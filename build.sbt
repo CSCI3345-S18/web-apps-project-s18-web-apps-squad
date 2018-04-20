@@ -2,7 +2,7 @@ version := "1.0-SNAPSHOT"
 
 // Server sub-project - this is where the Play stuff is
 lazy val server = (project in file("server")).settings(commonSettings).settings(
-  name := "CSCI3345-S18-server",
+  name := "FinalProject-server",
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   pipelineStages := Seq(digest, gzip),
@@ -27,7 +27,7 @@ lazy val server = (project in file("server")).settings(commonSettings).settings(
 
 // Client sub-project - this is where the Scala.js stuff is
 lazy val client = (project in file("client")).settings(commonSettings).settings(
-  name := "CSCI3345-S18-client",
+  name := "FinalProject-client",
   scalaJSUseMainModuleInitializer := true,
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "0.9.5",
@@ -38,7 +38,7 @@ lazy val client = (project in file("client")).settings(commonSettings).settings(
 
 // Shared subproject - this is where you put anything for both server and client
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).settings(commonSettings,
-  name := "CSCI3345-S18-shared")
+  name := "FinalProject-shared")
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 

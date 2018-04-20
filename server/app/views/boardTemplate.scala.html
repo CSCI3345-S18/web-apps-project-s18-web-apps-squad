@@ -1,0 +1,33 @@
+@* boardTemplate Template File *@
+@* TODO make posts be a Seq of case classes *@
+@(title: String, userName: String, boards: Seq[String], posts: Seq[(String, String, String)])(implicit request: RequestHeader)
+
+@import views.html.helper.CSRF
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/boardView.css")">
+    </head>
+    <body data-token='@CSRF.getToken.value'>
+        <div class="boardPanel">
+			<button @if(title==userName){id="currentPageUser"}else{id="userPage"}>@userName</button><br/>
+			<button @if(title=="Home"){id="currentPageHome"}else{id="homePage"}><b>Home</b></button><br/>
+        	@for(board <- boards){
+        		<button @if(title==board){id="currentPage"}>@board</button><br/>
+        	}
+        </div>
+        <h1 id="title">
+        	@title
+        </h1>
+        <div class="posts">
+        	@for(post <- posts){
+        		<button>
+        			<div>@post._1</div><br/>
+        			<div class="postInfo">by @post._2 on @post._3</div>
+        		</button>
+        	}
+        </div>
+    </body>
+</html>

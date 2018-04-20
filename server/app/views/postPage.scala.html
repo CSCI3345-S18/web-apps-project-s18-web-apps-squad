@@ -1,0 +1,14 @@
+@* postPage Template File *@
+@()(implicit request: RequestHeader)
+
+@postTemplate("Just Professor Things", "Login/Signup", 
+				Seq("Pictures", "Movies", "Web Applications", "Reddit", "Just Professor Things"),
+				"Best Way to Torture Students?", "I'm just looking for some new, fun, creative ways to make my web apps class harder.", "mlewis", 
+				Seq(("Scala, but no vars allowed", "sfogarty"), ("You should teach web apps in C.", "bmassing"), ("packets", "thicks")))
+				
+@*
+@postTemplate("board2", "Login/Signup", 
+			Seq("board1", "board2", "board3", "board4", "board5"), 
+				"post1 title", "post1 text", "user1", 
+				Seq(("comment1", "user8"), ("comment2", "user7")))
+*@

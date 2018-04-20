@@ -1,0 +1,44 @@
+@* postTemplate Template File *@
+@(boardTitle: String, userName: String, boards: Seq[String], postTitle: String, postText: String, poster: String, comments: Seq[(String, String)])(implicit request: RequestHeader)
+
+@import views.html.helper.CSRF
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>@postTitle</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/postView.css")">
+    </head>
+    <body data-token='@CSRF.getToken.value'>
+        <div class="boardPanel">
+			<button id="userPage">@userName</button><br/>
+			<button id="homePage"><b>Home</b></button><br/>
+        	@for(board <- boards){
+        		<button @if(boardTitle==board){id="currentPage"}>@board</button><br/>
+        	}
+        </div>
+		
+		<div id="post">
+			<button>
+				<div id="postTitle">
+					@postTitle 
+				</div></br>
+				<div id="postText">
+					@postText
+				</div></br>
+				<div class="poster">	
+					@poster
+				</div>
+			</button>
+		</div>
+		
+        <div class="comments">
+        	@for(comment <- comments){
+        		<button>
+        			<div class="commentText">@comment._1</div><br/>
+        			<div class="commenter">by @comment._2</div>
+        		</button>
+        	}
+        </div>
+    </body>
+</html>
