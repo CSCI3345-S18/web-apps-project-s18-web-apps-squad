@@ -1,0 +1,33 @@
+@* errorPage Template File *@
+@(errorMessage: String, boards: Seq[String], userName: String)(implicit request: RequestHeader)
+
+@import views.html.helper.CSRF
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Error</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/postView.css")">
+    </head>
+    <body data-token='@CSRF.getToken.value'>
+        <div class="boardPanel">
+			<button id="userPage">@userName</button><br/>
+			<button id="homePage"><b>Home</b></button><br/>
+        	@for(board <- boards){
+        		<button>@board</button><br/>
+        	}
+        </div>
+		
+		<div id="post">
+			<button>
+				<div id="postTitle">
+					Error
+				</div></br>
+				<div id="postText">
+					@errorMessage
+				</div></br>
+			</button>
+		</div>
+		
+    </body>
+</html>

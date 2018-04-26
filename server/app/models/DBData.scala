@@ -12,7 +12,7 @@ import play.api.mvc.ControllerComponents
 import scala.collection.mutable.Map
 import scala.collection.mutable.Buffer
 
-case class Post(id: Int, boardID: Int, posterID: Int, title: String, body: String)
+case class Post(id: Int, boardName: String, title: String, body: String, poster: String)
 case class User(id: Int, username: String, password: String, email: String)
 case class Board(id: Int, title: String, description: String)
 case class Comment(id: Int, flag: Char, postParentID: Int, commentParentID: Int)
@@ -25,8 +25,13 @@ class DBData() {
     // Pull all posts from the given board
   }
   
-  def getSubscriptionsFromUser(userID: Int) = {
+  def getSubscriptionsFromUser(username: String): Seq[String] = {
+    return Seq("todo", "todo", "todo")
     // Pull all subscriptions from the user
+  }
+  
+  def getPostFromPostID(boardName: String, postID: Int): Option[Post] = {
+    return Some(Post(postID, boardName, "TODO post name", "TODO post body", "TODO poster"))
   }
   
   def getCommentsFromPost(postID: Int) = {
