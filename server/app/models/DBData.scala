@@ -30,12 +30,17 @@ class DBData() {
     // Pull all subscriptions from the user
   }
   
-  def getPostFromPostID(boardName: String, postID: Int): Option[Post] = {
-    return Some(Post(postID, boardName, "TODO post name", "TODO post body", "TODO poster"))
+  def getDefaultSubscription(): Seq[String] = {
+    return Seq("todo")
   }
   
-  def getCommentsFromPost(postID: Int) = {
+  def getPostFromPostID(boardName: String, postID: Int): Option[Post] = {
+    return Some(Post(postID, boardName, "TODO in DBData val postName", "TODO in DBData val postBody", "TODO in DBData val poster"))
+  }
+  
+  def getCommentsFromPost(postID: Int): Seq[(String, String)] = {
     // Pull all comments from the particular post
+    return Seq(("todo comment body", "todo commenter"))//feel free to make this a case class
   }
   
   def addUser(userID: Int, username: String, password: String, email: String) = {

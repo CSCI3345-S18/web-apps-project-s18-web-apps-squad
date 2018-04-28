@@ -12,26 +12,29 @@ import models._
 @Singleton
 class PostController @Inject() (cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
   val dataModel = new DBData()
+  
   def viewPost(board: String, postIDStr: String) = Action { implicit request =>
-    var currentUser = "Login/Signup"
-    request.session.get("username").map{ currentUserStr =>
-      currentUser = currentUserStr
-    }
-    val currentUsersSubs = dataModel.getSubscriptionsFromUser(currentUser)
-      try{
-       val postID = postIDStr.toInt
-       val postOpt = dataModel.getPostFromPostID(board, postID)
+    val boards: Seq[String] = request.session.get("username").map{username =>
+					dataModel.getSubscriptionsFromUser(username)
+				}.getOrElse{
+					dataModel.getDefaultSubscription()
+				}
+    try{
+      val postID = postIDStr.toInt
+      val postOpt = dataModel.getPostFromPostID(board, postID)
       
-       postOpt match {
-         case Some(post) => {
-           val comments = Seq(("TODO comment", "TODO user"), ("TODO comment", "TODO user"))
-           Ok(views.html.postTemplate(board, currentUser, currentUsersSubs, post.title, post.body, post.poster, comments))
-         }
-         case None => Ok(views.html.errorPage("Post" + postIDStr + " not found", currentUsersSubs, currentUser))
-       }
+      postOpt match {
+        case None => throw new java.lang.NumberFormatException
+        case Some(post) => {
+          val comments = dataModel.getCommentsFromPost(postID)
+          Ok(views.html.postPage(board, boards, post.title, post.body, post.poster, comments))
+        }
+        
+      }
       
-     } catch {
-       case e: java.lang.NumberFormatException => Ok(views.html.errorPage("Bad post name", currentUsersSubs, currentUser))
-     } 
+    } catch {
+        case e: java.lang.NumberFormatException => Ok(views.html.errorPage("Post" + postIDStr + " not found", boards))
+    } 
   }
+  
 }

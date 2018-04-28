@@ -1,0 +1,30 @@
+@* baseView Template File *@
+@(title: String, boards:Seq[String])(content: Html)(implicit request: RequestHeader)
+
+@import views.html.helper.CSRF
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/postView.css")">
+    </head>
+    <body data-token='@CSRF.getToken.value'>
+        <div class="boardPanel">
+			<button id="userPage">
+				@{request.session.get("username").map{username =>
+					username //make this link to the 'username' user's page
+				}.getOrElse{
+					"Login/Signup" //make this link to a login page
+				}}
+			</button><br/>
+			<button id="homePage"><b>Home</b></button><br/>
+        	@for(board <- boards){
+        		<button>@board</button><br/>
+        	}
+        </div>
+
+		@content
+
+    </body>
+</html>

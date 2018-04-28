@@ -17,7 +17,7 @@ class MockupController @Inject() (cc: MessagesControllerComponents) extends Mess
   }
   
   def postPage() = Action { implicit request =>
-    Ok(views.html.postPage())
+    Ok("")//Ok(views.html.postPage())
   }
   
 }
