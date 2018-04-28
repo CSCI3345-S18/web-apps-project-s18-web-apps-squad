@@ -1,6 +1,47 @@
 @* homePage Template File *@
 @()(implicit request: RequestHeader)
 
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>funny informative forums: the last page of the internet</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/homePage.css")">
+	</head>
+	<body>
+		<nav>
+        	<ul>
+        	<li><a href="#">Home</a></li>
+        	<li><a href="#">New</a></li>
+        	<li><a href="#">Controversial</a></li>
+        	<li><a href="#">Top</a></li>
+        	<li><a href="#">Login</a></li>
+        	</ul>
+        </nav>
+		
+		<div id="home-hero">
+			<h3>Welcome to funny informative forums, the last page of the internet!</h3>
+			<button>CREATE AN ACCOUNT</button>
+	    </div>
+		<div id="home-board-panel">
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+		</div>
+		<div id="home-hot-posts">
+			<p id="home-search-posts">Search</p>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+			<button>View more</button>
+		</div>
+	</body>
+</html>
+
+@*
 @boardTemplate("Home", "Login/Signup", 
 			Seq("Pictures", "Movies", "Web Applications", "Reddit", "Just Professor Things"), 
 			Seq(("HTML core dump. How did this even happen plz help!", "in2deep", "Web Applications"), 
@@ -8,6 +49,8 @@
 				("Best Way to Torture Students?", "mlewis", "Just Professor Things"), 
 				("Please pay us", "starving_dev", "Reddit"), 
 				("[SERIOUS] Don't borrow my stapler", "pmeyers", "Just Professor Things")))
+				
+*@
 				
 @*
 @boardTemplate("Home", "Login/Signup", 
