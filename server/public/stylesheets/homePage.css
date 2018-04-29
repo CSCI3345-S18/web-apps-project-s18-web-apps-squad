@@ -55,3 +55,15 @@ nav ul li:hover {
 #home-hot-posts #home-search-posts {
 	font-size: 20px;
 }
+
+#login-hero {
+	background-color: yellow;
+}
+
+#login-instructions {
+	background-color: yellow;
+}
+
+#login-new-user {
+	background-color: yellow;
+}

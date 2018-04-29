@@ -14,6 +14,13 @@ GET		/user						controllers.MockupController.userPage
 
 GET		/post						controllers.MockupController.postPage
 
+# Routes for user login
+GET		/login						controllers.MockupController.allUsers
+
+POST	/addUser					controllers.MockupController.addUser
+
+POST	/login						controllers.MockupController.login
+
 #Post pages
 
 GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

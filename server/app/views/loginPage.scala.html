@@ -1,0 +1,71 @@
+@* homePage Template File *@
+@(users: Seq[User], loginForm: Form[Login], userForm: Form[NewUser])(implicit request: MessagesRequestHeader, flash: Flash)
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>funny informative forums: the last page of the internet</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/homePage.css")">
+	</head>
+	<body>
+		<nav>
+        	<ul>
+        	<li><a href="#">Home</a></li>
+        	<li><a href="#">New</a></li>
+        	<li><a href="#">Controversial</a></li>
+        	<li><a href="#">Top</a></li>
+        	<li><a href="#">Login</a></li>
+        	</ul>
+        </nav>
+        
+        <div id="login-hero">
+        	<h1 id="login-header1">Funny Informative Forums</h1>
+        	<p id="login-subheader1">Enter your credentials below or create a new account</p>
+        </div>
+       
+	    <div id="login-instructions">
+	    	<h3 id="login-header2">Login Form</h3>
+	    	<h4 id="login-subheader2">If you have an account, sign in with your credentials.</h4>
+	    </div>
+        
+        @helper.form(action = helper.CSRF(routes.MockupController.login)) {
+        	@helper.inputText(loginForm("username"))
+        	@helper.inputPassword(loginForm("password"))
+        	<input type="submit" name="loginSubmission" value="Login" class="submit-button">
+        }
+        
+        <div id="login-new-user">
+        	<h3 id="login-header3">New User Form</h3>
+        	<h4 id="login-subheader3">New here? Create an account below.</h4>
+        </div>
+        
+        @helper.form(action = helper.CSRF(routes.MockupController.addUser)) {
+        	@helper.inputText(userForm("username"))
+        	@helper.inputPassword(userForm("password"))
+        	<input type="submit" name="newUserSubmit" value="Create Account" class="submit-button">
+        }
+       
+	</body>
+</html>
+
+@*
+@boardTemplate("Home", "Login/Signup", 
+			Seq("Pictures", "Movies", "Web Applications", "Reddit", "Just Professor Things"), 
+			Seq(("HTML core dump. How did this even happen plz help!", "in2deep", "Web Applications"), 
+				("A map of Trinity as seen from the moon", "danderson", "Pictures"), 
+				("Best Way to Torture Students?", "mlewis", "Just Professor Things"), 
+				("Please pay us", "starving_dev", "Reddit"), 
+				("[SERIOUS] Don't borrow my stapler", "pmeyers", "Just Professor Things")))
+				
+*@
+				
+@*
+@boardTemplate("Home", "Login/Signup", 
+			Seq("board1", "board2", "board3", "board4", "board5"), 
+			Seq(("post1", "user1", "board1"), 
+				("post2", "user8", "board3"), 
+				("post3", "moderator", "board2"), 
+				("post4", "user3", "board1"), 
+				("post5", "user2", "board4")))
+
+*@
