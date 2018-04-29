@@ -46,6 +46,10 @@ object UserQueries {
 
 }
 
+object SubQueries {
+  import Tables._
+}
+
 class DBData() {
   
   def getPostsFromBoard(boardID: Int) = {

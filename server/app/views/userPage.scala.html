@@ -1,16 +1,46 @@
 @* userPage Template File *@
-@()(implicit request: RequestHeader)
+@(username: String)(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
 
-@boardTemplate("mlewis", "Login/Signup", 
-			Seq("Pictures", "Movies", "Web Applications", "Reddit", "Just Professor Things"), 
-			Seq(("Best Way to Torture Students?", "mlewis", "Just Professor Things"), 
-				("\"That would be one line in Scala\": a slam poem", "mlewis", "TechSupport"), 
-				("Is anyone going to Saturn this Friday? Looking for a carpool", "mlewis", "Space")))
-				
-@*
-@boardTemplate("user3", "Login/Signup", 
-			Seq("board1", "board2", "board3", "board4", "board5"), 
-			Seq(("post9", "user3", "board5"), 
-				("post4", "user3", "board1"), 
-				("post3", "user3", "board2")))
-*@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Your Profile</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/profilePage.css")">
+	</head>
+	<body>
+		<nav>
+			<ul>
+			<li><a href="http://pandora06.cs.trinity.edu:9005">Home</a></li>
+			<li><a href="#">New</a></li>
+			<li><a href="#">Controversial</a></li>
+			<li><a href="#">Top</a></li>
+			<li><a href="@routes.MockupController.userPage(username)">Account</a></li>
+			</ul>
+		</nav>
+		
+		<div id="profile-hero">
+			<h3>Welcome, @username</h3>
+			<button>Messages</button>
+			<form id="logout" action="@routes.MockupController.logout" method="GET">
+				@helper.CSRF.formField
+				<input type="submit" value="Logout">
+			</form>
+		</div>
+		<div id="profile-board-panel">
+			<p id="profile-subscription-header">Subscriptions</p><hr>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+		</div>
+		<div id="profile-posts">
+			<p id="profile-posts-header">Latest Posts</p><hr>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+		</div>
+	</body>
+</html>

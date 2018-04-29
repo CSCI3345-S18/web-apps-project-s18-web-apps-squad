@@ -10,7 +10,7 @@ GET     /                           controllers.MockupController.homePage
  
 GET		/home						controllers.MockupController.homePage
 
-GET		/user						controllers.MockupController.userPage
+GET		/user						controllers.MockupController.userPage(username: String)
 
 GET		/post						controllers.MockupController.postPage
 
@@ -20,6 +20,10 @@ GET		/login						controllers.MockupController.allUsers
 POST	/addUser					controllers.MockupController.addUser
 
 POST	/login						controllers.MockupController.login
+
+GET		/loggedout					controllers.MockupController.logout
+
+#GET		/profile					controllers.MockupController.getSubs(username: String)
 
 #Post pages
 

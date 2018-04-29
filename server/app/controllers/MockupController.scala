@@ -73,18 +73,23 @@ class MockupController @Inject() (
           val loginFuture = UserQueries.verifyUser(loginUser, db)
           loginFuture.map { success =>
             //if(success == true) Redirect(routes.MockupController.getSubs(loginUser.username))
-            if(success == true) Redirect(routes.MockupController.allUsers).flashing("message" -> "Login success.")
+            if(success == true) Redirect(routes.MockupController.userPage(loginUser.username))
             else Redirect(routes.MockupController.allUsers).flashing("error" -> "Failed to login.")
           }
         })
   }
   
+  def logout = Action { implicit request =>
+    Redirect(routes.MockupController.allUsers).withNewSession
+  }
+  
   /*def getSubs(username: String) = Action.async { implicit requeset =>
-    
+      val subsFuture = SubQueries.getTasks(username, db)
+      subsFuture.map(subs => Ok(views.html.profilePage(username, subs)))
   }*/
   
-  def userPage() = Action { implicit request =>
-    Ok(views.html.userPage())
+  def userPage(username: String) = Action { implicit request =>
+    Ok(views.html.userPage(username))
   }
   
   def postPage() = Action { implicit request =>
