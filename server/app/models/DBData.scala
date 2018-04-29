@@ -19,7 +19,7 @@ import controllers.Login
 import controllers.NewUser
 
 case class Post(id: Int, boardName: String, title: String, body: String, poster: String)
-case class User(id: Int, username: String, password: String, email: String)
+case class User(username: String, password: String, email: String)
 case class Board(id: Int, title: String, description: String)
 case class Comment(id: Int, flag: Char, postParentID: Int, commentParentID: Int)
 case class Messages(id: Int, senderID: Int, receiverID: Int, messages: String)
@@ -34,7 +34,7 @@ object UserQueries {
   
   def addUser(nu: NewUser, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
-      users += User(0, nu.username, nu.password, "email")
+      users += User(nu.username, nu.password, nu.email)
     }
   }
   

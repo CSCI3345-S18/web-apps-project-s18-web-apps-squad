@@ -21,7 +21,7 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserQueries
 
-case class NewUser(username: String, password: String, email: String)
+case class NewUser(email: String, username: String, password: String)
 case class Login(username: String, password: String)
 
 @Singleton
@@ -31,9 +31,9 @@ class MockupController @Inject() (
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
   val newUserForm = Form(mapping(
+      "email" -> nonEmptyText,
       "username" -> nonEmptyText,
-      "password" -> nonEmptyText,
-      "email" -> nonEmptyText)(NewUser.apply)(NewUser.unapply))
+      "password" -> nonEmptyText)(NewUser.apply)(NewUser.unapply))
       
   val loginForm = Form(mapping(
       "username" -> nonEmptyText,

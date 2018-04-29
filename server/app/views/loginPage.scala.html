@@ -10,11 +10,11 @@
 	<body>
 		<nav>
         	<ul>
-        	<li><a href="#">Home</a></li>
+        	<li><a href="http://pandora06.cs.trinity.edu:9005/">Home</a></li>
         	<li><a href="#">New</a></li>
         	<li><a href="#">Controversial</a></li>
         	<li><a href="#">Top</a></li>
-        	<li><a href="#">Login</a></li>
+        	<li><a href="http://pandora06.cs.trinity.edu:9005/login">Login</a></li>
         	</ul>
         </nav>
         
@@ -40,6 +40,7 @@
         </div>
         
         @helper.form(action = helper.CSRF(routes.MockupController.addUser)) {
+        	@helper.inputText(userForm("email"))
         	@helper.inputText(userForm("username"))
         	@helper.inputPassword(userForm("password"))
         	<input type="submit" name="newUserSubmit" value="Create Account" class="submit-button">
