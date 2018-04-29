@@ -96,6 +96,11 @@ class MockupController @Inject() (
     Ok("")//Ok(views.html.postPage())
   }
   
+  def loginPage() = Action.async { implicit request =>
+    val usersFuture = UserQueries.allUsers(db)
+    usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
+  }
+  
   
   
 }
