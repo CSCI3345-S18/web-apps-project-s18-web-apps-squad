@@ -14,6 +14,8 @@ GET		/user						controllers.MockupController.userPage(username: String)
 
 GET		/post						controllers.MockupController.postPage
 
+GET		/navLogin					controllers.MockupController.loginPage
+
 # Routes for user login
 GET		/login						controllers.MockupController.allUsers
 
