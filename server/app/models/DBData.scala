@@ -12,12 +12,43 @@ import play.api.mvc.ControllerComponents
 import scala.collection.mutable.Map
 import scala.collection.mutable.Buffer
 
+import slick.jdbc.MySQLProfile.api._
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import controllers.Login
+import controllers.NewUser
+
 case class Post(id: Int, boardName: String, title: String, body: String, poster: String)
-case class User(id: Int, username: String, password: String, email: String)
+case class User(username: String, password: String, email: String)
 case class Board(id: Int, title: String, description: String)
 case class Comment(id: Int, flag: Char, postParentID: Int, commentParentID: Int)
 case class Messages(id: Int, senderID: Int, receiverID: Int, messages: String)
 case class Subscription(id: Int, userID: Int, boardID: Int)
+
+object UserQueries {
+  import Tables._
+  
+  def allUsers(db: Database)(implicit ec: ExecutionContext): Future[Seq[User]] = {
+    db.run(users.result)
+  }
+  
+  def addUser(nu: NewUser, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      users += User(nu.username, nu.password, nu.email)
+    }
+  }
+  
+  def verifyUser(lu: Login, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+    db.run {
+      users.filter(_.username === lu.username).filter(_.password === lu.password).exists.result
+    }
+  }
+
+}
+
+object SubQueries {
+  import Tables._
+}
 
 class DBData() {
   

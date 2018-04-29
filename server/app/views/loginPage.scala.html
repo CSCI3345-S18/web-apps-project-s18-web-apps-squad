@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@()(implicit request: RequestHeader)
+@(users: Seq[User], loginForm: Form[Login], userForm: Form[NewUser])(implicit request: MessagesRequestHeader, flash: Flash)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,29 +17,35 @@
         	<li><a href="http://pandora06.cs.trinity.edu:9005/login">Login</a></li>
         	</ul>
         </nav>
-		
-		<div id="home-hero">
-			<h3>Welcome to funny informative forums, the last page of the internet!</h3>
-			<form action="http://pandora06.cs.trinity.edu:9005/login">	
-				<button>CREATE AN ACCOUNT</button>
-			</form>
+        
+        <div id="login-hero">
+        	<h1 id="login-header1">Funny Informative Forums</h1>
+        	<p id="login-subheader1">Enter your credentials below or create a new account</p>
+        </div>
+       
+	    <div id="login-instructions">
+	    	<h3 id="login-header2">Login Form</h3>
+	    	<h4 id="login-subheader2">If you have an account, sign in with your credentials.</h4>
 	    </div>
-		<div id="home-board-panel">
-			<p>Board</p>
-			<p>Board</p>
-			<p>Board</p>
-			<p>Board</p>
-			<p>Board</p>
-		</div>
-		<div id="home-hot-posts">
-			<p id="home-search-posts">Search</p>
-			<p>Post</p>
-			<p>Post</p>
-			<p>Post</p>
-			<p>Post</p>
-			<p>Post</p>
-			<button>View more</button>
-		</div>
+        
+        @helper.form(action = helper.CSRF(routes.MockupController.login)) {
+        	@helper.inputText(loginForm("username"))
+        	@helper.inputPassword(loginForm("password"))
+        	<input type="submit" name="loginSubmission" value="Login" class="submit-button">
+        }
+        
+        <div id="login-new-user">
+        	<h3 id="login-header3">New User Form</h3>
+        	<h4 id="login-subheader3">New here? Create an account below.</h4>
+        </div>
+        
+        @helper.form(action = helper.CSRF(routes.MockupController.addUser)) {
+        	@helper.inputText(userForm("email"))
+        	@helper.inputText(userForm("username"))
+        	@helper.inputPassword(userForm("password"))
+        	<input type="submit" name="newUserSubmit" value="Create Account" class="submit-button">
+        }
+       
 	</body>
 </html>
 
