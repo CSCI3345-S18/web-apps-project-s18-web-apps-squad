@@ -46,8 +46,37 @@ object UserQueries {
 
 }
 
-object SubQueries {
+object BoardQueries {
   import Tables._
+  
+  def allBoards(db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
+    db.run(boards.result)
+  }
+  
+  /*def getPostsFromBoard(boardID: Int, db: Database): Future[Seq[Post]] = {
+    
+  }*/
+  
+  /*def getSubsFromUser(username: String): Future[Seq[Board]] = {
+    
+  }*/
+  
+  /*def getCommentsFromPost(boardName: String, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Comment]] = {
+    
+  }*/
+  
+  /*def addSubscriptionToUser(username: String, subID: Int): Future[Int] = {
+    
+  }*/
+  
+  /*def addCoommentToPost(postID: Int): Future[Int] = {
+    
+  }*/
+  
+  /*def addPostToBoard(boardID: Int): Future[Int] = {
+    
+  }*/
+  
 }
 
 class DBData() {

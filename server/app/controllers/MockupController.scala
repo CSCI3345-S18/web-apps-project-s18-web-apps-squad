@@ -20,6 +20,7 @@ import play.api.data.Forms.mapping
 import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserQueries
+import models.BoardQueries
 
 case class NewUser(email: String, username: String, password: String)
 case class Login(username: String, password: String)
