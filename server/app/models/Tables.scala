@@ -12,4 +12,11 @@ object Tables extends {
     def * = (username, password, email) <> (User.tupled, User.unapply)
   }
   val users = TableQuery[Users]
+  
+  class Boards(tag: Tag) extends Table[Board](tag, "Boards") {
+    def title = column[String]("title")
+    def description = column[String]("description")
+    def * = (title, description) <> (Board.tupled, Board.unapply)
+  }
+  val boards = TableQuery[Boards]
 }
