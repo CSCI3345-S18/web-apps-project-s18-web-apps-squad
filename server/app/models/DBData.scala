@@ -53,6 +53,12 @@ object BoardQueries {
     db.run(boards.result)
   }
   
+  def addBoard(b: Board, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      boards += Board(b.title, b.description)
+    }
+  }
+  
   /*def getPostsFromBoard(boardID: Int, db: Database): Future[Seq[Post]] = {
     
   }*/

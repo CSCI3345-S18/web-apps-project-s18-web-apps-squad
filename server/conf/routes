@@ -16,6 +16,8 @@ GET		/post						controllers.MockupController.postPage
 
 GET		/navLogin					controllers.MockupController.loginPage
 
+GET		/board						controllers.MockupController.boardPage(title: String, desc: String)
+
 # Routes for user login
 GET		/login						controllers.MockupController.allUsers
 
@@ -24,6 +26,10 @@ POST	/addUser					controllers.MockupController.addUser
 POST	/login						controllers.MockupController.login
 
 GET		/loggedout					controllers.MockupController.logout
+
+POST	/addBoard					controllers.MockupController.addBoard
+
+GET		/allBoards					controllers.MockupController.allBoards
 
 #GET		/profile					controllers.MockupController.getSubs(username: String)
 

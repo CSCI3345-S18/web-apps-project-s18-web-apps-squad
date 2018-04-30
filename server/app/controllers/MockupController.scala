@@ -21,6 +21,8 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserQueries
 import models.BoardQueries
+import models.Board
+import models.Post
 
 case class NewUser(email: String, username: String, password: String)
 case class Login(username: String, password: String)
@@ -39,6 +41,10 @@ class MockupController @Inject() (
   val loginForm = Form(mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
+      
+  val newBoardForm = Form(mapping(
+      "title" -> nonEmptyText,
+      "description" -> nonEmptyText)(Board.apply)(Board.unapply))
   
   def homePage() = Action { implicit request =>
     Ok(views.html.homePage())
@@ -60,6 +66,27 @@ class MockupController @Inject() (
           addFuture.map { cnt =>
             if(cnt == 1) Redirect(routes.MockupController.allUsers).flashing("message" -> "New user added.")
             else Redirect(routes.MockupController.allUsers).flashing("error" -> "Failed to add user.")
+          }
+        })
+  }
+  
+  def allBoards = Action.async { implicit request =>
+    val boardsFuture = BoardQueries.allBoards(db)
+    boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
+  }
+  
+  def addBoard = Action.async { implicit request =>
+    newBoardForm.bindFromRequest().fold(
+        formWithErrors => {
+          val boardsFuture = BoardQueries.allBoards(db)
+          boardsFuture.map(boards => BadRequest(views.html.addBoardPage(boards, newBoardForm)))
+        },
+        newBoard => {
+          val addFuture = BoardQueries.addBoard(newBoard, db)
+          addFuture.map { cnt =>
+            //if(cnt == 1) Redirect(routes.MockupController.allBoards).flashing("message" -> "New board added.")
+            if(cnt == 1) Redirect(routes.MockupController.boardPage(newBoard.title, newBoard.description))
+            else Redirect(routes.MockupController.allBoards).flashing("error" -> "Failed to add user.")
           }
         })
   }
@@ -100,6 +127,11 @@ class MockupController @Inject() (
   def loginPage() = Action.async { implicit request =>
     val usersFuture = UserQueries.allUsers(db)
     usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
+  }
+  
+  def boardPage(title: String, desc: String) = Action.async { implicit request =>
+    val boardsFuture = BoardQueries.allBoards(db)
+    boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
   }
   
   

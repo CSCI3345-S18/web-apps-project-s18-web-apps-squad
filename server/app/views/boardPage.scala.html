@@ -1,0 +1,43 @@
+@* postPage Template File *@
+@(title: String, desc: String)(implicit request: RequestHeader)
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>@title</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/boardPage.css")">
+	</head>
+	<body>
+		<nav>
+        	<ul>
+        	<li><a href="@routes.MockupController.homePage()">Home</a></li>
+        	<li><a href="#">New</a></li>
+        	<li><a href="#">Controversial</a></li>
+        	<li><a href="#">Top</a></li>
+        	<li><a href="@routes.MockupController.loginPage()">Login</a></li>
+        	</ul>
+        </nav>
+		<div id="board-hero">
+			<h3>Welcome to @title</h3>
+			<h3>@desc</h3>
+		</div>
+		<div id="board-board-panel">
+			<p id="board-subscription-header">Subscriptions</p><hr>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+			<p>Board</p>
+		</div>
+		<div id="board-create-post">
+			
+		</div>
+		<div id="board-posts">
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+			<p>Post</p>
+		</div>
+	</body>
+</html>

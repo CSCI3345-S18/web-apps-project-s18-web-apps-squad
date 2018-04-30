@@ -5,7 +5,6 @@ object Tables extends {
   import profile.api._
   
   class Users(tag: Tag) extends Table[User](tag, "Users") {
-    //def id = column[Int]("id")
     def username = column[String]("username")
     def password = column[String]("password")
     def email = column[String]("email")
