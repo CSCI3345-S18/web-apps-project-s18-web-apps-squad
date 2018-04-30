@@ -26,6 +26,10 @@
 				@helper.CSRF.formField
 				<input type="submit" value="Logout">
 			</form>
+			<form id="addBoard" action="@routes.MockupController.allBoards" method="GET">
+				@helper.CSRF.formField
+				<input type="submit" value="Create new Board">
+			</form>
 		</div>
 		<div id="profile-board-panel">
 			<p id="profile-subscription-header">Subscriptions</p><hr>

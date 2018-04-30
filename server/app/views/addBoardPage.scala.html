@@ -1,0 +1,28 @@
+@* homePage Template File *@
+@(boards: Seq[Board], newBoardForm: Form[Board])(implicit request: MessagesRequestHeader, flash: Flash)
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Add a Board</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/addBoardPage.css")">
+	</head>
+	<body>
+		<nav>
+        	<ul>
+        	<li><a href="@routes.MockupController.homePage()">Home</a></li>
+        	<li><a href="#">New</a></li>
+        	<li><a href="#">Controversial</a></li>
+        	<li><a href="#">Top</a></li>
+        	<li><a href="@routes.MockupController.loginPage()">Login</a></li>
+        	</ul>
+        </nav>
+		<div id="add-board-instruction">
+		@helper.form(action = helper.CSRF(routes.MockupController.addBoard())) {
+			@helper.inputText(newBoardForm("title"))
+			@helper.inputText(newBoardForm("description"))
+			<input type="submit" value="Submit">
+		}
+		</div>
+	</body>
+</html>
