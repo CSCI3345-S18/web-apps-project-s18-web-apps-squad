@@ -1,5 +1,12 @@
 package models
 
+case class Post(id: Int, boardName: String, title: String, body: String, poster: String)
+case class User(username: String, password: String, email: String)
+case class Board(title: String, description: String)
+case class Comment(id: Int, flag: Char, postParentID: Int, commentParentID: Int)
+case class Messages(id: Int, senderID: Int, receiverID: Int, messages: String)
+case class Subscription(id: Int, userID: Int, boardID: Int)
+
 object Tables extends {
   val profile = slick.jdbc.MySQLProfile
   import profile.api._
