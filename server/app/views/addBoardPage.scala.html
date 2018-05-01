@@ -8,21 +8,42 @@
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/addBoardPage.css")">
 	</head>
 	<body>
-		<nav>
-        	<ul>
-        	<li><a href="@routes.MockupController.homePage()">Home</a></li>
-        	<li><a href="#">New</a></li>
-        	<li><a href="#">Controversial</a></li>
-        	<li><a href="#">Top</a></li>
-        	<li><a href="@routes.MockupController.loginPage()">Login</a></li>
-        	</ul>
-        </nav>
-		<div id="add-board-instruction">
-		@helper.form(action = helper.CSRF(routes.MockupController.addBoard())) {
-			@helper.inputText(newBoardForm("title"))
-			@helper.inputText(newBoardForm("description"))
-			<input type="submit" value="Submit">
-		}
+        
+        <div class="leftnav">
+        	<a href="@routes.MockupController.homePage()">Home</a>
+        	<a href="#">Popular</a>
+        	<a href="#">Top</a>
+        	<a href="@routes.MockupController.loginPage()">Account</a>
+        	<h5>Filter bar</h5>
+        	<p id="sub-header">Subscriptions</p>
+        	<p>Board</p>
+        	<p>Board</p>
+        	<p>Board</p>
+        	<p>Board</p>
+        </div>
+        <div class="topnav">
+        	<nav>
+        		<ul>
+        		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
+        		<li><p>Search bar</p></li>
+        		<li><a href="#">Messages</a></li>
+        		<li><a href="#">Create</a></li>
+        		<li><a href="#">Profile</a></li>
+        		</ul>
+        	</nav>
+        </div>
+        
+        <div class="main">
+        	<div id="add-board-hero">
+        		<p id="add-board-header1">Create a New Community</p>
+        	</div>
+			<div id="add-board-instruction">
+			@helper.form(action = helper.CSRF(routes.MockupController.addBoard())) {
+				@helper.inputText(newBoardForm("title"))
+				@helper.inputText(newBoardForm("description"))
+				<input type="submit" value="Submit">
+			}
+			</div>
 		</div>
 	</body>
 </html>

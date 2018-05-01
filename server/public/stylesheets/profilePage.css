@@ -1,8 +1,18 @@
 /* This CSS was adapted from the W3 schools at https://www.w3schools.com/howto/howto_js_vertical_tabs.asp */
 
+body {
+	background-color: #EFF7FF;
+	font-family: "Arial", Helvetica, sans-serif;
+}
+
 nav {
-        background-color: #333;
-        text-align: center;
+		top: 0px !important;
+		padding-top: 0px !important;
+		margin-top: 0px !important;
+        background-color: white;
+        text-align: right;
+        border-bottom: 1px solid #e8e8e8;
+        z-index: 2;
 }
 
 nav ul {
@@ -13,7 +23,7 @@ nav ul {
 
 nav ul li {
         display: inline-block;
-        padding: 15px 0;
+        padding: 0 0;
         margin: 0;
 }
 
@@ -22,40 +32,122 @@ nav ul li a {
         font-size: 20px;
         padding: 0 15px;
         text-decoration: none;
-        color: #fff;
+        color: black;
 }
 
-nav ul li:hover {
-        background-color: #555;
+.leftnav {
+    width: 220px;
+    position: fixed;
+    z-index: 1;
+    top: 58px;
+    left: 0;
+    background: white;
+    overflow-x: hidden;
+    padding: 8px 0;
+    border: 1px solid #e8e8e8;
 }
 
-#profile-hero {
-	background-color: yellow;
-	margin-bottom: 10px;
-	text-align: center;
+.leftnav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 24px;
+    color: #2196F3;
+    display: block;
 }
 
-#profile-board-panel {
-	background-color: yellow;
-	font-size: 30px;
-	color: red;
-	float: left;
-	width: 10%;
-	height: 100%;
+.leftnav a:hover {
+    color: #064579;
 }
 
-#profile-posts {
-	background-color: yellow;
-	font-size: 40px;
-	color: red;
+.leftnav #sub-header {
+	font-size: 18px;
+	left: 10px;
+	padding: 6px 8px 6px 16px;
+}
+
+.leftnav p {
+	font-size: 24px;
+	display: block;
+	padding: 6px 8px 6px 16px;
+}
+
+.main {
+	margin-left: 220px;
+	margin-right: 330px;
+	padding: 0px 10px;
+}
+
+.main #profile-hero {
+	background-color: white;
+	border: 1px solid #e8e8e8;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.main #profile-hero #messages {
+	background-color: #FF5700;
+	border: 1px;
+	border-color: #008B8B;
+	text-decoration: none;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	cursor: pointer;
+	width: 200px;
+	margin-bottom: 4px;
+	margin-left: 3px;
 	float: right;
-	width: 89%;
 }
 
-#profile-posts #profile-posts-header {
-	text-align: center;
+.main #profile-hero #logoutbtn {
+	background-color: #FF5700;
+	border: 1px;
+	border-color: #008B8B;
+	text-decoration: none;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	cursor: pointer;
+	width: 200px;
+	margin-bottom: 4px;
+	margin-left: 3px;
+	float: right;
 }
 
-#profile-board-panel #profile-subscription-header {
-	text-align: center;
+.main #profile-hero #addboardbtn {
+	background-color: #FF5700;
+	border: 1px;
+	border-color: #008B8B;
+	text-decoration: none;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	cursor: pointer;
+	width: 200px;
+	margin-bottom: 4px;
+	float: right;
+}
+
+.main #profile-posts {
+	background-color: white;
+	border: 1px solid #e8e8e8;
+	margin-bottom: 30px;
+}
+
+.main #profile-communities {
+	background-color: white;
+	border: 1px solid #e8e8e8;
+	margin-bottom: 30px;
+}
+
+.main #profile-comments {
+	background-color: white;
+	border: 1px solid #e8e8e8;
+	margin-bottom: 30px;
 }

@@ -101,7 +101,7 @@ class MockupController @Inject() (
           val loginFuture = UserModel.verifyUser(loginUser, db)
           loginFuture.map { success =>
             //if(success == true) Redirect(routes.MockupController.getSubs(loginUser.username))
-            if(success == true) Redirect(routes.MockupController.userPage(loginUser.username))
+            if(success == true) Redirect(routes.MockupController.userPage(loginUser.username)).withSession("connected" -> loginUser.username)
             else Redirect(routes.MockupController.allUsers).flashing("error" -> "Failed to login.")
           }
         })
