@@ -2,6 +2,7 @@
 
 body {
 	background-color: #EFF7FF;
+	font-family: "Arial", Helvetica, sans-serif;
 }
 
 nav {
@@ -106,10 +107,36 @@ nav ul li a {
 	padding: 6px 8px 6px 16px;
 }
 
-#main {
+.main {
 	margin-left: 220px;
 	margin-right: 330px;
 	padding: 0px 10px;
+}
+
+.main #login-hero {
+	text-align: center;
+	height: 150px;
+	color: black;
+	background-color: white;
+	border: 2px solid #E8E8E8;
+	margin-top: 30px;
+	font-family: "Arial", Helvetia, sans-serif;
+}
+
+.main #login-header1 {
+	margin-top: 40px;
+}
+
+.main #login-subheader1 {
+	font-size: 20px;
+}
+
+.main #login-instructions {
+	text-align: left;
+}
+
+.main #login-form {
+	text-align: left;
 }
 
 #home-posts {

@@ -1,8 +1,18 @@
 /* This CSS was adapted from the W3 schools at https://www.w3schools.com/howto/howto_js_vertical_tabs.asp */
 
+body {
+	background-color: #EFF7FF;
+	font-family: "Arial", Helvetica, sans-serif;
+}
+
 nav {
-        background-color: #333;
-        text-align: center;
+		top: 0px !important;
+		padding-top: 0px !important;
+		margin-top: 0px !important;
+        background-color: white;
+        text-align: right;
+        border-bottom: 1px solid #e8e8e8;
+        z-index: 2;
 }
 
 nav ul {
@@ -13,7 +23,7 @@ nav ul {
 
 nav ul li {
         display: inline-block;
-        padding: 15px 0;
+        padding: 0 0;
         margin: 0;
 }
 
@@ -22,13 +32,64 @@ nav ul li a {
         font-size: 20px;
         padding: 0 15px;
         text-decoration: none;
-        color: #fff;
+        color: black;
 }
 
-nav ul li:hover {
-        background-color: #555;
+.leftnav {
+    width: 220px;
+    position: fixed;
+    z-index: 1;
+    top: 58px;
+    left: 0;
+    background: white;
+    overflow-x: hidden;
+    padding: 8px 0;
+    border: 1px solid #e8e8e8;
 }
 
-#add-board-instruction {
-	background-color: yellow;
+.leftnav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 24px;
+    color: #2196F3;
+    display: block;
+}
+
+.leftnav a:hover {
+    color: #064579;
+}
+
+.leftnav #sub-header {
+	font-size: 18px;
+	left: 10px;
+	padding: 6px 8px 6px 16px;
+}
+
+.leftnav p {
+	font-size: 24px;
+	display: block;
+	padding: 6px 8px 6px 16px;
+}
+
+.main {
+	margin-left: 220px;
+	margin-right: 330px;
+	padding: 0px 10px;
+}
+
+.main #add-board-hero {
+	background-color: white;
+	border: 1px solid #e8e8e8;
+	font-size: 30px;
+	text-align: center;
+	height: 140px;
+	margin-top: 24px;
+}
+
+.main #add-board-hero #add-board-header1 {
+	margin-top: 50px;
+}
+
+.main #add-board-instruction {
+	
 }
