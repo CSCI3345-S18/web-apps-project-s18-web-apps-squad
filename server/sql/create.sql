@@ -1,6 +1,3 @@
-DROP DATABASE cmorale1;
-CREATE DATABASE cmorale1;
-USE cmorale1;
 
 CREATE TABLE Boards(
     id int NOT NULL AUTO_INCREMENT,
@@ -25,6 +22,8 @@ CREATE TABLE Posts(
     body VARCHAR(255),
     link VARCHAR(255),
     flag CHAR(1),
+    total_upvotes int NOT NULL,
+    total_downvotes int NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (board_id) REFERENCES Boards (id),
     FOREIGN KEY (poster_id) REFERENCES Users (id)
@@ -37,6 +36,8 @@ CREATE TABLE Comments(
     post_parent_id int NOT NULL,
     comment_parent_id int,
     flag CHAR(1),
+    total_upvotes int NOT NULL,
+    total_downvotes int NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (post_parent_id) REFERENCES Posts (id),
     FOREIGN KEY (comment_parent_id) REFERENCES Comments (id)
@@ -70,3 +71,24 @@ CREATE TABLE Subscriptions(
 );
 CREATE INDEX idx_user_id on Subscriptions (user_id);
 CREATE INDEX idx_board_id on Subscriptions (board_id);
+
+CREATE TABLE Vote_Posts(
+  id int NOT NULL AUTO_INCREMENT,
+  post_id int NOT NULL,
+  user_id int NOT NULL,
+  upvote char NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (post_id) REFERENCES Posts(id),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
+);
+
+
+CREATE TABLE Vote_Comments(
+  id int NOT NULL AUTO_INCREMENT,
+  comment_id int NOT NULL,
+  user_id int NOT NULL,
+  upvote char NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (comment_id) REFERENCES Comments(id),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
+);
