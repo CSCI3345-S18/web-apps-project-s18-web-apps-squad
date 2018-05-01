@@ -21,6 +21,7 @@ import models.Post
 
 case class NewUser(email: String, username: String, password: String)
 case class Login(username: String, password: String)
+case class NewPost(boardID: Int, posterID: Int, title: String, body: String, link: String)
 
 @Singleton
 class MockupController @Inject() (
@@ -32,24 +33,24 @@ class MockupController @Inject() (
       "email" -> nonEmptyText,
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(NewUser.apply)(NewUser.unapply))
-      
+
   val loginForm = Form(mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
-      
+
   val newBoardForm = Form(mapping(
       "title" -> nonEmptyText,
       "description" -> nonEmptyText)(Board.apply)(Board.unapply))
-  
+
   def homePage() = Action { implicit request =>
     Ok(views.html.homePage())
   }
-  
+
   def allUsers = Action.async { implicit request =>
     val usersFuture = UserModel.allUsers(db)
     usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
   }
-  
+
   def addUser = Action.async { implicit request =>
     newUserForm.bindFromRequest().fold(
         formWithErrors => {
@@ -64,12 +65,12 @@ class MockupController @Inject() (
           }
         })
   }
-  
+
   def allBoards = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
   }
-  
+
   def addBoard = Action.async { implicit request =>
     newBoardForm.bindFromRequest().fold(
         formWithErrors => {
@@ -85,7 +86,7 @@ class MockupController @Inject() (
           }
         })
   }
-  
+
   def login = Action.async { implicit request =>
     loginForm.bindFromRequest().fold(
         formWithErrors => {
@@ -101,29 +102,29 @@ class MockupController @Inject() (
           }
         })
   }
-  
+
   def logout = Action { implicit request =>
     Redirect(routes.MockupController.allUsers).withNewSession
   }
-  
+
   /*def getSubs(username: String) = Action.async { implicit requeset =>
       val subsFuture = SubQueries.getTasks(username, db)
       subsFuture.map(subs => Ok(views.html.profilePage(username, subs)))
   }*/
-  
+
   def userPage(username: String) = Action { implicit request =>
     Ok(views.html.userPage(username))
   }
-  
+
   def postPage() = Action { implicit request =>
     Ok("")//Ok(views.html.postPage())
   }
-  
+
   def loginPage() = Action.async { implicit request =>
     val usersFuture = UserModel.allUsers(db)
     usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
   }
-  
+
   def boardPage(title: String, desc: String) = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
