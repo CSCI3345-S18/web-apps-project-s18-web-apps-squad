@@ -1,8 +1,17 @@
 /* This CSS was adapted from the W3 schools at https://www.w3schools.com/howto/howto_js_vertical_tabs.asp */
 
+body {
+	background-color: #EFF7FF;
+}
+
 nav {
-        background-color: #333;
-        text-align: center;
+		top: 0px !important;
+		padding-top: 0px !important;
+		margin-top: 0px !important;
+        background-color: white;
+        text-align: right;
+        border-bottom: 1px solid #e8e8e8;
+        z-index: 2;
 }
 
 nav ul {
@@ -13,7 +22,7 @@ nav ul {
 
 nav ul li {
         display: inline-block;
-        padding: 15px 0;
+        padding: 0 0;
         margin: 0;
 }
 
@@ -22,48 +31,90 @@ nav ul li a {
         font-size: 20px;
         padding: 0 15px;
         text-decoration: none;
-        color: #fff;
+        color: black;
 }
 
-nav ul li:hover {
-        background-color: #555;
-}
-
-
-#home-hero {
-	background-color: yellow;
-	margin-bottom: 10px;
-}
-
-#home-board-panel {
-	background-color: yellow;
-	font-size: 30px;
-	color: red;
-	float: left;
-	width: 10%;
-	height: 100%;
-}
-
-#home-hot-posts {
-	background-color: yellow;
-	font-size: 40px;
-	color: red;
+.rightnav {
+	width: 300px;
+	z-index: 1;
+	right: 10px;
+	background: white;
+	overflow-x: hidden;
+	padding: 0 8px;
+	margin-top: 40px;
+	padding-bottom: 38px;
+	padding-top: 30px;
+	padding-left: 12px;
+	padding-right: 12px;
 	float: right;
-	width: 89%;
+	font-size: 18px;
+	border-radius: 10px;
+	border: 1px solid #e8e8e8;
+	text-align: center;
 }
 
-#home-hot-posts #home-search-posts {
-	font-size: 20px;
+.rightnav #create-btn {
+        background-color: #FF5700;
+        border: 1px;
+        border-color: #008B8B;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+        display: inline-block;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        width: 100%;
+        padding-top: 10px;
+        padding-bottom: 10px;
 }
 
-#login-hero {
-	background-color: yellow;
+.leftnav {
+    width: 220px;
+    position: fixed;
+    z-index: 1;
+    top: 58px;
+    left: 0;
+    background: white;
+    overflow-x: hidden;
+    padding: 8px 0;
+    border: 1px solid #e8e8e8;
 }
 
-#login-instructions {
-	background-color: yellow;
+.leftnav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 24px;
+    color: #2196F3;
+    display: block;
 }
 
-#login-new-user {
-	background-color: yellow;
+.leftnav a:hover {
+    color: #064579;
+}
+
+.leftnav #sub-header {
+	font-size: 18px;
+	left: 10px;
+	padding: 6px 8px 6px 16px;
+}
+
+.leftnav p {
+	font-size: 24px;
+	display: block;
+	padding: 6px 8px 6px 16px;
+}
+
+#main {
+	margin-left: 220px;
+	margin-right: 330px;
+	padding: 0px 10px;
+}
+
+#home-posts {
+	background-color: white;
+	border: 1px solid #e8e8e8;
+	font-size: 40px;
+	margin-top: 40px;
 }
