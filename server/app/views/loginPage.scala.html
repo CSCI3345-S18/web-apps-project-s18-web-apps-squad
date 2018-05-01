@@ -10,10 +10,10 @@
 	<body>
         
         <div class="leftnav">
-        	<a href="@routes.MockupController.homePage()">Home</a>
+        	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="#">Popular</a>
         	<a href="#">Top</a>
-        	<a href="@routes.MockupController.loginPage()">Account</a>
+        	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
         	<p>Board</p>
@@ -28,7 +28,7 @@
         		<li><p>Search bar</p></li>
         		<li><a href="#">Messages</a></li>
         		<li><a href="#">Create</a></li>
-        		<li><a href="@routes.MockupController.loginPage()">Profile</a></li>
+        		<li><a href="@routes.UserController.loginPage()">Profile</a></li>
         		</ul>
         	</nav>
         </div>
@@ -45,7 +45,7 @@
 	    	</div>
 	    	
 	    	<div id="login-form">
-        		@helper.form(action = helper.CSRF(routes.MockupController.login)) {
+        		@helper.form(action = helper.CSRF(routes.UserController.login)) {
         			@helper.inputText(loginForm("username"))
         			@helper.inputPassword(loginForm("password"))
         			<input type="submit" name="loginSubmission" value="Login" class="submit-button">
@@ -57,7 +57,7 @@
         		<h4 id="login-subheader3">New here? Create an account below.</h4>
         	</div>
         
-        	@helper.form(action = helper.CSRF(routes.MockupController.addUser)) {
+        	@helper.form(action = helper.CSRF(routes.UserController.addUser)) {
         		@helper.inputText(userForm("email"))
         		@helper.inputText(userForm("username"))
         		@helper.inputPassword(userForm("password"))
