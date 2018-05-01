@@ -4,29 +4,27 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import play.api.mvc.MessagesControllerComponents
 import play.api.mvc.MessagesAbstractController
-import models.DBData
 import models._
 
 //case class Post(id: Int, boardName: String, title: String, body: String, poster: String)
 
 @Singleton
 class PostController @Inject() (cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
-  val dataModel = new DBData()
   
   def viewPost(board: String, postIDStr: String) = Action { implicit request =>
     val boards: Seq[String] = request.session.get("username").map{username =>
-					dataModel.getSubscriptionsFromUser(username)
+					UserModel.getSubsFromUser(username).map(_.toString())
 				}.getOrElse{
-					dataModel.getDefaultSubscription()
+					BoardModel.getDefaultSubscription()
 				}
     try{
       val postID = postIDStr.toInt
-      val postOpt = dataModel.getPostFromPostID(board, postID)
+      val postOpt = PostModel.getPostFromPostID(board, postID)
       
       postOpt match {
         case None => throw new java.lang.NumberFormatException
         case Some(post) => {
-          val comments = dataModel.getCommentsFromPost(postID)
+          val comments = PostModel.getCommentsFromPost(postID)
           Ok(views.html.postPage(board, boards, post.title, post.body, post.poster, comments))
         }
         
