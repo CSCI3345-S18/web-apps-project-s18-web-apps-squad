@@ -133,7 +133,5 @@ class MockupController @Inject() (
     val boardsFuture = BoardQueries.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
   }
-  
-  
-  
+
 }
