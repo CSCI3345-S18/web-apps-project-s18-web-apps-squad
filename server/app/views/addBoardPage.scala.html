@@ -10,10 +10,10 @@
 	<body>
         
         <div class="leftnav">
-        	<a href="@routes.MockupController.homePage()">Home</a>
+        	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="#">Popular</a>
         	<a href="#">Top</a>
-        	<a href="@routes.MockupController.loginPage()">Account</a>
+        	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
         	<p>Board</p>
@@ -38,7 +38,7 @@
         		<p id="add-board-header1">Create a New Community</p>
         	</div>
 			<div id="add-board-instruction">
-			@helper.form(action = helper.CSRF(routes.MockupController.addBoard())) {
+			@helper.form(action = helper.CSRF(routes.BoardController.addBoard())) {
 				@helper.inputText(newBoardForm("title"))
 				@helper.inputText(newBoardForm("description"))
 				<input type="submit" value="Submit">

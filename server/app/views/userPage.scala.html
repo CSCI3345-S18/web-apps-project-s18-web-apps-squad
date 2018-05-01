@@ -9,10 +9,10 @@
 	</head>
 	<body>
         <div class="leftnav">
-        	<a href="@routes.MockupController.homePage()">Home</a>
+        	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="#">Popular</a>
         	<a href="#">Top</a>
-        	<a href="@routes.MockupController.loginPage()">Account</a>
+        	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
         	<p>Board</p>
@@ -39,11 +39,11 @@
 				<p>Karma: 132</p>
 				<div id="buttons">
 					<button id="messages">Messages</button>
-					<form id="logout" action="@routes.MockupController.logout" method="GET">
+					<form id="logout" action="@routes.UserController.logout" method="GET">
 						@helper.CSRF.formField
 						<input id="logoutbtn" type="submit" value="Logout">
 					</form>
-					<form id="addBoard" action="@routes.MockupController.allBoards" method="GET">
+					<form id="addBoard" action="@routes.BoardController.allBoards" method="GET">
 						@helper.CSRF.formField
 						<input id="addboardbtn" type="submit" value="Create new Board">
 					</form>
