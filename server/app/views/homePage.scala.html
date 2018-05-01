@@ -9,10 +9,10 @@
 	</head>
 	<body>
         <div class="leftnav">
-        	<a href="@routes.MockupController.homePage()">Home</a>
+        	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="#">Popular</a>
         	<a href="#">Top</a>
-        	<a href="@routes.MockupController.loginPage()">Account</a>
+        	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
         	<p>Board</p>
@@ -33,7 +33,7 @@
         </div>
         <div class="rightnav">
 			<p>Looking to start a new community?</p>
-			<form action="@routes.MockupController.allBoards">
+			<form action="@routes.BoardController.allBoards">
 				<button id="create-btn" type="submit" value="Create Board">CREATE</button>
 			</form>
         </div>

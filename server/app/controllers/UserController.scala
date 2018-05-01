@@ -19,16 +19,16 @@ import models.BoardModel
 import models.Board
 import models.Post
 
-case class NewUser(email: String, username: String, password: String)
-case class Login(username: String, password: String)
+//case class NewUser(email: String, username: String, password: String)
+//case class Login(username: String, password: String)
 
 @Singleton
-class MockupController @Inject() (
+class UserController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
-  /*val newUserForm = Form(mapping(
+  val newUserForm = Form(mapping(
       "email" -> nonEmptyText,
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(NewUser.apply)(NewUser.unapply))
@@ -59,29 +59,8 @@ class MockupController @Inject() (
         newUser => {
           val addFuture = UserModel.addUser(newUser, db)
           addFuture.map { cnt =>
-            if(cnt == 1) Redirect(routes.MockupController.allUsers).flashing("message" -> "New user added.")
-            else Redirect(routes.MockupController.allUsers).flashing("error" -> "Failed to add user.")
-          }
-        })
-  }
-  
-  def allBoards = Action.async { implicit request =>
-    val boardsFuture = BoardModel.allBoards(db)
-    boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
-  }
-  
-  def addBoard = Action.async { implicit request =>
-    newBoardForm.bindFromRequest().fold(
-        formWithErrors => {
-          val boardsFuture = BoardModel.allBoards(db)
-          boardsFuture.map(boards => BadRequest(views.html.addBoardPage(boards, newBoardForm)))
-        },
-        newBoard => {
-          val addFuture = BoardModel.addBoard(newBoard, db)
-          addFuture.map { cnt =>
-            //if(cnt == 1) Redirect(routes.MockupController.allBoards).flashing("message" -> "New board added.")
-            if(cnt == 1) Redirect(routes.MockupController.boardPage(newBoard.title, newBoard.description))
-            else Redirect(routes.MockupController.allBoards).flashing("error" -> "Failed to add user.")
+            if(cnt == 1) Redirect(routes.UserController.allUsers).flashing("message" -> "New user added.")
+            else Redirect(routes.UserController.allUsers).flashing("error" -> "Failed to add user.")
           }
         })
   }
@@ -95,15 +74,15 @@ class MockupController @Inject() (
         loginUser => {
           val loginFuture = UserModel.verifyUser(loginUser, db)
           loginFuture.map { success =>
-            //if(success == true) Redirect(routes.MockupController.getSubs(loginUser.username))
-            if(success == true) Redirect(routes.MockupController.userPage(loginUser.username)).withSession("connected" -> loginUser.username)
-            else Redirect(routes.MockupController.allUsers).flashing("error" -> "Failed to login.")
+            //if(success == true) Redirect(routes.UserController.getSubs(loginUser.username))
+            if(success == true) Redirect(routes.UserController.userPage(loginUser.username)).withSession("connected" -> loginUser.username)
+            else Redirect(routes.UserController.allUsers).flashing("error" -> "Failed to login.")
           }
         })
   }
   
   def logout = Action { implicit request =>
-    Redirect(routes.MockupController.allUsers).withNewSession
+    Redirect(routes.UserController.allUsers).withNewSession
   }
   
   /*def getSubs(username: String) = Action.async { implicit requeset =>
@@ -115,18 +94,9 @@ class MockupController @Inject() (
     Ok(views.html.userPage(username))
   }
   
-  def postPage() = Action { implicit request =>
-    Ok("")//Ok(views.html.postPage())
-  }
-  
   def loginPage() = Action.async { implicit request =>
     val usersFuture = UserModel.allUsers(db)
     usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
   }
-  
-  def boardPage(title: String, desc: String) = Action.async { implicit request =>
-    val boardsFuture = BoardModel.allBoards(db)
-    boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
-  }*/
 
 }

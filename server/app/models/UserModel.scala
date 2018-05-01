@@ -18,7 +18,6 @@ import scala.concurrent.Future
 import controllers.Login
 import controllers.NewUser
 
-
 object UserModel {
   import Tables._
   

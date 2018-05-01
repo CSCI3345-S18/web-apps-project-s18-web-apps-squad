@@ -6,32 +6,30 @@
 GET		/assets/*file				controllers.Assets.versioned(path="/public", file: Asset)
 
 # Mockup pages
-GET     /                           controllers.MockupController.homePage
+GET     /                           controllers.UserController.homePage
  
-GET		/home						controllers.MockupController.homePage
+GET		/home						controllers.UserController.homePage
 
-GET		/user						controllers.MockupController.userPage(username: String)
+GET		/user						controllers.UserController.userPage(username: String)
 
-GET		/post						controllers.MockupController.postPage
+GET		/post						controllers.BoardController.postPage
 
-GET		/navLogin					controllers.MockupController.loginPage
+GET		/navLogin					controllers.UserController.loginPage
 
-GET		/board						controllers.MockupController.boardPage(title: String, desc: String)
+GET		/board						controllers.BoardController.boardPage(title: String, desc: String)
 
 # Routes for user login
-GET		/login						controllers.MockupController.allUsers
+GET		/login						controllers.UserController.allUsers
 
-POST	/addUser					controllers.MockupController.addUser
+POST	/addUser					controllers.UserController.addUser
 
-POST	/login						controllers.MockupController.login
+POST	/login						controllers.UserController.login
 
-GET		/loggedout					controllers.MockupController.logout
+GET		/loggedout					controllers.UserController.logout
 
-POST	/addBoard					controllers.MockupController.addBoard
+POST	/addBoard					controllers.BoardController.addBoard
 
-GET		/allBoards					controllers.MockupController.allBoards
-
-#GET		/profile					controllers.MockupController.getSubs(username: String)
+GET		/allBoards					controllers.BoardController.allBoards
 
 #Post pages
 
