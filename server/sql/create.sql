@@ -1,71 +1,94 @@
-CREATE TABLE board(
-    id int NOT NULL,
+
+CREATE TABLE Boards(
+    id int NOT NULL AUTO_INCREMENT,
     title VARCHAR(50) NOT NULL,
     description VARCHAR(255),
     PRIMARY KEY(id)
 );
 
-CREATE TABLE user(
-    id int NOT NULL,
+CREATE TABLE Users(
+    id int NOT NULL AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL,
     password VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE post(
-    id int NOT NULL,
+CREATE TABLE Posts(
+    id int NOT NULL AUTO_INCREMENT,
     board_id int NOT NULL,
     poster_id int NOT NULL,
     title VARCHAR(50) NOT NULL,
     body VARCHAR(255),
     link VARCHAR(255),
     flag CHAR(1),
+    total_upvotes int NOT NULL,
+    total_downvotes int NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (board_id) REFERENCES board(id),
-    FOREIGN KEY (poster_id) REFERENCES user(id)
+    FOREIGN KEY (board_id) REFERENCES Boards (id),
+    FOREIGN KEY (poster_id) REFERENCES Users (id)
 );
-CREATE INDEX idx_board_id on post (board_id);
-CREATE INDEX idx_poster_id on post (poster_id);
+CREATE INDEX idx_board_id on Posts (board_id);
+CREATE INDEX idx_poster_id on Posts (poster_id);
 
-CREATE TABLE comment(
-    id int NOT NULL,
+CREATE TABLE Comments(
+    id int NOT NULL AUTO_INCREMENT,
     post_parent_id int NOT NULL,
     comment_parent_id int,
     flag CHAR(1),
+    total_upvotes int NOT NULL,
+    total_downvotes int NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (post_parent_id) REFERENCES post(id),
-    FOREIGN KEY (comment_parent_id) REFERENCES comment(id)
+    FOREIGN KEY (post_parent_id) REFERENCES Posts (id),
+    FOREIGN KEY (comment_parent_id) REFERENCES Comments (id)
 );
-CREATE INDEX idx_post_parent_id ON comment (post_parent_id);
-CREATE INDEX idx_comment_parent_id ON comment (comment_parent_id);
+CREATE INDEX idx_post_parent_id ON Comments (post_parent_id);
+CREATE INDEX idx_comment_parent_id ON Comments (comment_parent_id);
 
 
-CREATE INDEX idx_username on user (username);
-CREATE INDEX idx_email on user (email);
+CREATE INDEX idx_username on Users (username);
+CREATE INDEX idx_email on Users (email);
 
-CREATE TABLE message(
-    id int NOT NULL,
+CREATE TABLE Messages(
+    id int NOT NULL AUTO_INCREMENT,
     sender_id int NOT NULL,
     receiver_id int NOT NULL,
     message VARCHAR(1000),
     PRIMARY KEY (id),
-    FOREIGN KEY (sender_id) REFERENCES user(id),
-    FOREIGN KEY (receiver_id) REFERENCES user(id)
+    FOREIGN KEY (sender_id) REFERENCES Users(id),
+    FOREIGN KEY (receiver_id) REFERENCES Users(id)
 );
-CREATE INDEX idx_sender_id on message (sender_id);
-CREATE INDEX idx_receiver_id on message (receiver_id);
+CREATE INDEX idx_sender_id on Messages (sender_id);
+CREATE INDEX idx_receiver_id on Messages (receiver_id);
 
-CREATE TABLE subscription(
-    id int NOT NULL,
+CREATE TABLE Subscriptions(
+    id int NOT NULL AUTO_INCREMENT,
     user_id int NOT NULL,
     board_id int NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES user(id),
-    FOREIGN KEY (board_id) REFERENCES board(id)
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (board_id) REFERENCES Boards(id)
 );
-CREATE INDEX idx_user_id on subscription (user_id);
-CREATE INDEX idx_board_id on subscription (board_id);
+CREATE INDEX idx_user_id on Subscriptions (user_id);
+CREATE INDEX idx_board_id on Subscriptions (board_id);
+
+CREATE TABLE Vote_Posts(
+  id int NOT NULL AUTO_INCREMENT,
+  post_id int NOT NULL,
+  user_id int NOT NULL,
+  upvote char NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (post_id) REFERENCES Posts(id),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
+);
 
 
-
+CREATE TABLE Vote_Comments(
+  id int NOT NULL AUTO_INCREMENT,
+  comment_id int NOT NULL,
+  user_id int NOT NULL,
+  upvote char NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (comment_id) REFERENCES Comments(id),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
+);
