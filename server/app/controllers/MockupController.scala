@@ -19,8 +19,8 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.Forms._
 import scala.concurrent.Future
-import models.UserQueries
-import models.BoardQueries
+import models.UserModel
+import models.BoardModel
 import models.Board
 import models.Post
 
@@ -51,18 +51,18 @@ class MockupController @Inject() (
   }
   
   def allUsers = Action.async { implicit request =>
-    val usersFuture = UserQueries.allUsers(db)
+    val usersFuture = UserModel.allUsers(db)
     usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
   }
   
   def addUser = Action.async { implicit request =>
     newUserForm.bindFromRequest().fold(
         formWithErrors => {
-          val usersFuture = UserQueries.allUsers(db)
+          val usersFuture = UserModel.allUsers(db)
           usersFuture.map(users => BadRequest(views.html.loginPage(users, loginForm, formWithErrors)))
         },
         newUser => {
-          val addFuture = UserQueries.addUser(newUser, db)
+          val addFuture = UserModel.addUser(newUser, db)
           addFuture.map { cnt =>
             if(cnt == 1) Redirect(routes.MockupController.allUsers).flashing("message" -> "New user added.")
             else Redirect(routes.MockupController.allUsers).flashing("error" -> "Failed to add user.")
@@ -71,18 +71,18 @@ class MockupController @Inject() (
   }
   
   def allBoards = Action.async { implicit request =>
-    val boardsFuture = BoardQueries.allBoards(db)
+    val boardsFuture = BoardModel.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
   }
   
   def addBoard = Action.async { implicit request =>
     newBoardForm.bindFromRequest().fold(
         formWithErrors => {
-          val boardsFuture = BoardQueries.allBoards(db)
+          val boardsFuture = BoardModel.allBoards(db)
           boardsFuture.map(boards => BadRequest(views.html.addBoardPage(boards, newBoardForm)))
         },
         newBoard => {
-          val addFuture = BoardQueries.addBoard(newBoard, db)
+          val addFuture = BoardModel.addBoard(newBoard, db)
           addFuture.map { cnt =>
             //if(cnt == 1) Redirect(routes.MockupController.allBoards).flashing("message" -> "New board added.")
             if(cnt == 1) Redirect(routes.MockupController.boardPage(newBoard.title, newBoard.description))
@@ -94,11 +94,11 @@ class MockupController @Inject() (
   def login = Action.async { implicit request =>
     loginForm.bindFromRequest().fold(
         formWithErrors => {
-          val usersFuture = UserQueries.allUsers(db)
+          val usersFuture = UserModel.allUsers(db)
           usersFuture.map(users => BadRequest(views.html.loginPage(users, formWithErrors, newUserForm)))
         },
         loginUser => {
-          val loginFuture = UserQueries.verifyUser(loginUser, db)
+          val loginFuture = UserModel.verifyUser(loginUser, db)
           loginFuture.map { success =>
             //if(success == true) Redirect(routes.MockupController.getSubs(loginUser.username))
             if(success == true) Redirect(routes.MockupController.userPage(loginUser.username))
@@ -125,12 +125,12 @@ class MockupController @Inject() (
   }
   
   def loginPage() = Action.async { implicit request =>
-    val usersFuture = UserQueries.allUsers(db)
+    val usersFuture = UserModel.allUsers(db)
     usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
   }
   
   def boardPage(title: String, desc: String) = Action.async { implicit request =>
-    val boardsFuture = BoardQueries.allBoards(db)
+    val boardsFuture = BoardModel.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
   }
 
