@@ -1,7 +1,8 @@
 package models
 
-case class Post(id: Int, boardName: String, title: String, body: String, poster: String)
-case class User(username: String, password: String, email: String)
+case class Post(id: Int, boardID: Int, posterID: Int,
+   title: String, body: String, link: String, upvotes: Int, downvotes: Int)
+case class User(id: Int, username: String, password: String, email: String)
 case class Board(title: String, description: String)
 case class Comment(id: Int, flag: Char, postParentID: Int, commentParentID: Int)
 case class Messages(id: Int, senderID: Int, receiverID: Int, messages: String)
@@ -12,10 +13,11 @@ object Tables extends {
   import profile.api._
 
   class Users(tag: Tag) extends Table[User](tag, "Users") {
+    def id = column[Int]("id")
     def username = column[String]("username")
     def password = column[String]("password")
     def email = column[String]("email")
-    def * = (username, password, email) <> (User.tupled, User.unapply)
+    def * = (id, username, password, email) <> (User.tupled, User.unapply)
   }
   val users = TableQuery[Users]
 
@@ -25,4 +27,17 @@ object Tables extends {
     def * = (title, description) <> (Board.tupled, Board.unapply)
   }
   val boards = TableQuery[Boards]
+
+  class Posts(tag: Tag) extends Table[Post](tag, "Posts") {
+    def id = column[Int]("id")
+    def boardID = column[Int]("boardID")
+    def posterID = column[Int]("posterID")
+    def title = column[String]("title")
+    def body = column[String]("body")
+    def link = column[String]("link")
+    def upvotes = column[Int]("upvotes")
+    def downvotes = column[Int]("downvotes")
+    def * = (id, boardID, posterID, title, body, link, upvotes, downvotes) <> (Post.tupled, Post.unapply)
+  }
+  val posts = TableQuery[Posts]
 }
