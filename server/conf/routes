@@ -31,6 +31,8 @@ POST	/addBoard					controllers.BoardController.addBoard
 
 GET		/allBoards					controllers.BoardController.allBoards
 
+GET		/addBoard					controllers.BoardController.addBoardPage
+
 #Post pages
 
 GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

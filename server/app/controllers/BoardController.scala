@@ -34,7 +34,7 @@ class BoardController @Inject() (
   
   def allBoards = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)
-    boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
+    boardsFuture.map(boards => Ok(views.html.popularBoardsPage(boards)))
   }
   
   def addBoard = Action.async { implicit request =>
@@ -46,7 +46,6 @@ class BoardController @Inject() (
         newBoard => {
           val addFuture = BoardModel.addBoard(newBoard, db)
           addFuture.map { cnt =>
-            //if(cnt == 1) Redirect(routes.BoardController.allBoards).flashing("message" -> "New board added.")
             if(cnt == 1) Redirect(routes.BoardController.boardPage(newBoard.title, newBoard.description))
             else Redirect(routes.BoardController.allBoards).flashing("error" -> "Failed to add user.")
           }
@@ -60,6 +59,11 @@ class BoardController @Inject() (
   def boardPage(title: String, desc: String) = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
+  }
+  
+  def addBoardPage() = Action.async { implicit request =>
+    val boardsFuture = BoardModel.allBoards(db)
+    boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
   }
 
 }

@@ -1,11 +1,11 @@
 @* postPage Template File *@
-@(title: String, desc: String)(implicit request: RequestHeader)
+@(boards: Seq[Board])(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>@title</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/boardPage.css")">
+		<title>Popular Boards</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/popularBoardsPage.css")">
 	</head>
 	<body>
         <div class="leftnav">
@@ -15,6 +15,11 @@
         	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
+        	@for(b <- boards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>
@@ -27,22 +32,17 @@
         		</ul>
         	</nav>
         </div>
-        
         <div class="main">
-			<div id="board-hero">
-				<h3>Welcome to @title</h3>
-				<h3>@desc</h3>
-			</div>
-			<div id="board-create-post">
-			
-			</div>
-			<div id="board-posts">
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-			</div>
-		</div>
+        	<div class="boards">
+        		<table border="1">
+        			<tr><th>Popular Boards</th></tr>
+        			@for(b <- boards) {
+        				<tr>
+        					<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
+        				</tr>
+        			}
+        		</table>
+        	</div>
+        </div>
 	</body>
 </html>

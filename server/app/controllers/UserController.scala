@@ -41,8 +41,9 @@ class UserController @Inject() (
       "title" -> nonEmptyText,
       "description" -> nonEmptyText)(Board.apply)(Board.unapply))
   
-  def homePage() = Action { implicit request =>
-    Ok(views.html.homePage())
+  def homePage() = Action.async { implicit request =>
+    val boardsFuture = BoardModel.allBoards(db)
+    boardsFuture.map(boards => Ok(views.html.homePage(boards)))
   }
   
   def allUsers = Action.async { implicit request =>
@@ -54,6 +55,7 @@ class UserController @Inject() (
     newUserForm.bindFromRequest().fold(
         formWithErrors => {
           val usersFuture = UserModel.allUsers(db)
+          val boardsFuture = BoardModel.allBoards(db)
           usersFuture.map(users => BadRequest(views.html.loginPage(users, loginForm, formWithErrors)))
         },
         newUser => {
