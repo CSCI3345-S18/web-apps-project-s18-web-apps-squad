@@ -20,21 +20,27 @@ import controllers.NewUser
 
 object UserModel {
   import Tables._
-  
+
   def getSubsFromUser(username: String): Seq[Board] = {
     return Seq()//TODO
   }
-  
+
+  def getUserFromID(id: Int, db: Database): Future[Option[User]] = {
+    db.run {
+      users.filter(_.id === id).result.headOption
+    }
+  }
+
   def allUsers(db: Database)(implicit ec: ExecutionContext): Future[Seq[User]] = {
     db.run(users.result)
   }
-  
+
   def addUser(nu: NewUser, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
-      users += User(nu.username, nu.password, nu.email)
+      users += User(0, nu.username, nu.password, nu.email)
     }
   }
-  
+
   def verifyUser(lu: Login, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
     db.run {
       users.filter(_.username === lu.username).filter(_.password === lu.password).exists.result
