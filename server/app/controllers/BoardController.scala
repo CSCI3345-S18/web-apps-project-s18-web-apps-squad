@@ -64,8 +64,13 @@ class BoardController @Inject() (
   }
   
   def addBoardPage() = Action.async { implicit request =>
-    val boardsFuture = BoardModel.allBoards(db)
-    boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
+    request.session.get("connected").map { user =>
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
+    }.getOrElse {
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
+    }
   }
 
 }
