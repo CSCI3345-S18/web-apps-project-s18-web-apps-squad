@@ -7,7 +7,7 @@ GET		/assets/*file				controllers.Assets.versioned(path="/public", file: Asset)
 
 # Mockup pages
 GET     /                           controllers.UserController.homePage
- 
+
 GET		/home						controllers.UserController.homePage
 
 GET		/user						controllers.UserController.userPage(username: String)
@@ -33,7 +33,7 @@ GET		/allBoards					controllers.BoardController.allBoards
 
 GET		/addBoard					controllers.BoardController.addBoardPage
 
-# POST	/addPost					controllers.PostController.addPost(title: String)
+POST	/addPost					controllers.PostController.addPost(title: String)
 
 # GET		/addPost					controllers.PostController.addPostPage
 

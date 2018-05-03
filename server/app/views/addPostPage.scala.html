@@ -8,7 +8,7 @@
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/addBoardPage.css")">
 	</head>
 	<body>
-        
+
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="#">Popular</a>
@@ -28,13 +28,13 @@
         		</ul>
         	</nav>
         </div>
-        
+
         <div class="main">
         	<div id="add-board-hero">
         		<p id="add-board-header1">Add a Post to @boardTitle</p>
         	</div>
 			<div id="add-board-instruction">
-			@helper.form(action = helper.CSRF(routes.BoardController.addPost(boardTitle))) {
+			@helper.form(action = helper.CSRF(routes.PostController.addPost(boardTitle))) {
 				@helper.inputText(newPostForm("title"))
 				@helper.inputText(newPostForm("body"))
 				@helper.inputText(newPostForm("link"))

@@ -41,46 +41,44 @@ class PostController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
-  
+
   val newPostForm = Form(mapping(
       "title" -> nonEmptyText,
       "body" -> nonEmptyText,
       "link" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
-      
+
   def addPost(boardTitle: String) = Action.async { implicit request =>
     val boardFuture = BoardModel.getBoardIDByTitle(boardTitle, db)
     val posterUsername = request.session.get("connected")
     val posterFuture = UserModel.getUserFromUsername(posterUsername.toString, db)
     newPostForm.bindFromRequest().fold(
         formWithErrors => {
-          for {
-            boardOption <- boardFuture
-          } yield {
-            for {
-              board <- boardOption
-            } yield {
+          boardFuture map { boardOption =>
+            boardOption map { board =>
               BadRequest(views.html.addPostPage(board.title, formWithErrors))
+            } getOrElse {
+              BadRequest(views.html.addPostPage("bad board", formWithErrors))
             }
-            
           }
         },
         newPost => {
-          for {
-            boardOption <- boardFuture
-            posterOption <- posterFuture
-          } yield {
-            for {
-              board <- boardOption
-              poster <- posterOption
-            } yield {
-              val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
-              addFuture.map { cnt =>
-                if(cnt == 1) Redirect(routes.BoardController.boardPage(board.title, board.desription))
-                else Redirect(routes.PostController.addPostPage(board.title, newPostForm))
+          boardFuture flatMap {
+            case Some(board) =>{
+              posterFuture flatMap {
+                case Some(poster) => {
+                  val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
+                  addFuture flatMap { cnt =>
+                    if(cnt == 1) Future(Ok("...")) // posted
+                    else Future(Ok("..."))
+                  }
+                }
+                //No poster
+                case None => Future(Ok("..."))
               }
             }
+            //No Board
+            case None => Future(Ok("..."))
           }
         })
   }
-
 }
