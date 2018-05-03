@@ -17,6 +17,7 @@ case class User(
   email: String
 )
 case class Board(
+  id: Int,
   title: String,
   description: String
 )
@@ -111,9 +112,10 @@ object Tables extends {
   val users = TableQuery[Users]
 
   class Boards(tag: Tag) extends Table[Board](tag, "Boards") {
+    def id = column[Int]("id")
     def title = column[String]("title")
     def description = column[String]("description")
-    def * = (title, description) <> (Board.tupled, Board.unapply)
+    def * = (id, title, description) <> (Board.tupled, Board.unapply)
   }
   val boards = TableQuery[Boards]
 

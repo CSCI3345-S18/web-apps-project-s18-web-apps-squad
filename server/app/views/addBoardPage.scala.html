@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@(boards: Seq[Board], newBoardForm: Form[Board])(implicit request: MessagesRequestHeader, flash: Flash)
+@(boards: Seq[Board], newBoardForm: Form[NewBoard])(implicit request: MessagesRequestHeader, flash: Flash)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +8,7 @@
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/addBoardPage.css")">
 	</head>
 	<body>
-        
+
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="#">Popular</a>
@@ -32,7 +32,7 @@
         		</ul>
         	</nav>
         </div>
-        
+
         <div class="main">
         	<div id="add-board-hero">
         		<p id="add-board-header1">Create a New Community</p>

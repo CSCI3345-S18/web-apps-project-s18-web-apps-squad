@@ -16,7 +16,7 @@ import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import controllers.Login
-import controllers.NewUser
+import controllers.NewBoard
 
 object BoardModel {
   import Tables._
@@ -25,9 +25,9 @@ object BoardModel {
     db.run(boards.result)
   }
 
-  def addBoard(b: Board, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addBoard(b: NewBoard, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
-      boards += Board(b.title, b.description)
+      boards += Board(0, b.title, b.description)
     }
   }
 
