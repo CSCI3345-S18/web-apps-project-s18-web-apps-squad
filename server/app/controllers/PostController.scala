@@ -61,6 +61,7 @@ class PostController @Inject() (
             } yield {
               BadRequest(views.html.addPostPage(board.title, formWithErrors))
             }
+            
           }
         },
         newPost => {
