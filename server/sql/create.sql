@@ -33,6 +33,7 @@ CREATE INDEX idx_poster_id on Posts (poster_id);
 
 CREATE TABLE Comments(
     id int NOT NULL AUTO_INCREMENT,
+    body VARCHAR(1000) NOT NULL,
     post_parent_id int NOT NULL,
     comment_parent_id int,
     flag CHAR(1),
@@ -51,9 +52,9 @@ CREATE INDEX idx_email on Users (email);
 
 CREATE TABLE Messages(
     id int NOT NULL AUTO_INCREMENT,
+    body VARCHAR(1000),
     sender_id int NOT NULL,
     receiver_id int NOT NULL,
-    message VARCHAR(1000),
     PRIMARY KEY (id),
     FOREIGN KEY (sender_id) REFERENCES Users(id),
     FOREIGN KEY (receiver_id) REFERENCES Users(id)
@@ -65,6 +66,7 @@ CREATE TABLE Subscriptions(
     id int NOT NULL AUTO_INCREMENT,
     user_id int NOT NULL,
     board_id int NOT NULL,
+    title VARCHAR(50) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (board_id) REFERENCES Boards(id)
@@ -76,7 +78,7 @@ CREATE TABLE Vote_Posts(
   id int NOT NULL AUTO_INCREMENT,
   post_id int NOT NULL,
   user_id int NOT NULL,
-  upvote char NOT NULL,
+  upvote boolean NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (post_id) REFERENCES Posts(id),
   FOREIGN KEY (user_id) REFERENCES Users(id)
@@ -87,7 +89,7 @@ CREATE TABLE Vote_Comments(
   id int NOT NULL AUTO_INCREMENT,
   comment_id int NOT NULL,
   user_id int NOT NULL,
-  upvote char NOT NULL,
+  upvote boolean NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (comment_id) REFERENCES Comments(id),
   FOREIGN KEY (user_id) REFERENCES Users(id)

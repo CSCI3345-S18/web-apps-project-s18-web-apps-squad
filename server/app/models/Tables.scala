@@ -1,17 +1,106 @@
 package models
 
-case class Post(id: Int, boardID: Int, posterID: Int,
-   title: String, body: String, link: String, upvotes: Int, downvotes: Int)
-case class User(id: Int, username: String, password: String, email: String)
-case class Board(title: String, description: String)
-case class Comment(id: Int, flag: Char, postParentID: Int, commentParentID: Int)
-case class Messages(id: Int, senderID: Int, receiverID: Int, messages: String)
-case class Subscription(id: Int, userID: Int, boardID: Int)
+case class Post(
+  id: Int,
+  boardID: Int,
+  posterID: Int,
+  title: String,
+  body: String,
+  link: String,
+  upvotes: Int,
+  downvotes: Int
+)
+case class User(
+  id: Int,
+  username: String,
+  password: String,
+  email: String
+)
+case class Board(
+  title: String,
+  description: String
+)
+case class Comment(
+  id: Int,
+  body: String,
+  postParentID: Int,
+  commentParentID: Int,
+  flag: Char,
+  upvotes: Int,
+  downvotes: Int
+)
+case class Message(
+  id: Int,
+  body: String,
+  senderID: Int,
+  receiverID: Int
+)
+case class VotePost(
+  id: Int,
+  postID: Int,
+  userID: Int,
+  upvote: Boolean
+)
+case class VoteComment(
+  id: Int,
+  commentID: Int,
+  userID: Int,
+  upvote: Boolean
+)
+case class Subscription(
+  id: Int,
+  userID: Int,
+  boardID: Int,
+  title: String
+)
 
 object Tables extends {
   val profile = slick.jdbc.MySQLProfile
   import profile.api._
 
+  class Comments(tag: Tag) extends Table[Comment](tag, "Comments") {
+    def id = column[Int]("id")
+    def body = column[String]("body")
+    def postParentID = column[Int]("post_parent_id")
+    def commentParentID = column[Int]("comment_parent_id")
+    def flag = column[Char]("flag")
+    def upvotes = column[Int]("total_upvotes")
+    def downvotes = column[Int]("total_downvotes")
+    def * = (id, body, postParentID, commentParentID, flag, upvotes, downvotes) <> (Comment.tupled, Comment.unapply)
+  }
+  val comments = TableQuery[Comments]
+  class Messages(tag: Tag) extends Table[Message](tag, "Messages") {
+    def id = column[Int]("id")
+    def body = column[String]("body")
+    def senderID = column[Int]("sender_id")
+    def receiverID = column[Int]("receiver_id")
+    def * = (id, body, senderID, receiverID) <> (Message.tupled, Message.unapply)
+  }
+  val messages = TableQuery[Messages]
+  class Subscriptions(tag: Tag) extends Table[Subscription](tag, "Subscriptions") {
+    def id = column[Int]("id")
+    def userID = column[Int]("user_id")
+    def boardID = column[Int]("board_id")
+    def title = column[String]("title")
+    def * = (id, userID, boardID, title) <> (Subscription.tupled, Subscription.unapply)
+  }
+  val subscriptions = TableQuery[Subscriptions]
+  class VotePosts(tag: Tag) extends Table[VotePost](tag, "Vote_Posts") {
+    def id = column[Int]("id")
+    def userID = column[Int]("post_id")
+    def boardID = column[Int]("board_id")
+    def upvote = column[Boolean]("upvote")
+    def * = (id, userID, boardID, upvote) <> (VotePost.tupled, VotePost.unapply)
+  }
+  val votePosts = TableQuery[VotePosts]
+  class VoteComments(tag: Tag) extends Table[VoteComment](tag, "Vote_Comment") {
+    def id = column[Int]("id")
+    def userID = column[Int]("post_id")
+    def boardID = column[Int]("board_id")
+    def upvote = column[Boolean]("upvote")
+    def * = (id, userID, boardID, upvote) <> (VoteComment.tupled, VoteComment.unapply)
+  }
+  val voteComments = TableQuery[VoteComments]
   class Users(tag: Tag) extends Table[User](tag, "Users") {
     def id = column[Int]("id")
     def username = column[String]("username")
@@ -30,13 +119,13 @@ object Tables extends {
 
   class Posts(tag: Tag) extends Table[Post](tag, "Posts") {
     def id = column[Int]("id")
-    def boardID = column[Int]("boardID")
-    def posterID = column[Int]("posterID")
+    def boardID = column[Int]("board_id")
+    def posterID = column[Int]("poster_id")
     def title = column[String]("title")
     def body = column[String]("body")
     def link = column[String]("link")
-    def upvotes = column[Int]("upvotes")
-    def downvotes = column[Int]("downvotes")
+    def upvotes = column[Int]("total_upvotes")
+    def downvotes = column[Int]("total_downvotes")
     def * = (id, boardID, posterID, title, body, link, upvotes, downvotes) <> (Post.tupled, Post.unapply)
   }
   val posts = TableQuery[Posts]
