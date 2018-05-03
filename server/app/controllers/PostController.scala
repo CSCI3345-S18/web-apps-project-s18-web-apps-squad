@@ -48,41 +48,49 @@ class PostController @Inject() (
       "link" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
 
   def addPost(boardTitle: String) = Action.async { implicit request =>
-    val boardFuture = BoardModel.getBoardByTitle(boardTitle, db)
-    val posterUsername = request.session.get("connected")
-    val posterFuture = UserModel.getUserFromUsername(posterUsername.toString, db)
-    newPostForm.bindFromRequest().fold(
-        formWithErrors => {
-          boardFuture map { boardOption =>
-            boardOption map { board =>
-              BadRequest(views.html.addPostPage(boardTitle, formWithErrors))
-            } getOrElse {
-              BadRequest(views.html.addPostPage("bad board", formWithErrors))
-            }
-          }
-        },
-        newPost => {
-          boardFuture flatMap {
-            case Some(board) =>{
-              posterFuture flatMap {
-                case Some(poster) => {
-                  val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
-                  addFuture flatMap { cnt =>
-                    if(cnt == 1) Future(Ok("Post added")) // posted
-                    else Future(Ok("Post not added"))
-                  }
-                }
-                //No poster
-                case None => Future(Ok("Post not added because no poster"))
+    request.session.get("connected").map { user =>
+      val boardFutOpt = BoardModel.getBoardByTitle(boardTitle, db)
+      val posterFutOpt = UserModel.getUserFromUsername(user, db)
+      newPostForm.bindFromRequest().fold(
+          formWithErrors => {
+            boardFutOpt map { boardOption =>
+              boardOption map { board =>
+                BadRequest(views.html.addPostPage(boardTitle, formWithErrors))
+              } getOrElse {
+                BadRequest(views.html.addPostPage("Bad board", formWithErrors))
               }
             }
-            //No Board
-            case None => Future(Ok("Post not added because no board"))
-          }
-        })
+          },
+          newPost => {
+            boardFutOpt flatMap {
+              case Some(board) => {
+                posterFutOpt flatMap {
+                  case Some(poster) => {
+                    val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
+                    addFuture flatMap { cnt =>
+                      if(cnt == 1) Future(Redirect(routes.BoardController.boardPage(boardTitle, board.description))) // posted
+                      else Future(Ok("Post not added"))
+                    }
+                  }
+                  //No poster
+                  case None => Future(Ok("Post not added because no poster"))
+                }
+              }
+              //No Board
+              case None => Future(Ok("Post not added because no board"))  
+            }
+          })
+    }.getOrElse {
+      val boards = BoardModel.allBoards(db)
+      boards.map(boards => Redirect(routes.UserController.loginPage))
+    }
   }
   
   def addPostPage(boardTitle: String) = Action { implicit request =>
-    Ok(views.html.addPostPage(boardTitle, newPostForm))
+    request.session.get("connected").map { user =>
+      Ok(views.html.addPostPage(boardTitle, newPostForm))
+    }.getOrElse {
+      Redirect(routes.UserController.loginPage)
+    }
   }
 }
