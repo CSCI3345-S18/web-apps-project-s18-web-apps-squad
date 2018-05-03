@@ -81,4 +81,8 @@ class PostController @Inject() (
           }
         })
   }
+  
+  def addPostPage(boardTitle: String) = Action { implicit request =>
+    Ok(views.html.addPostPage(boardTitle, newPostForm))
+  }
 }

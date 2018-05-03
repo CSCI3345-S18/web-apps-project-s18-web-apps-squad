@@ -35,7 +35,7 @@ GET		/addBoard					controllers.BoardController.addBoardPage
 
 POST	/addPost					controllers.PostController.addPost(title: String)
 
-# GET		/addPost					controllers.PostController.addPostPage
+GET		/addPostPage				controllers.PostController.addPostPage(boardTitle: String)
 
 #Post pages
 

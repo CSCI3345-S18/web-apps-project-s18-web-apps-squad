@@ -46,7 +46,6 @@ class UserController @Inject() (
       boards <- boardsFuture
       users <- usersFuture
     } yield (Ok(views.html.loginPage(boards, users, loginForm, newUserForm)))
-    //usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
   }
   
   def addUser = Action.async { implicit request =>

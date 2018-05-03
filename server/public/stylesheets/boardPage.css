@@ -71,6 +71,42 @@ nav ul li a {
 	padding: 6px 8px 6px 16px;
 }
 
+.rightnav {
+	width: 300px;
+	z-index: 1;
+	right: 10px;
+	background: white;
+	overflow-x: hidden;
+	padding: 0 8px;
+	margin-top: 40px;
+	padding-bottom: 38px;
+	padding-top: 30px;
+	padding-left: 12px;
+	padding-right: 12px;
+	float: right;
+	font-size: 18px;
+	border-radius: 10px;
+	border: 1px solid #e8e8e8;
+	text-align: center;
+}
+
+.rightnav #create-btn {
+        background-color: #FF5700;
+        border: 1px;
+        border-color: #008B8B;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+        display: inline-block;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        width: 100%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+}
+
 .main {
 	margin-left: 220px;
 	margin-right: 330px;
