@@ -1,5 +1,5 @@
 @* postPage Template File *@
-@(title: String, desc: String)(implicit request: RequestHeader)
+@(posts: Seq[Post], title: String, desc: String)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,11 +41,11 @@
 			
 			</div>
 			<div id="board-posts">
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
+			@for(p <- posts) {
+				<tr>
+					<td>@p.title</td>
+				</tr>
+			}
 			</div>
 		</div>
 	</body>

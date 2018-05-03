@@ -16,6 +16,7 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserModel
 import models.BoardModel
+import models.PostModel
 //import controllers.NewBoard
 import models.Post
 
@@ -58,9 +59,16 @@ class BoardController @Inject() (
     Ok("")//Ok(views.html.postPage())
   }
 
+  //Gets the board in question as well as loads the posts from the board
   def boardPage(title: String, desc: String) = Action.async { implicit request =>
-    val boardsFuture = BoardModel.allBoards(db)
-    boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
+    val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
+    boardsFutOpt.flatMap { 
+      case Some(board) =>
+        val postsSeqOpt = PostModel.getPostsFromBoard(board.id, db)
+        postsSeqOpt.map(posts => Ok(views.html.boardPage(posts, board.title, board.description)))
+      case None =>
+        Future.successful(Redirect(routes.UserController.homePage))
+    }
   }
   
   def addBoardPage() = Action.async { implicit request =>
@@ -72,5 +80,20 @@ class BoardController @Inject() (
       boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
     }
   }
+  
+  /*def getPosts(boardID: Int) = Action.async { implicit request =>
+    val postsFutSeq = PostModel.getPostsFromBoard(boardID, db)
+    val boardFutOpt = BoardModel.getBoardByID(boardID, db)
+    for {
+      posts <- postsFutSeq
+      board <- boardFutOpt
+    } yield {
+      for {
+        b <- board
+      } yield {
+        Ok(views.html.boardPage(posts, b.title, b.description))
+      }
+    }
+  }*/
 
 }
