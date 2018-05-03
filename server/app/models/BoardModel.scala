@@ -21,20 +21,25 @@ import controllers.NewBoard
 
 object BoardModel {
   import Tables._
-  
+
   def allBoards(db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
     db.run(boards.result)
   }
-  
+
   def addBoard(b: NewBoard, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
-    val tmpID = 0;
     db.run {
-      boards += Board(tmpID, b.title, b.description)
+      boards += Board(0, b.title, b.description)
     }
   }
-  
+
   def getDefaultSubscription(): Seq[String] = {
     return Seq("todo")
+  }
+  
+  def searchBoardsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
+    db.run {
+      boards.filter(_.title like title+"%").result
+    }
   }
   
   def getBoardByID(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
@@ -52,25 +57,25 @@ object BoardModel {
   def getTitle(b: Board, db: Database)(implicit ec: ExecutionContext): String = {
     return b.title
   }
-  
+ 
   /*def getPostsFromBoard(boardID: Int, db: Database): Future[Seq[Post]] = {
-    
+
   }*/
-  
+
   /*def getCommentsFromPost(boardName: String, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Comment]] = {
-    
+
   }*/
-  
+
   /*def addSubscriptionToUser(username: String, subID: Int): Future[Int] = {
-    
+
   }*/
-  
+
   /*def addCoommentToPost(postID: Int): Future[Int] = {
-    
+
   }*/
-  
+
   /*def addPostToBoard(boardID: Int): Future[Int] = {
-    
+
   }*/
-  
+
 }

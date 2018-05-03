@@ -48,4 +48,9 @@ object PostModel {
       posts += Post(0, boardID, posterID, np.title, np.body, np.link, 0, 0)
     }
   }
+  def searchPostsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
+    db.run {
+      posts.filter(_.title like title+"%").result
+    }
+  }
 }

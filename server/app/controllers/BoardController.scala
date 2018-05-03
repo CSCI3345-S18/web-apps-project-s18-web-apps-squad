@@ -16,7 +16,7 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserModel
 import models.BoardModel
-import models.Board
+import controllers.NewBoard
 import models.Post
 
 //case class NewUser(email: String, username: String, password: String)
@@ -29,16 +29,16 @@ class BoardController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
-      
+
   val newBoardForm = Form(mapping(
       "title" -> nonEmptyText,
       "description" -> nonEmptyText)(NewBoard.apply)(NewBoard.unapply))
-  
+      
   def allBoards = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.popularBoardsPage(boards)))
   }
-  
+
   def addBoard = Action.async { implicit request =>
     newBoardForm.bindFromRequest().fold(
         formWithErrors => {
@@ -53,11 +53,11 @@ class BoardController @Inject() (
           }
         })
   }
-  
+
   def postPage() = Action { implicit request =>
     Ok("")//Ok(views.html.postPage())
   }
-  
+
   def boardPage(title: String, desc: String) = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)
     boardsFuture.map(boards => Ok(views.html.boardPage(title, desc)))
