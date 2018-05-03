@@ -16,7 +16,7 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserModel
 import models.BoardModel
-import controllers.NewBoard
+//import controllers.NewBoard
 import models.Post
 
 //case class NewUser(email: String, username: String, password: String)
