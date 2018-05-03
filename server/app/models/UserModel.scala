@@ -30,6 +30,12 @@ object UserModel {
       users.filter(_.id === id).result.headOption
     }
   }
+  
+  def getUserFromUsername(username: String, db: Database): Future[Option[User]] = {
+    db.run {
+      users.filter(_.username === username).result.headOption
+    }
+  }
 
   def allUsers(db: Database)(implicit ec: ExecutionContext): Future[Seq[User]] = {
     db.run(users.result)

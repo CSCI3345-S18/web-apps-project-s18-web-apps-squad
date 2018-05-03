@@ -33,6 +33,10 @@ GET		/allBoards					controllers.BoardController.allBoards
 
 GET		/addBoard					controllers.BoardController.addBoardPage
 
+# POST	/addPost					controllers.PostController.addPost(title: String)
+
+# GET		/addPost					controllers.PostController.addPostPage
+
 #Post pages
 
-GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)
+# GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

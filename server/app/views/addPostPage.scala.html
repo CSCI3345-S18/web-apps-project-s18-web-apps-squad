@@ -1,10 +1,10 @@
 @* homePage Template File *@
-@(boards: Seq[Board], newBoardForm: Form[NewBoard])(implicit request: MessagesRequestHeader, flash: Flash)
+@(boardTitle: String, newPostForm: Form[NewPost])(implicit request: MessagesRequestHeader, flash: Flash)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Add a Board</title>
+		<title>Create a post</title>
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/addBoardPage.css")">
 	</head>
 	<body>
@@ -16,11 +16,6 @@
         	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
-        	@for(b <- boards) {
-        		<tr>
-        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
-        		</tr>
-        	}
         </div>
         <div class="topnav">
         	<nav>
@@ -36,12 +31,13 @@
         
         <div class="main">
         	<div id="add-board-hero">
-        		<p id="add-board-header1">Create a New Community</p>
+        		<p id="add-board-header1">Add a Post to @boardTitle</p>
         	</div>
 			<div id="add-board-instruction">
-			@helper.form(action = helper.CSRF(routes.BoardController.addBoard())) {
-				@helper.inputText(newBoardForm("title"))
-				@helper.inputText(newBoardForm("description"))
+			@helper.form(action = helper.CSRF(routes.BoardController.addPost(boardTitle))) {
+				@helper.inputText(newPostForm("title"))
+				@helper.inputText(newPostForm("body"))
+				@helper.inputText(newPostForm("link"))
 				<input type="submit" value="Submit">
 			}
 			</div>

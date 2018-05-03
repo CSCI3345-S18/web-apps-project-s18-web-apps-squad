@@ -17,6 +17,7 @@ import models._
 import javax.inject._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import play.api._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
 
@@ -33,54 +34,52 @@ import models.BoardModel
 import models.Board
 import models.Post
 
-case class newPost(title: String, body: String, link: String)
+case class NewPost(title: String, body: String, link: String)
 
 @Singleton
 class PostController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
-
-  def viewPost(board: String, postIDStr: String) = Action.async { implicit request =>
-    val boards: Seq[String] = request.session.get("username").map{username =>
-					UserModel.getSubsFromUser(username).map(_.toString())
-				}.getOrElse{
-					BoardModel.getDefaultSubscription()
-				}
-    val postID = postIDStr.toInt
-    val postOptFuture = PostModel.getPostFromPostID(postID, db)
-    postOptFuture.map(postOpt =>
-      postOpt match {
-        case None => Ok(views.html.errorPage("Post not found", boards))
-        case Some(post) => {
-          val comments = PostModel.getCommentsFromPost(postID)
-          val userOptFuture = UserModel.getUserFromID(post.posterID, db)
-          val userOptTry = Await.ready(userOptFuture, Duration.Inf).value.get
-          userOptTry match {
-            case Success(userOpt) => {
-              userOpt match {
-                case None => Ok(views.html.errorPage("User not found", boards))
-                case Some(user) => {
-                  Ok(views.html.postPage(board, boards, post.title, post.body, user.username, comments))
-                }
-              }
-            }
-            case Failure(e) => Ok(views.html.errorPage("User not found", boards))
-
-          }
-        }
-      }
-  )}
   
   val newPostForm = Form(mapping(
       "title" -> nonEmptyText,
       "body" -> nonEmptyText,
-      "link" -> nonEmptyText)(newPost.apply)(newPost.unapply))
-  
-  /*def addPost = Action.async { implicit request =>
-      newPostForm.bindFromRequeset().fold(
-          formWithErrors => {
-            val postsFuture = PostModel.
+      "link" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
+      
+  def addPost(boardTitle: String) = Action.async { implicit request =>
+    val boardFuture = BoardModel.getBoardIDByTitle(boardTitle, db)
+    val posterUsername = request.session.get("connected")
+    val posterFuture = UserModel.getUserFromUsername(posterUsername.toString, db)
+    newPostForm.bindFromRequest().fold(
+        formWithErrors => {
+          for {
+            boardOption <- boardFuture
+          } yield {
+            for {
+              board <- boardOption
+            } yield {
+              BadRequest(views.html.addPostPage(board.title, formWithErrors))
+            }
           }
-  }*/
+        },
+        newPost => {
+          for {
+            boardOption <- boardFuture
+            posterOption <- posterFuture
+          } yield {
+            for {
+              board <- boardOption
+              poster <- posterOption
+            } yield {
+              val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
+              addFuture.map { cnt =>
+                if(cnt == 1) Redirect(routes.BoardController.boardPage(board.title, board.desription))
+                else Redirect(routes.PostController.addPostPage(board.title, newPostForm))
+              }
+            }
+          }
+        })
+  }
+
 }

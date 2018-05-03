@@ -22,6 +22,8 @@ import models.Post
 //case class NewUser(email: String, username: String, password: String)
 //case class Login(username: String, password: String)
 
+case class NewBoard(title: String, description: String)
+
 @Singleton
 class BoardController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
@@ -30,7 +32,7 @@ class BoardController @Inject() (
       
   val newBoardForm = Form(mapping(
       "title" -> nonEmptyText,
-      "description" -> nonEmptyText)(Board.apply)(Board.unapply))
+      "description" -> nonEmptyText)(NewBoard.apply)(NewBoard.unapply))
   
   def allBoards = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)

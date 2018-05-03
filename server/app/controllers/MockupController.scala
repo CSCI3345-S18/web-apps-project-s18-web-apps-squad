@@ -21,7 +21,7 @@ import models.Post
 
 case class NewUser(email: String, username: String, password: String)
 case class Login(username: String, password: String)
-case class NewPost(boardID: Int, posterID: Int, title: String, body: String, link: String)
+//case class NewPost(boardID: Int, posterID: Int, title: String, body: String, link: String)
 
 @Singleton
 class MockupController @Inject() (

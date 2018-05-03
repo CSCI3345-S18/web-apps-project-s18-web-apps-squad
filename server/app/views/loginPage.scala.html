@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@(users: Seq[User], loginForm: Form[Login], userForm: Form[NewUser])(implicit request: MessagesRequestHeader, flash: Flash)
+@(boards: Seq[Board], users: Seq[User], loginForm: Form[Login], userForm: Form[NewUser])(implicit request: MessagesRequestHeader, flash: Flash)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +16,11 @@
         	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
+        	@for(b <- boards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>

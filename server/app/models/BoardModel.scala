@@ -17,6 +17,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import controllers.Login
 import controllers.NewUser
+import controllers.NewBoard
 
 object BoardModel {
   import Tables._
@@ -25,14 +26,31 @@ object BoardModel {
     db.run(boards.result)
   }
   
-  def addBoard(b: Board, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addBoard(b: NewBoard, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    val tmpID = 0;
     db.run {
-      boards += Board(b.title, b.description)
+      boards += Board(tmpID, b.title, b.description)
     }
   }
   
   def getDefaultSubscription(): Seq[String] = {
     return Seq("todo")
+  }
+  
+  def getBoardByID(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
+    db.run {
+      boards.filter(_.id === boardID).result.headOption
+    }
+  }
+  
+  def getBoardIDByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
+    db.run {
+      boards.filter(_.title === title).result.headOption
+    }
+  }
+  
+  def getTitle(b: Board, db: Database)(implicit ec: ExecutionContext): String = {
+    return b.title
   }
   
   /*def getPostsFromBoard(boardID: Int, db: Database): Future[Seq[Post]] = {
