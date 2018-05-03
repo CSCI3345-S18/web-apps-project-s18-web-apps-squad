@@ -35,8 +35,14 @@ class UserController @Inject() (
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
   
   def homePage() = Action.async { implicit request =>
-    val boardsFuture = BoardModel.allBoards(db)
-    boardsFuture.map(boards => Ok(views.html.homePage(boards)))
+    request.session.get("connected").map { user =>
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Ok(views.html.homePage(boards)))
+    }.getOrElse {
+      Unauthorized("Oops, you are not connected")
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Ok(views.html.homePage(boards)))
+    }
   }
   
   def allUsers = Action.async { implicit request =>
@@ -91,7 +97,19 @@ class UserController @Inject() (
   }
   
   def userPage(username: String) = Action { implicit request =>
-    Ok(views.html.userPage(username))
+    request.session.get("connected"). map { user =>
+      Ok(views.html.userPage(username))
+    }.getOrElse {
+      Ok(views.html.userPage(username))
+    }
+  }
+  
+  def profilePage = Action { implicit request =>
+    request.session.get("connected").map { user =>
+      Ok(views.html.profilePage(user))
+    }.getOrElse {
+      Redirect(routes.UserController.loginPage)
+    }
   }
   
   def loginPage() = Action.async { implicit request =>

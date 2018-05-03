@@ -1,0 +1,63 @@
+@* userPage Template File *@
+@(username: String)(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Your Profile</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/profilePage.css")">
+	</head>
+	<body>
+        <div class="leftnav">
+        	<a href="@routes.UserController.homePage()">Home</a>
+        	<a href="#">Popular</a>
+        	<a href="#">Top</a>
+        	<a href="@routes.UserController.loginPage()">Account</a>
+        	<h5>Filter bar</h5>
+        	<p id="sub-header">Subscriptions</p>
+        	<p>Board</p>
+        	<p>Board</p>
+        	<p>Board</p>
+        	<p>Board</p>
+        </div>
+        <div class="topnav">
+        	<nav>
+        		<ul>
+        		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
+        		<li><p>Search bar</p></li>
+        		<li><a href="#">Messages</a></li>
+        		<li><a href="#">Create</a></li>
+        		<li><a href="#">Profile</a></li>
+        		</ul>
+        	</nav>
+        </div>
+        
+        <div class="main">	
+			<div id="profile-hero">
+				<p>Profile pic</p>
+				<h3>@username</h3>
+				<p>Karma: 132</p>
+				<div id="buttons">
+					<button id="messages">Messages</button>
+					<form id="logout" action="@routes.UserController.logout" method="GET">
+						@helper.CSRF.formField
+						<input id="logoutbtn" type="submit" value="Logout">
+					</form>
+					<form id="addBoard" action="@routes.BoardController.allBoards" method="GET">
+						@helper.CSRF.formField
+						<input id="addboardbtn" type="submit" value="Create new Board">
+					</form>
+				</div>
+			</div>
+			<div id="profile-posts">
+				<p id="profile-posts-header">My Posts</p><hr>
+			</div>
+			<div id="profile-communities">
+				<p id="profile-communities-header">My Communities</p><hr>
+			</div>
+			<div id="profile-comments">
+				<p id="profile-comments-header">My Comments</p><hr>
+			</div>
+		</div>
+	</body>
+</html>

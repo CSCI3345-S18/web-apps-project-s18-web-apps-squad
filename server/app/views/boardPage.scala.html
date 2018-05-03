@@ -1,10 +1,10 @@
 @* postPage Template File *@
-@(boardTitle: String, desc: String)(implicit request: RequestHeader)
+@(title: String, desc: String)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>@boardTitle</title>
+		<title>@title</title>
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/boardPage.css")">
 	</head>
 	<body>
@@ -29,14 +29,12 @@
         </div>
         <div class="rightnav">
 			<p>Have something to say?</p>
-			@helper.form(action = helper.CSRF(routes.PostController.addPostPage(boardTitle))) {
-				<input id="create-btn" type="submit" value="Create a post">
-			}
+			<button id="create-btn"><a href="@routes.PostController.addPostPage(title)">Add Post</a></button>
         </div>
         
         <div class="main">
 			<div id="board-hero">
-				<h3>Welcome to @boardTitle</h3>
+				<h3>Welcome to @title</h3>
 				<h3>@desc</h3>
 			</div>
 			<div id="board-create-post">

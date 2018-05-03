@@ -14,9 +14,11 @@ GET		/user						controllers.UserController.userPage(username: String)
 
 GET		/post						controllers.BoardController.postPage
 
-GET		/navLogin					controllers.UserController.loginPage
+GET		/account					controllers.UserController.profilePage
 
 GET		/board						controllers.BoardController.boardPage(title: String, desc: String)
+
+GET		/loginPage					controllers.UserController.loginPage
 
 # Routes for user login
 GET		/login						controllers.UserController.allUsers
@@ -35,7 +37,7 @@ GET		/addBoard					controllers.BoardController.addBoardPage
 
 POST	/addPost					controllers.PostController.addPost(title: String)
 
-GET		/addPostPage				controllers.PostController.addPostPage(boardTitle: String)
+GET		/addPostPage				controllers.PostController.addPostPage(title: String)
 
 #Post pages
 

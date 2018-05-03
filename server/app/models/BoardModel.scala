@@ -43,7 +43,7 @@ object BoardModel {
     }
   }
   
-  def getBoardIDByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
+  def getBoardByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
     db.run {
       boards.filter(_.title === title).result.headOption
     }

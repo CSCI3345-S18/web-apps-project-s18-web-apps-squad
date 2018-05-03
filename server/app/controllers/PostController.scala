@@ -48,14 +48,14 @@ class PostController @Inject() (
       "link" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
 
   def addPost(boardTitle: String) = Action.async { implicit request =>
-    val boardFuture = BoardModel.getBoardIDByTitle(boardTitle, db)
+    val boardFuture = BoardModel.getBoardByTitle(boardTitle, db)
     val posterUsername = request.session.get("connected")
     val posterFuture = UserModel.getUserFromUsername(posterUsername.toString, db)
     newPostForm.bindFromRequest().fold(
         formWithErrors => {
           boardFuture map { boardOption =>
             boardOption map { board =>
-              BadRequest(views.html.addPostPage(board.title, formWithErrors))
+              BadRequest(views.html.addPostPage(boardTitle, formWithErrors))
             } getOrElse {
               BadRequest(views.html.addPostPage("bad board", formWithErrors))
             }
@@ -68,16 +68,16 @@ class PostController @Inject() (
                 case Some(poster) => {
                   val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
                   addFuture flatMap { cnt =>
-                    if(cnt == 1) Future(Ok("...")) // posted
-                    else Future(Ok("..."))
+                    if(cnt == 1) Future(Ok("Post added")) // posted
+                    else Future(Ok("Post not added"))
                   }
                 }
                 //No poster
-                case None => Future(Ok("..."))
+                case None => Future(Ok("Post not added because no poster"))
               }
             }
             //No Board
-            case None => Future(Ok("..."))
+            case None => Future(Ok("Post not added because no board"))
           }
         })
   }
