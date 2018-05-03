@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@(users: Seq[User], loginForm: Form[Login], userForm: Form[NewUser])(implicit request: MessagesRequestHeader, flash: Flash)
+@(boards: Seq[Board], users: Seq[User], loginForm: Form[Login], userForm: Form[NewUser])(implicit request: MessagesRequestHeader, flash: Flash)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,14 +12,15 @@
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="#">Popular</a>
-        	<a href="#">Top</a>
+        	<a href="#">New</a>
         	<a href="@routes.UserController.loginPage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
+        	@for(b <- boards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>
@@ -66,25 +67,3 @@
        </div>
 	</body>
 </html>
-
-@*
-@boardTemplate("Home", "Login/Signup", 
-			Seq("Pictures", "Movies", "Web Applications", "Reddit", "Just Professor Things"), 
-			Seq(("HTML core dump. How did this even happen plz help!", "in2deep", "Web Applications"), 
-				("A map of Trinity as seen from the moon", "danderson", "Pictures"), 
-				("Best Way to Torture Students?", "mlewis", "Just Professor Things"), 
-				("Please pay us", "starving_dev", "Reddit"), 
-				("[SERIOUS] Don't borrow my stapler", "pmeyers", "Just Professor Things")))
-				
-*@
-				
-@*
-@boardTemplate("Home", "Login/Signup", 
-			Seq("board1", "board2", "board3", "board4", "board5"), 
-			Seq(("post1", "user1", "board1"), 
-				("post2", "user8", "board3"), 
-				("post3", "moderator", "board2"), 
-				("post4", "user3", "board1"), 
-				("post5", "user2", "board4")))
-
-*@

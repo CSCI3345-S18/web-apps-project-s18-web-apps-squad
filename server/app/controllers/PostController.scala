@@ -14,7 +14,27 @@ import scala.concurrent.duration.Duration
 import scala.util._
 import models._
 
-//case class Post(id: Int, boardName: String, title: String, body: String, poster: String)
+import javax.inject._
+import play.api.i18n.I18nSupport
+import play.api.mvc._
+import play.api._
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.db.slick.HasDatabaseConfigProvider
+
+import slick.jdbc.JdbcProfile
+import slick.jdbc.JdbcCapabilities
+import slick.jdbc.MySQLProfile.api._
+import scala.concurrent.ExecutionContext
+import play.api.data.Form
+import play.api.data.Forms.mapping
+import play.api.data.Forms._
+import scala.concurrent.Future
+import models.UserModel
+import models.BoardModel
+import models.Board
+import models.Post
+
+case class NewPost(title: String, body: String, link: String)
 
 @Singleton
 class PostController @Inject() (
@@ -22,34 +42,47 @@ class PostController @Inject() (
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
-  def viewPost(board: String, postIDStr: String) = Action.async { implicit request =>
-    val boards: Seq[String] = request.session.get("username").map{username =>
-					UserModel.getSubsFromUser(username).map(_.toString())
-				}.getOrElse{
-					BoardModel.getDefaultSubscription()
-				}
-    val postID = postIDStr.toInt
-    val postOptFuture = PostModel.getPostFromPostID(postID, db)
-    postOptFuture.map(postOpt =>
-      postOpt match {
-        case None => Ok(views.html.errorPage("Post not found", boards))
-        case Some(post) => {
-          val comments = PostModel.getCommentsFromPost(postID)
-          val userOptFuture = UserModel.getUserFromID(post.posterID, db)
-          val userOptTry = Await.ready(userOptFuture, Duration.Inf).value.get
-          userOptTry match {
-            case Success(userOpt) => {
-              userOpt match {
-                case None => Ok(views.html.errorPage("User not found", boards))
-                case Some(user) => {
-                  Ok(views.html.postPage(board, boards, post.title, post.body, user.username, comments))
+  val newPostForm = Form(mapping(
+      "title" -> nonEmptyText,
+      "body" -> nonEmptyText,
+      "link" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
+
+  def addPost(boardTitle: String) = Action.async { implicit request =>
+    val boardFuture = BoardModel.getBoardByTitle(boardTitle, db)
+    val posterUsername = request.session.get("connected")
+    val posterFuture = UserModel.getUserFromUsername(posterUsername.toString, db)
+    newPostForm.bindFromRequest().fold(
+        formWithErrors => {
+          boardFuture map { boardOption =>
+            boardOption map { board =>
+              BadRequest(views.html.addPostPage(boardTitle, formWithErrors))
+            } getOrElse {
+              BadRequest(views.html.addPostPage("bad board", formWithErrors))
+            }
+          }
+        },
+        newPost => {
+          boardFuture flatMap {
+            case Some(board) =>{
+              posterFuture flatMap {
+                case Some(poster) => {
+                  val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
+                  addFuture flatMap { cnt =>
+                    if(cnt == 1) Future(Ok("Post added")) // posted
+                    else Future(Ok("Post not added"))
+                  }
                 }
+                //No poster
+                case None => Future(Ok("Post not added because no poster"))
               }
             }
-            case Failure(e) => Ok(views.html.errorPage("User not found", boards))
-
+            //No Board
+            case None => Future(Ok("Post not added because no board"))
           }
-        }
-      }
-  )}
+        })
+  }
+  
+  def addPostPage(boardTitle: String) = Action { implicit request =>
+    Ok(views.html.addPostPage(boardTitle, newPostForm))
+  }
 }

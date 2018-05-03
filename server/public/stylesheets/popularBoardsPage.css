@@ -35,42 +35,6 @@ nav ul li a {
         color: black;
 }
 
-.leftnav {
-    width: 220px;
-    position: fixed;
-    z-index: 1;
-    top: 58px;
-    left: 0;
-    background: white;
-    overflow-x: hidden;
-    padding: 8px 0;
-    border: 1px solid #e8e8e8;
-}
-
-.leftnav a {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 24px;
-    color: #2196F3;
-    display: block;
-}
-
-.leftnav a:hover {
-    color: #064579;
-}
-
-.leftnav #sub-header {
-	font-size: 18px;
-	left: 10px;
-	padding: 6px 8px 6px 16px;
-}
-
-.leftnav p {
-	font-size: 24px;
-	display: block;
-	padding: 6px 8px 6px 16px;
-}
-
 .rightnav {
 	width: 300px;
 	z-index: 1;
@@ -107,32 +71,44 @@ nav ul li a {
         padding-bottom: 10px;
 }
 
-.rightnav #create-btn a {
-	text-decoration: none;
-	color: white;
-	display: inline-block;
-	width: inherit;
-	height: inherit;
+.leftnav {
+    width: 220px;
+    position: fixed;
+    z-index: 1;
+    top: 58px;
+    left: 0;
+    background: white;
+    overflow-x: hidden;
+    padding: 8px 0;
+    border: 1px solid #e8e8e8;
+}
+
+.leftnav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 24px;
+    color: #2196F3;
+    display: block;
+}
+
+.leftnav a:hover {
+    color: #064579;
+}
+
+.leftnav #sub-header {
+	font-size: 18px;
+	left: 10px;
+	padding: 6px 8px 6px 16px;
+}
+
+.leftnav p {
+	font-size: 24px;
+	display: block;
+	padding: 6px 8px 6px 16px;
 }
 
 .main {
 	margin-left: 220px;
 	margin-right: 330px;
 	padding: 0px 10px;
-}
-
-#board-hero {
-	background-color: white;
-	border: 1px solid #e8e8e8;
-	margin-top: 30px;
-}
-
-#board-hero h3 {
-	text-align: center;
-}
-
-#board-posts {
-	background-color: yellow;
-	color: red;
-	font-size: 30px;
 }

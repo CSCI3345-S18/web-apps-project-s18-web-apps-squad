@@ -7,16 +7,18 @@ GET		/assets/*file				controllers.Assets.versioned(path="/public", file: Asset)
 
 # Mockup pages
 GET     /                           controllers.UserController.homePage
- 
+
 GET		/home						controllers.UserController.homePage
 
 GET		/user						controllers.UserController.userPage(username: String)
 
 GET		/post						controllers.BoardController.postPage
 
-GET		/navLogin					controllers.UserController.loginPage
+GET		/account					controllers.UserController.profilePage
 
 GET		/board						controllers.BoardController.boardPage(title: String, desc: String)
+
+GET		/loginPage					controllers.UserController.loginPage
 
 # Routes for user login
 GET		/login						controllers.UserController.allUsers
@@ -31,6 +33,12 @@ POST	/addBoard					controllers.BoardController.addBoard
 
 GET		/allBoards					controllers.BoardController.allBoards
 
+GET		/addBoard					controllers.BoardController.addBoardPage
+
+POST	/addPost					controllers.PostController.addPost(title: String)
+
+GET		/addPostPage				controllers.PostController.addPostPage(title: String)
+
 #Post pages
 
-GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)
+# GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

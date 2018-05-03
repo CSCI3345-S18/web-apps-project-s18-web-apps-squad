@@ -8,36 +8,45 @@
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/boardPage.css")">
 	</head>
 	<body>
-		<nav>
-        	<ul>
-        	<li><a href="@routes.UserController.homePage()">Home</a></li>
-        	<li><a href="#">New</a></li>
-        	<li><a href="#">Controversial</a></li>
-        	<li><a href="#">Top</a></li>
-        	<li><a href="@routes.UserController.loginPage()">Login</a></li>
-        	</ul>
-        </nav>
-		<div id="board-hero">
-			<h3>Welcome to @title</h3>
-			<h3>@desc</h3>
-		</div>
-		<div id="board-board-panel">
-			<p id="board-subscription-header">Subscriptions</p><hr>
-			<p>Board</p>
-			<p>Board</p>
-			<p>Board</p>
-			<p>Board</p>
-			<p>Board</p>
-		</div>
-		<div id="board-create-post">
+        <div class="leftnav">
+        	<a href="@routes.UserController.homePage()">Home</a>
+        	<a href="@routes.BoardController.allBoards">Popular</a>
+        	<a href="#">New</a>
+        	<a href="@routes.UserController.loginPage()">Account</a>
+        	<h5>Filter bar</h5>
+        	<p id="sub-header">Subscriptions</p>
+        </div>
+        <div class="topnav">
+        	<nav>
+        		<ul>
+        		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
+        		<li><p>Search bar</p></li>
+        		<li><a href="#">Messages</a></li>
+        		<li><a href="#">Create</a></li>
+        		<li><a href="#">Profile</a></li>
+        		</ul>
+        	</nav>
+        </div>
+        <div class="rightnav">
+			<p>Have something to say?</p>
+			<button id="create-btn"><a href="@routes.PostController.addPostPage(title)">Add Post</a></button>
+        </div>
+        
+        <div class="main">
+			<div id="board-hero">
+				<h3>Welcome to @title</h3>
+				<h3>@desc</h3>
+			</div>
+			<div id="board-create-post">
 			
-		</div>
-		<div id="board-posts">
-			<p>Post</p>
-			<p>Post</p>
-			<p>Post</p>
-			<p>Post</p>
-			<p>Post</p>
+			</div>
+			<div id="board-posts">
+				<p>Post</p>
+				<p>Post</p>
+				<p>Post</p>
+				<p>Post</p>
+				<p>Post</p>
+			</div>
 		</div>
 	</body>
 </html>

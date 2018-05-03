@@ -20,9 +20,12 @@ import controllers.NewPost
 
 object PostModel {
   import Tables._
-  /*def getPostsFromBoard(boardID: Int, db: Database): Future[Seq[Post]] = {
-    // Pull all posts from the given board
-  }*/
+  
+  def getPostsFromBoard(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
+    db.run {
+      posts.filter(_.boardID === boardID).result
+    }
+  }
 
   def getPostFromPostID(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Post]] = {
     db.run{
@@ -39,10 +42,10 @@ object PostModel {
     // Locate the post and then add comment
   }
 
-  def addPost(np: NewPost, db: Database): Future[Int] = {
+  def addPost(boardID: Int, posterID: Int, np: NewPost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
-      //first number is an id which the database will ignore and last two are upvotes and downvotes
-      posts += Post(0, np.boardID, np.posterID, np.title, np.body, np.link, 0, 0)
+      //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
+      posts += Post(0, boardID, posterID, np.title, np.body, np.link, 0, 0)
     }
   }
   def searchPostsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {

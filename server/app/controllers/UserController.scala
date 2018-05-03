@@ -19,9 +19,6 @@ import models.BoardModel
 import models.Board
 import models.Post
 
-//case class NewUser(email: String, username: String, password: String)
-//case class Login(username: String, password: String)
-
 @Singleton
 class UserController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
@@ -36,25 +33,36 @@ class UserController @Inject() (
   val loginForm = Form(mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
-      
-  val newBoardForm = Form(mapping(
-      "title" -> nonEmptyText,
-      "description" -> nonEmptyText)(Board.apply)(Board.unapply))
   
-  def homePage() = Action { implicit request =>
-    Ok(views.html.homePage())
+  def homePage() = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Ok(views.html.homePage(boards)))
+    }.getOrElse {
+      Unauthorized("Oops, you are not connected")
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Ok(views.html.homePage(boards)))
+    }
   }
   
   def allUsers = Action.async { implicit request =>
     val usersFuture = UserModel.allUsers(db)
-    usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
+    val boardsFuture = BoardModel.allBoards(db)
+    for { 
+      boards <- boardsFuture
+      users <- usersFuture
+    } yield (Ok(views.html.loginPage(boards, users, loginForm, newUserForm)))
   }
   
   def addUser = Action.async { implicit request =>
     newUserForm.bindFromRequest().fold(
         formWithErrors => {
           val usersFuture = UserModel.allUsers(db)
-          usersFuture.map(users => BadRequest(views.html.loginPage(users, loginForm, formWithErrors)))
+          val boardsFuture = BoardModel.allBoards(db)
+          for {
+            users <- usersFuture
+            boards <- boardsFuture
+          } yield (BadRequest(views.html.loginPage(boards, users, loginForm, formWithErrors)))
         },
         newUser => {
           val addFuture = UserModel.addUser(newUser, db)
@@ -69,12 +77,15 @@ class UserController @Inject() (
     loginForm.bindFromRequest().fold(
         formWithErrors => {
           val usersFuture = UserModel.allUsers(db)
-          usersFuture.map(users => BadRequest(views.html.loginPage(users, formWithErrors, newUserForm)))
+          val boardsFuture = BoardModel.allBoards(db)
+          for {
+            users <- usersFuture
+            boards <- boardsFuture
+          } yield (BadRequest(views.html.loginPage(boards, users, formWithErrors, newUserForm)))
         },
         loginUser => {
           val loginFuture = UserModel.verifyUser(loginUser, db)
           loginFuture.map { success =>
-            //if(success == true) Redirect(routes.UserController.getSubs(loginUser.username))
             if(success == true) Redirect(routes.UserController.userPage(loginUser.username)).withSession("connected" -> loginUser.username)
             else Redirect(routes.UserController.allUsers).flashing("error" -> "Failed to login.")
           }
@@ -85,18 +96,29 @@ class UserController @Inject() (
     Redirect(routes.UserController.allUsers).withNewSession
   }
   
-  /*def getSubs(username: String) = Action.async { implicit requeset =>
-      val subsFuture = SubQueries.getTasks(username, db)
-      subsFuture.map(subs => Ok(views.html.profilePage(username, subs)))
-  }*/
-  
   def userPage(username: String) = Action { implicit request =>
-    Ok(views.html.userPage(username))
+    request.session.get("connected"). map { user =>
+      Ok(views.html.userPage(username))
+    }.getOrElse {
+      Ok(views.html.userPage(username))
+    }
+  }
+  
+  def profilePage = Action { implicit request =>
+    request.session.get("connected").map { user =>
+      Ok(views.html.profilePage(user))
+    }.getOrElse {
+      Redirect(routes.UserController.loginPage)
+    }
   }
   
   def loginPage() = Action.async { implicit request =>
     val usersFuture = UserModel.allUsers(db)
-    usersFuture.map(users => Ok(views.html.loginPage(users, loginForm, newUserForm)))
+    val boardsFuture = BoardModel.allBoards(db)
+    for {
+      users <- usersFuture
+      boards <- boardsFuture
+    } yield(Ok(views.html.loginPage(boards, users, loginForm, newUserForm)))
   }
 
 }

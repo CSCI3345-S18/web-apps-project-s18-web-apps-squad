@@ -16,6 +16,7 @@ import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import controllers.Login
+import controllers.NewUser
 import controllers.NewBoard
 
 object BoardModel {
@@ -34,12 +35,29 @@ object BoardModel {
   def getDefaultSubscription(): Seq[String] = {
     return Seq("todo")
   }
+  
   def searchBoardsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
     db.run {
       boards.filter(_.title like title+"%").result
     }
   }
-
+  
+  def getBoardByID(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
+    db.run {
+      boards.filter(_.id === boardID).result.headOption
+    }
+  }
+  
+  def getBoardByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
+    db.run {
+      boards.filter(_.title === title).result.headOption
+    }
+  }
+  
+  def getTitle(b: Board, db: Database)(implicit ec: ExecutionContext): String = {
+    return b.title
+  }
+ 
   /*def getPostsFromBoard(boardID: Int, db: Database): Future[Seq[Post]] = {
 
   }*/

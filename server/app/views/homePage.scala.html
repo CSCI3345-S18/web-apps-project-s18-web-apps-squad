@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@()(implicit request: RequestHeader)
+@(boards: Seq[Board])(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,15 +10,16 @@
 	<body>
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
-        	<a href="#">Popular</a>
-        	<a href="#">Top</a>
-        	<a href="@routes.UserController.loginPage()">Account</a>
+        	<a href="@routes.BoardController.allBoards">Popular</a>
+        	<a href="#">New</a>
+        	<a href="@routes.UserController.profilePage">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
+        	@for(b <- boards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td></tr>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>
@@ -27,13 +28,13 @@
         		<li><p>Search bar</p></li>
         		<li><a href="#">Messages</a></li>
         		<li><a href="#">Create</a></li>
-        		<li><a href="#">Profile</a></li>
+        		<li><a href="@routes.UserController.profilePage">Profile</a></li>
         		</ul>
         	</nav>
         </div>
         <div class="rightnav">
 			<p>Looking to start a new community?</p>
-			<form action="@routes.BoardController.allBoards">
+			<form action="@routes.BoardController.addBoardPage">
 				<button id="create-btn" type="submit" value="Create Board">CREATE</button>
 			</form>
         </div>
