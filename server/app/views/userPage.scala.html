@@ -1,5 +1,5 @@
 @* userPage Template File *@
-@(username: String)(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
+@(username: String, posts: Seq[Post], comments: Seq[Comment], searchForm: Form[SearchQuery])(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,9 +22,12 @@
         </div>
         <div class="topnav">
         	<nav>
+        		@helper.form(action = helper.CSRF(routes.SearchController.searchPage)) {
+        			@helper.inputText(searchForm("query"))
+        			<input type="submit" value="Search">
+        		}
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
-        		<li><p>Search bar</p></li>
         		<li><a href="@routes.UserController.messagesPage">Messages</a></li>
         		<li><a href="#">Create</a></li>
         		<li><a href="@routes.UserController.profilePage">Profile</a></li>
@@ -45,13 +48,24 @@
 				</div>
 			</div>
 			<div id="profile-posts">
-				<p id="profile-posts-header">My Posts</p><hr>
-			</div>
-			<div id="profile-communities">
-				<p id="profile-communities-header">My Communities</p><hr>
+				<p id="profile-posts-header">Posts</p><hr>
+				<table border="1">
+					@for(p <- posts) {
+						<tr>
+							<td><a href="@routes.PostController.postPage(p.title)">@p.title</a></td>
+						</tr>
+					}
+				</table>
 			</div>
 			<div id="profile-comments">
-				<p id="profile-comments-header">My Comments</p><hr>
+				<p id="profile-communities-header">Comments</p><hr>
+				<table border="1">
+					@for(c <- comments) {
+						<tr>
+							<td>@c.body</td>
+						</tr>
+					}
+				</table>
 			</div>
 		</div>
 	</body>

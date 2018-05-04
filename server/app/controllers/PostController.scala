@@ -47,6 +47,9 @@ class PostController @Inject() (
       "body" -> nonEmptyText,
       "link" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
 
+  val searchForm = Form(mapping(
+      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+
   def addPost(boardTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val boardFutOpt = BoardModel.getBoardByTitle(boardTitle, db)
@@ -55,9 +58,9 @@ class PostController @Inject() (
           formWithErrors => {
             boardFutOpt map { boardOption =>
               boardOption map { board =>
-                BadRequest(views.html.addPostPage(boardTitle, formWithErrors))
+                BadRequest(views.html.addPostPage(boardTitle, formWithErrors, searchForm))
               } getOrElse {
-                BadRequest(views.html.addPostPage("Bad board", formWithErrors))
+                BadRequest(views.html.addPostPage("Bad board", formWithErrors, searchForm))
               }
             }
           },
@@ -88,7 +91,7 @@ class PostController @Inject() (
   
   def addPostPage(boardTitle: String) = Action { implicit request =>
     request.session.get("connected").map { user =>
-      Ok(views.html.addPostPage(boardTitle, newPostForm))
+      Ok(views.html.addPostPage(boardTitle, newPostForm, searchForm))
     }.getOrElse {
       Redirect(routes.UserController.loginPage)
     }
@@ -99,7 +102,7 @@ class PostController @Inject() (
     val postFutOpt = PostModel.getPostFromTitle(title, db)
     postFutOpt.map {
       case Some(ogPost) =>
-        Ok(views.html.postPage(ogPost.title, ogPost.body, ogPost.link))
+        Ok(views.html.postPage(ogPost.title, ogPost.body, ogPost.link, searchForm))
       case None =>
         Redirect(routes.UserController.homePage)
     }

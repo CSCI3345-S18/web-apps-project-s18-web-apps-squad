@@ -50,7 +50,7 @@ class SearchController @Inject() (
             searchedPosts <- searchedPostsFuture
             searchedUsers <- searchedUsersFuture
           } yield {
-            Ok(views.html.searchPage(sideBoards, searchedBoards, searchedPosts, searchedUsers))
+            Ok(views.html.searchPage(sideBoards, searchedBoards, searchedPosts, searchedUsers, searchForm))
           }
         })
   }

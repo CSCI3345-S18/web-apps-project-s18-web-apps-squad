@@ -54,7 +54,7 @@ class UserController @Inject() (
     for { 
       boards <- boardsFuture
       users <- usersFuture
-    } yield (Ok(views.html.loginPage(boards, users, loginForm, newUserForm)))
+    } yield (Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
   }
   
   def addUser = Action.async { implicit request =>
@@ -65,14 +65,14 @@ class UserController @Inject() (
           for {
             users <- usersFuture
             boards <- boardsFuture
-          } yield (BadRequest(views.html.loginPage(boards, users, loginForm, formWithErrors)))
+          } yield (BadRequest(views.html.loginPage(boards, users, loginForm, formWithErrors, searchForm)))
         },
         newUser => {
           val checkUsername = UserModel.checkIfUsernameExists(newUser.username, db)
           checkUsername.map(success =>
             if(!success) {
               UserModel.addUser(newUser, db)
-              Redirect(routes.UserController.userPage(newUser.username)).withSession("connected" -> newUser.username)
+              Redirect(routes.UserController.profilePage).withSession("connected" -> newUser.username)
             } else {
               Redirect(routes.UserController.loginPage)
             })
@@ -87,7 +87,7 @@ class UserController @Inject() (
           for {
             users <- usersFuture
             boards <- boardsFuture
-          } yield (BadRequest(views.html.loginPage(boards, users, formWithErrors, newUserForm)))
+          } yield (BadRequest(views.html.loginPage(boards, users, formWithErrors, newUserForm, searchForm)))
         },
         loginUser => {
           val loginFuture = UserModel.verifyUser(loginUser, db)
@@ -102,11 +102,25 @@ class UserController @Inject() (
     Redirect(routes.UserController.allUsers).withNewSession
   }
   
-  def userPage(username: String) = Action { implicit request =>
+  def userPage(username: String) = Action.async { implicit request =>
     request.session.get("connected"). map { user =>
-      Ok(views.html.userPage(username))
+      val userContents = UserModel.getUserFromUsername(username, db)
+      userContents.flatMap {
+        case Some(user) =>
+          val postsSeqOpt = UserModel.getPostsOfUser(user.id, db)
+          val commentsSeqOpt = UserModel.getCommentsOfUser(user.id, db)
+          for {
+            posts <- postsSeqOpt
+            comments <- commentsSeqOpt
+          } yield {
+            Ok(views.html.userPage(user.username, posts, comments, searchForm))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.homePage))
+      }
     }.getOrElse {
-      Ok(views.html.userPage(username))
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Redirect(routes.UserController.homePage))
     }
   }
   
@@ -123,7 +137,7 @@ class UserController @Inject() (
             comments <- commentsSeqOpt
             subBoards <- subBoardsSeqOpt
           } yield {
-            Ok(views.html.profilePage(actualUser.username, posts, comments, subBoards))
+            Ok(views.html.profilePage(actualUser.username, posts, comments, subBoards, searchForm))
           }
         case None =>
           Future.successful(Redirect(routes.UserController.loginPage))
@@ -140,13 +154,13 @@ class UserController @Inject() (
     for {
       users <- usersFuture
       boards <- boardsFuture
-    } yield(Ok(views.html.loginPage(boards, users, loginForm, newUserForm)))
+    } yield(Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
   }
   
   def messagesPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Ok(views.html.messagesPage(boards)))
+      boardsFuture.map(boards => Ok(views.html.messagesPage(boards, searchForm)))
     }.getOrElse {
       val boardsFuture = BoardModel.allBoards(db)
       boardsFuture.map(boards => Redirect(routes.UserController.loginPage))

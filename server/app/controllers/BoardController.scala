@@ -35,16 +35,19 @@ class BoardController @Inject() (
       "title" -> nonEmptyText,
       "description" -> nonEmptyText)(NewBoard.apply)(NewBoard.unapply))
       
+  val searchForm = Form(mapping(
+      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+      
   def allBoards = Action.async { implicit request =>
     val boardsFuture = BoardModel.allBoards(db)
-    boardsFuture.map(boards => Ok(views.html.popularBoardsPage(boards)))
+    boardsFuture.map(boards => Ok(views.html.popularBoardsPage(boards, searchForm)))
   }
 
   def addBoard = Action.async { implicit request =>
     newBoardForm.bindFromRequest().fold(
         formWithErrors => {
           val boardsFuture = BoardModel.allBoards(db)
-          boardsFuture.map(boards => BadRequest(views.html.addBoardPage(boards, newBoardForm)))
+          boardsFuture.map(boards => BadRequest(views.html.addBoardPage(boards, newBoardForm, searchForm)))
         },
         newBoard => {
           val addFuture = BoardModel.addBoard(newBoard, db)
@@ -61,7 +64,7 @@ class BoardController @Inject() (
     boardsFutOpt.flatMap { 
       case Some(board) =>
         val postsSeqOpt = PostModel.getPostsFromBoard(board.id, db)
-        postsSeqOpt.map(posts => Ok(views.html.boardPage(posts, board.title, board.description)))
+        postsSeqOpt.map(posts => Ok(views.html.boardPage(posts, board.title, board.description, searchForm)))
       case None =>
         Future.successful(Redirect(routes.UserController.homePage))
     }
@@ -70,7 +73,7 @@ class BoardController @Inject() (
   def addBoardPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm)))
+      boardsFuture.map(boards => Ok(views.html.addBoardPage(boards, newBoardForm, searchForm)))
     }.getOrElse {
       val boardsFuture = BoardModel.allBoards(db)
       boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
