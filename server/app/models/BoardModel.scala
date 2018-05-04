@@ -57,25 +57,5 @@ object BoardModel {
   def getTitle(b: Board, db: Database)(implicit ec: ExecutionContext): String = {
     return b.title
   }
- 
-  /*def getPostsFromBoard(boardID: Int, db: Database): Future[Seq[Post]] = {
-
-  }*/
-
-  /*def getCommentsFromPost(boardName: String, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Comment]] = {
-
-  }*/
-
-  /*def addSubscriptionToUser(username: String, subID: Int): Future[Int] = {
-
-  }*/
-
-  /*def addCoommentToPost(postID: Int): Future[Int] = {
-
-  }*/
-
-  /*def addPostToBoard(boardID: Int): Future[Int] = {
-
-  }*/
 
 }

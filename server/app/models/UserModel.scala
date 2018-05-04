@@ -20,18 +20,36 @@ import controllers.NewUser
 
 object UserModel {
   import Tables._
-
+  
+  def getCommentsOfUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Comment]] = {
+    db.run {
+      comments.filter(_.userID === userID).result
+    }
+  }
+  
+  def getPostsOfUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
+    db.run {
+      posts.filter(_.posterID === userID).result
+    }
+  }
+  
+  def checkIfUsernameExists(username: String, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+    db.run {
+      users.filter(_.username === username).exists.result
+    }
+  }
+  
   def getSubsFromUser(username: String): Seq[Board] = {
     return Seq()//TODO
   }
 
-  def getUserFromID(id: Int, db: Database): Future[Option[User]] = {
+  def getUserFromID(id: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[User]] = {
     db.run {
       users.filter(_.id === id).result.headOption
     }
   }
   
-  def getUserFromUsername(username: String, db: Database): Future[Option[User]] = {
+  def getUserFromUsername(username: String, db: Database)(implicit ec: ExecutionContext): Future[Option[User]] = {
     db.run {
       users.filter(_.username === username).result.headOption
     }
@@ -52,6 +70,7 @@ object UserModel {
       users.filter(_.username === lu.username).filter(_.password === lu.password).exists.result
     }
   }
+  
   def searchUsersByUsername(username: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[User]] = {
     db.run {
       users.filter(_.username like username+"%").result

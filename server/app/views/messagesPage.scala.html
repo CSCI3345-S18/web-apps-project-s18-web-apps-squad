@@ -1,20 +1,25 @@
-@* postPage Template File *@
-@(title: String, body: String, link: String)(implicit request: RequestHeader)
+@* homePage Template File *@
+@(boards: Seq[Board])(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>@title</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/postPage.css")">
+		<title>Messages</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/messagesPage.css")">
 	</head>
 	<body>
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="@routes.BoardController.allBoards">Popular</a>
         	<a href="#">New</a>
-        	<a href="@routes.UserController.profilePage()">Account</a>
+        	<a href="@routes.UserController.profilePage">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
+        	@for(b <- boards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>
@@ -27,21 +32,13 @@
         		</ul>
         	</nav>
         </div>
-        <div class="rightnav">
-			<p>Have something to say?</p>
-			<button id="create-btn"><a href="@routes.PostController.addPostPage(title)">Add Post</a></button>
-        </div>
-        
         <div class="main">
-			<div id="post-hero">
-				<h3>@title</h3>
-				<h3>@body</h3>
-				<h3>@link</h3>
-			</div>
-			<div id="post-comments">
-				<p>Comment</p>
-				<p>Comment</p>
-				<p>Comment</p>
+			<div id="profile-messages">
+				<p>Message</p>
+				<p>Message</p>
+				<p>Message</p>
+				<p>Message</p>
+				<p>Message</p>
 			</div>
 		</div>
 	</body>

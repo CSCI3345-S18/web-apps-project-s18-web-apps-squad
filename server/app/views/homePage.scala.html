@@ -17,7 +17,7 @@
         	<p id="sub-header">Subscriptions</p>
         	@for(b <- boards) {
         		<tr>
-        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td></tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
         		</tr>
         	}
         </div>
@@ -26,7 +26,7 @@
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
         		<li><p>Search bar</p></li>
-        		<li><a href="#">Messages</a></li>
+        		<li><a href="@routes.UserController.messagesPage">Messages</a></li>
         		<li><a href="#">Create</a></li>
         		<li><a href="@routes.UserController.profilePage">Profile</a></li>
         		</ul>

@@ -12,7 +12,7 @@ GET		/home						controllers.UserController.homePage
 
 GET		/user						controllers.UserController.userPage(username: String)
 
-GET		/post						controllers.BoardController.postPage
+GET		/post						controllers.PostController.postPage(title: String)
 
 GET		/account					controllers.UserController.profilePage
 
@@ -38,6 +38,8 @@ GET		/addBoard					controllers.BoardController.addBoardPage
 POST	/addPost					controllers.PostController.addPost(title: String)
 
 GET		/addPostPage				controllers.PostController.addPostPage(title: String)
+
+GET		/messages					controllers.UserController.messagesPage
 
 #Post pages
 

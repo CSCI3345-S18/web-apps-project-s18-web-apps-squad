@@ -1,5 +1,5 @@
 @* userPage Template File *@
-@(username: String)(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
+@(username: String, posts: Seq[Post], comments: Seq[Comment], subscribedBoards: Seq[Board])(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,24 +10,25 @@
 	<body>
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
-        	<a href="#">Popular</a>
-        	<a href="#">Top</a>
-        	<a href="@routes.UserController.loginPage()">Account</a>
+        	<a href="@routes.BoardController.allBoards">Popular</a>
+        	<a href="#">New</a>
+        	<a href="@routes.UserController.profilePage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">Subscriptions</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
+        	@for(b <- subscribedBoards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
         		<li><p>Search bar</p></li>
-        		<li><a href="#">Messages</a></li>
+        		<li><a href="@routes.UserController.messagesPage">Messages</a></li>
         		<li><a href="#">Create</a></li>
-        		<li><a href="#">Profile</a></li>
+        		<li><a href="@routes.UserController.profilePage">Profile</a></li>
         		</ul>
         	</nav>
         </div>
@@ -38,12 +39,15 @@
 				<h3>@username</h3>
 				<p>Karma: 132</p>
 				<div id="buttons">
-					<button id="messages">Messages</button>
+					<form id="messagesForm" action="@routes.UserController.messagesPage" method="GET">
+						@helper.CSRF.formField
+						<input id="messages" type="submit" value="Messages">
+					</form>
 					<form id="logout" action="@routes.UserController.logout" method="GET">
 						@helper.CSRF.formField
 						<input id="logoutbtn" type="submit" value="Logout">
 					</form>
-					<form id="addBoard" action="@routes.BoardController.allBoards" method="GET">
+					<form id="addBoard" action="@routes.BoardController.addBoardPage" method="GET">
 						@helper.CSRF.formField
 						<input id="addboardbtn" type="submit" value="Create new Board">
 					</form>
@@ -51,12 +55,22 @@
 			</div>
 			<div id="profile-posts">
 				<p id="profile-posts-header">My Posts</p><hr>
-			</div>
-			<div id="profile-communities">
-				<p id="profile-communities-header">My Communities</p><hr>
+				<table border="1">
+					@for(p <- posts) {
+						<tr>
+							<td><a href="@routes.PostController.postPage(p.title)">@p.title</a></td>
+						</tr>
+					}
+				</table>
 			</div>
 			<div id="profile-comments">
 				<p id="profile-comments-header">My Comments</p><hr>
+				<table border="1">
+					@for(c <- comments) {
+						<tr>
+							<td>@c.body</td>
+					}
+				</table>
 			</div>
 		</div>
 	</body>
