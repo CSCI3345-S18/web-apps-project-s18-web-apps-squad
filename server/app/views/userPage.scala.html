@@ -38,14 +38,9 @@
 				<h3>@username</h3>
 				<p>Karma: 132</p>
 				<div id="buttons">
-					<button id="messages">Messages</button>
-					<form id="logout" action="@routes.UserController.logout" method="GET">
+					<form id="addBoard" action="@routes.UserController.messagesPage" method="GET">
 						@helper.CSRF.formField
-						<input id="logoutbtn" type="submit" value="Logout">
-					</form>
-					<form id="addBoard" action="@routes.BoardController.addBoardPage" method="GET">
-						@helper.CSRF.formField
-						<input id="addboardbtn" type="submit" value="Create new Board">
+						<input id="addboardbtn" type="submit" value="Send a Message">
 					</form>
 				</div>
 			</div>

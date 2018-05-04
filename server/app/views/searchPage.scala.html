@@ -1,11 +1,11 @@
 @* homePage Template File *@
-@(boards: Seq[Board], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader, flash: Flash)
+@(boards: Seq[Board], searchedBoards: Seq[Board], searchedPosts: Seq[Post], searchedUsers: Seq[User])(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>funny informative forums: the last page of the internet</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/homePage.css")">
+		<title>Search Page</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/searchPage.css")">
 	</head>
 	<body>
         <div class="leftnav">
@@ -23,10 +23,6 @@
         </div>
         <div class="topnav">
         	<nav>
-        		@helper.form(action = helper.CSRF(routes.SearchController.searchPage)) {
-        			@helper.inputText(searchForm("query"))
-        			<input type="submit" value="Search">
-        		}
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
         		<li><p>Search bar</p></li>
@@ -36,20 +32,36 @@
         		</ul>
         	</nav>
         </div>
-        <div class="rightnav">
-			<p>Looking to start a new community?</p>
-			<form action="@routes.BoardController.addBoardPage">
-				<button id="create-btn" type="submit" value="Create Board">CREATE</button>
-			</form>
-        </div>
         <div class="main">
-			<div id="home-posts">
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<button id="load-more">View more</button>
+			<div id="seached-boards">
+				<table border="1">
+					<th>Communities</th>
+					@for(b <- searchedBoards) {
+						<tr>
+							<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></th>
+						</tr>
+					}
+				</table>
+			</div>
+			<div id="searched-posts">
+				<table border="1">
+					<th>Posts</th>
+					@for(p <- searchedPosts) {
+						<tr>
+							<td><a href="@routes.PostController.postPage(p.title)">@p.title</a></td>
+						</tr>
+					}
+				</table>
+			</div>
+			<div id="searched-posts">
+				<table border="1">
+					<th>Posts</th>
+					@for(u <- searchedUsers) {
+						<tr>
+							<td><a href="@routes.UserController.userPage(u.username)">@u.username</a></td>
+						</tr>
+					}
+				</table>
 			</div>
 		</div>
 	</body>

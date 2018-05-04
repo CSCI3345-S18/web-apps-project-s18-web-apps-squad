@@ -33,15 +33,18 @@ class UserController @Inject() (
   val loginForm = Form(mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
+      
+    val searchForm = Form(mapping(
+      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
   
   def homePage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Ok(views.html.homePage(boards)))
+      boardsFuture.map(boards => Ok(views.html.homePage(boards, searchForm)))
     }.getOrElse {
       Unauthorized("Oops, you are not connected")
       val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Ok(views.html.homePage(boards)))
+      boardsFuture.map(boards => Ok(views.html.homePage(boards, searchForm)))
     }
   }
   
