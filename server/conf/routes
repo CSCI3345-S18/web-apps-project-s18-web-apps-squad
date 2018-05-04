@@ -12,7 +12,7 @@ GET		/home						controllers.UserController.homePage
 
 GET		/user						controllers.UserController.userPage(username: String)
 
-GET		/post						controllers.BoardController.postPage
+GET		/post						controllers.PostController.postPage(title: String)
 
 GET		/account					controllers.UserController.profilePage
 

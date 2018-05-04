@@ -93,4 +93,15 @@ class PostController @Inject() (
       Redirect(routes.UserController.loginPage)
     }
   }
+  
+  // Shows the original post inputs and loads its comments
+  def postPage(title: String) = Action.async { implicit request =>
+    val postFutOpt = PostModel.getPostFromTitle(title, db)
+    postFutOpt.map {
+      case Some(ogPost) =>
+        Ok(views.html.postPage(ogPost.title, ogPost.body, ogPost.link))
+      case None =>
+        Redirect(routes.UserController.homePage)
+    }
+  }
 }

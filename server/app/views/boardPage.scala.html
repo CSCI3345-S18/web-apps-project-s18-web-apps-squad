@@ -37,15 +37,21 @@
 				<h3>Welcome to @title</h3>
 				<h3>@desc</h3>
 			</div>
-			<div id="board-create-post">
-			
-			</div>
 			<div id="board-posts">
-			@for(p <- posts) {
-				<tr>
-					<td>@p.title</td>
-				</tr>
-			}
+				<tr><th>Recent posts</th></tr>
+				@for(p <- posts) {
+					<table border="1">
+						<tr>
+							<th><a href="@routes.PostController.postPage(p.title)">@p.title</a></th>
+						</tr>
+						<tr>
+							<td>@p.body</td>
+						</tr>
+						<tr>
+							<td>@p.link</td>
+						</tr>
+					</table>
+				}
 			</div>
 		</div>
 	</body>

@@ -52,6 +52,7 @@ object UserModel {
       users.filter(_.username === lu.username).filter(_.password === lu.password).exists.result
     }
   }
+  
   def searchUsersByUsername(username: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[User]] = {
     db.run {
       users.filter(_.username like username+"%").result

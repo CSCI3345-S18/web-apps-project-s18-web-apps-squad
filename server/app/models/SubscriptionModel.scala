@@ -18,7 +18,6 @@ import scala.concurrent.Future
 import controllers.NewSubscription
 
 
-
 object SubscriptionModel {
   import Tables._
 

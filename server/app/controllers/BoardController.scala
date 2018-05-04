@@ -55,10 +55,6 @@ class BoardController @Inject() (
         })
   }
 
-  def postPage() = Action { implicit request =>
-    Ok("")//Ok(views.html.postPage())
-  }
-
   //Gets the board in question as well as loads the posts from the board
   def boardPage(title: String, desc: String) = Action.async { implicit request =>
     val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
@@ -80,20 +76,5 @@ class BoardController @Inject() (
       boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
     }
   }
-  
-  /*def getPosts(boardID: Int) = Action.async { implicit request =>
-    val postsFutSeq = PostModel.getPostsFromBoard(boardID, db)
-    val boardFutOpt = BoardModel.getBoardByID(boardID, db)
-    for {
-      posts <- postsFutSeq
-      board <- boardFutOpt
-    } yield {
-      for {
-        b <- board
-      } yield {
-        Ok(views.html.boardPage(posts, b.title, b.description))
-      }
-    }
-  }*/
 
 }

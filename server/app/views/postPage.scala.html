@@ -1,27 +1,48 @@
 @* postPage Template File *@
-@(boardTitle: String, boards: Seq[String], postTitle: String, postText: String, poster: String, comments: Seq[(String, String)])(implicit request: RequestHeader)
+@(title: String, body: String, link: String)(implicit request: RequestHeader)
 
-@baseView(postTitle, boards){
-	<div id="post">
-		<button>
-			<div id="postTitle">
-				@postTitle 
-			</div></br>
-			<div id="postText">
-				@postText
-			</div></br>
-			<div class="poster">	
-				@poster
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>@title</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/postPage.css")">
+	</head>
+	<body>
+        <div class="leftnav">
+        	<a href="@routes.UserController.homePage()">Home</a>
+        	<a href="@routes.BoardController.allBoards">Popular</a>
+        	<a href="#">New</a>
+        	<a href="@routes.UserController.loginPage()">Account</a>
+        	<h5>Filter bar</h5>
+        	<p id="sub-header">Subscriptions</p>
+        </div>
+        <div class="topnav">
+        	<nav>
+        		<ul>
+        		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
+        		<li><p>Search bar</p></li>
+        		<li><a href="#">Messages</a></li>
+        		<li><a href="#">Create</a></li>
+        		<li><a href="@routes.UserController.profilePage">Profile</a></li>
+        		</ul>
+        	</nav>
+        </div>
+        <div class="rightnav">
+			<p>Have something to say?</p>
+			<button id="create-btn"><a href="@routes.PostController.addPostPage(title)">Add Post</a></button>
+        </div>
+        
+        <div class="main">
+			<div id="post-hero">
+				<h3>@title</h3>
+				<h3>@body</h3>
+				<h3>@link</h3>
 			</div>
-		</button>
-	</div>
-		
-    <div class="comments">
-        @for(comment <- comments){
-        	<button>
-        		<div class="commentText">@comment._1</div><br/>
-        		<div class="commenter">by @comment._2</div>
-        	</button>
-    	}
-	</div>
-}
+			<div id="post-comments">
+				<p>Comment</p>
+				<p>Comment</p>
+				<p>Comment</p>
+			</div>
+		</div>
+	</body>
+</html>

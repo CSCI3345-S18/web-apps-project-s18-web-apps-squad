@@ -27,9 +27,15 @@ object PostModel {
     }
   }
 
-  def getPostFromPostID(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Post]] = {
+  def getPostFromID(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Post]] = {
     db.run{
       posts.filter(_.id === postID).result.headOption
+    }
+  }
+  
+  def getPostFromTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Post]] = {
+    db.run {
+      posts.filter(_.title === title).result.headOption
     }
   }
 
