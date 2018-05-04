@@ -34,12 +34,14 @@ CREATE INDEX idx_poster_id on Posts (poster_id);
 CREATE TABLE Comments(
     id int NOT NULL AUTO_INCREMENT,
     body VARCHAR(1000) NOT NULL,
+    user_id int NOT NULL,
     post_parent_id int NOT NULL,
     comment_parent_id int,
     flag CHAR(1),
     total_upvotes int NOT NULL,
     total_downvotes int NOT NULL,
     PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES Users (id),
     FOREIGN KEY (post_parent_id) REFERENCES Posts (id),
     FOREIGN KEY (comment_parent_id) REFERENCES Comments (id)
 );
