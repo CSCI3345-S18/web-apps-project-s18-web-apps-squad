@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@(boards: Seq[Board], newBoardForm: Form[NewBoard])(implicit request: MessagesRequestHeader, flash: Flash)
+@(boards: Seq[Board], newBoardForm: Form[NewBoard], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader, flash: Flash)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +24,10 @@
         </div>
         <div class="topnav">
         	<nav>
+        		@helper.form(action = helper.CSRF(routes.SearchController.searchPage)) {
+        			@helper.inputText(searchForm("query"))
+        			<input type="submit" value="Search">
+        		}
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
         		<li><p>Search bar</p></li>
