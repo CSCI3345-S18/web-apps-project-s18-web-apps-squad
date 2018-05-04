@@ -50,7 +50,7 @@ class BoardController @Inject() (
           val addFuture = BoardModel.addBoard(newBoard, db)
           addFuture.map { cnt =>
               if(cnt == 1) Redirect(routes.BoardController.boardPage(newBoard.title, newBoard.description))
-              else Redirect(routes.BoardController.allBoards).flashing("error" -> "Failed to add user.")
+              else Redirect(routes.BoardController.allBoards).flashing("error" -> "Failed to add board.")
           }
         })
   }

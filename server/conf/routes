@@ -39,6 +39,8 @@ POST	/addPost					controllers.PostController.addPost(title: String)
 
 GET		/addPostPage				controllers.PostController.addPostPage(title: String)
 
+GET		/messages					controllers.UserController.messagesPage
+
 #Post pages
 
 # GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)
