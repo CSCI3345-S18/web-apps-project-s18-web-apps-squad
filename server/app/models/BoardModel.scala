@@ -53,9 +53,5 @@ object BoardModel {
       boards.filter(_.title === title).result.headOption
     }
   }
-  
-  def getTitle(b: Board, db: Database)(implicit ec: ExecutionContext): String = {
-    return b.title
-  }
 
 }
