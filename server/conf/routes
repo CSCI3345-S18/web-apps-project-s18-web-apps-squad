@@ -43,6 +43,8 @@ GET		/messages					controllers.UserController.messagesPage
 
 GET		/search						controllers.SearchController.searchPage
 
+GET		/addSubscription			controllers.SubscriptionController.addSubscription(title: String)
+
 #Post pages
 
 # GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

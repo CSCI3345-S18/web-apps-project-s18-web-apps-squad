@@ -19,6 +19,7 @@ import models.BoardModel
 import models.Board
 import models.Post
 import models.CommentModel
+import models.SubscriptionModel
 
 case class NewSubscription(
   userID: Int,
@@ -31,5 +32,27 @@ class SubscriptionController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
+  
+  def addSubscription(title: String) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val boardToSubscribeTo = BoardModel.getBoardByTitle(title, db)
+      loggedinUser.flatMap {
+        case Some(user) =>
+          boardToSubscribeTo.flatMap {
+            case Some(board) =>
+              SubscriptionModel.addSubscription(user.id, board.id, board.title, db)
+              Future.successful(Redirect(routes.BoardController.boardPage(board.title, board.description)))
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.homePage))
+      }
+    }.getOrElse {
+      val boardsFuture = BoardModel.allBoards(db)
+      boardsFuture.map(boards => Redirect(routes.UserController.homePage))
+    }
+  }
 
 }
