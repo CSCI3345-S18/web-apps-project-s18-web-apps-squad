@@ -26,15 +26,15 @@ object SubscriptionModel {
       subscriptions.filter(_.boardID === boardID).result
     }
   }
-  def getSubscriptionFromUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Subscription]] = {
+  def getSubscriptionsFromUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Subscription]] = {
     db.run {
       subscriptions.filter(_.userID === userID).result
     }
   }
-  def addComment(s: NewSubscription, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addSubscription(userID: Int, boardID: Int, title: String, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       //0 for id
-      subscriptions += Subscription(0, s.userID, s.boardID, s.title)
+      subscriptions += Subscription(0, userID, boardID, title)
     }
   }
 }
