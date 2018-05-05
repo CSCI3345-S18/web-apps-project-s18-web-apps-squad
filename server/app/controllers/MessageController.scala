@@ -31,4 +31,47 @@ class MessageController @Inject() (
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
+    val searchForm = Form(mapping(
+      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))  
+  
+    def messagesPage() = Action.async { implicit request =>
+      request.session.get("connected").map { user =>
+        val loggedinUser = UserModel.getUserFromUsername(user, db)
+        loggedinUser.flatMap {
+          case Some(actualUser) => {
+            val boardsFuture = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+            boardsFuture.flatMap{boards =>
+              val friendshipsFuture = UserModel.getFriendsipsOfUser(actualUser.id, db)
+              friendshipsFuture.flatMap{friends =>
+                val friendIDs = friends.map{ friend =>
+                  if(friend.userOneID != actualUser.id)
+                    friend.userOneID
+                  else
+                    friend.userTwoID
+                }
+                val friendUsernameFutures = Future.sequence(friendIDs.map{UserModel.getUserFromID(_, db)})
+              
+                for{
+                  maybeUsers <- friendUsernameFutures
+                } yield {
+                  val friendUsernames = maybeUsers.collect{case Some(friend) => friend.username}
+                  Ok(views.html.messagesPage(boards, searchForm, friendUsernames, friendIDs))
+                }
+              }
+            }
+          }
+          case None =>
+            val usersFuture = UserModel.allUsers(db)
+            usersFuture.map(users => Redirect(routes.UserController.loginPage))
+        }
+      }.getOrElse {
+        val boardsFuture = BoardModel.allBoards(db)
+        boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
+      }
+  }
+    
+  def messagingPage(friend: String) = Action.async { implicit request =>
+    val res = "you are messaging" + friend
+    Future(Ok(res))
+  }
 }

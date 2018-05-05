@@ -30,7 +30,7 @@
         		}
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
-        		<li><a href="@routes.UserController.messagesPage">Messages</a></li>
+        		<li><a href="@routes.MessageController.messagesPage">Messages</a></li>
         		<li><a href="#">Create</a></li>
         		<li><a href="@routes.UserController.profilePage">Profile</a></li>
         		</ul>
@@ -41,6 +41,7 @@
         <div class="main">
 			<div id="profile-messages">
 				@for(uname <- friendUsernames){
+					@*TODO make this link go to a messaging page*@
 					<p><a href="@routes.UserController.userPage(uname)">@uname</a></p>
 				}
 			</div>
