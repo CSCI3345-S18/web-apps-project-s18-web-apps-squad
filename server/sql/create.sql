@@ -1,3 +1,7 @@
+CREATE TABLE Banned_Users(
+	id INT NOT NULL PRIMARY KEY,
+	username varchar(30)
+);
 
 CREATE TABLE Boards(
     id int NOT NULL AUTO_INCREMENT,
