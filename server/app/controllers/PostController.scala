@@ -52,51 +52,65 @@ class PostController @Inject() (
       
   val commentForm = Form(mapping(
       "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
-
+      
   def addPost(boardTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
-      val boardFutOpt = BoardModel.getBoardByTitle(boardTitle, db)
-      val posterFutOpt = UserModel.getUserFromUsername(user, db)
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
       newPostForm.bindFromRequest().fold(
           formWithErrors => {
-            boardFutOpt map { boardOption =>
-              boardOption map { board =>
-                BadRequest(views.html.addPostPage(boardTitle, formWithErrors, searchForm))
-              } getOrElse {
-                BadRequest(views.html.addPostPage("Bad board", formWithErrors, searchForm))
-              }
+            loggedinUser.flatMap {
+              case Some(actualUser) =>
+                val subbedBoards = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+                subbedBoards.map(subs => BadRequest(views.html.addPostPage(subs, boardTitle, formWithErrors, searchForm)))
+              case None =>
+                Future.successful(Redirect(routes.UserController.loginPage))
             }
           },
           newPost => {
-            boardFutOpt flatMap {
-              case Some(board) => {
-                posterFutOpt flatMap {
-                  case Some(poster) => {
-                    val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
-                    addFuture flatMap { cnt =>
-                      if(cnt == 1) Future(Redirect(routes.BoardController.boardPage(boardTitle))) // posted
-                      else Future(Ok("Post not added"))
+            val addedPost = PostModel.getPostFromTitle(boardTitle, db)
+            val boardBeingAddedTo = BoardModel.getBoardByTitle(boardTitle, db)
+            loggedinUser.flatMap {
+              case Some(actualUser) =>
+                boardBeingAddedTo.flatMap {
+                  case Some(board) =>
+                    addedPost.flatMap {
+                      case Some(post) =>
+                        val addFuture = PostModel.addPost(board.id, actualUser.id, newPost, db)
+                        addFuture.flatMap { cnt =>
+                          if(cnt == 1) Future(Redirect(routes.BoardController.boardPage(boardTitle)))
+                          else Future(Ok("Post not added"))
+                        }
+                      case None =>
+                        Future(Ok("Please add an actual post"))
                     }
-                  }
-                  //No poster
-                  case None => Future(Ok("Post not added because no poster"))
+                  case None =>
+                    Future(Ok("Please add to an actual board"))
                 }
-              }
-              //No Board
-              case None => Future(Ok("Post not added because no board"))  
+              case None =>
+                Future.successful(Redirect(routes.UserController.loginPage))
             }
           })
     }.getOrElse {
-      val boards = BoardModel.allBoards(db)
-      boards.map(boards => Redirect(routes.UserController.loginPage))
+      Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
   
-  def addPostPage(boardTitle: String) = Action { implicit request =>
+  def addPostPage(boardTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
-      Ok(views.html.addPostPage(boardTitle, newPostForm, searchForm))
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          val subbedBoardsSeq = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          for {
+            subs <- subbedBoardsSeq
+          } yield {
+            Ok(views.html.addPostPage(subs, boardTitle, newPostForm, searchForm))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
     }.getOrElse {
-      Redirect(routes.UserController.loginPage)
+      Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
   
