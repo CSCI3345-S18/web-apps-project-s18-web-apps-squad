@@ -56,7 +56,7 @@ case class Subscription(
 )
 case class Friendship(
   id: Int,
-  userOneID: Int,  
+  userOneID: Int,
   userTwoID: Int
 )
 
@@ -138,8 +138,8 @@ object Tables extends {
   val posts = TableQuery[Posts]
   class Friends(tag: Tag) extends Table[Friendship](tag, "Friendship"){
     def id = column[Int]("id")
-    def userOneID = column[Int]("userOneID")
-    def userTwoID = column[Int]("userTwoID")
+    def userOneID = column[Int]("user_one_id")
+    def userTwoID = column[Int]("user_two_id")
     def * = (id, userOneID, userTwoID) <> (Friendship.tupled, Friendship.unapply)
   }
   val friends = TableQuery[Friends]
