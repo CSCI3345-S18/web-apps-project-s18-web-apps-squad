@@ -31,23 +31,29 @@ object BoardModel {
       boards += Board(0, b.title, b.description)
     }
   }
-
+  def getTopBoardsForUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
+    db.run {
+      val b = subscriptions.filter(_.userID === userID).join(boards).on(_.boardID === _.id).map( b => b._2)
+      b.join(subscriptions).groupBy(_._1).map { case (bor, subs) =>
+        (bor, subs.map(_._2).length)} sortBy(_._2) take(5) map(_._1) result
+    }
+  }
   def getDefaultSubscription(): Seq[String] = {
     return Seq("todo")
   }
-  
+
   def searchBoardsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
     db.run {
       boards.filter(_.title like title+"%").result
     }
   }
-  
+
   def getBoardByID(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
     db.run {
       boards.filter(_.id === boardID).result.headOption
     }
   }
-  
+
   def getBoardByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
     db.run {
       boards.filter(_.title === title).result.headOption
