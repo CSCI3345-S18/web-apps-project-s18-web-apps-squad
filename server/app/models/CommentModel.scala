@@ -32,10 +32,10 @@ object CommentModel {
       comments.filter(_.userID === userID).result
     }
   }
-  def addComment(c: NewComment, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addComment(body: String, userID: Int, postParentID: Int, commentParentID: Int, flag: Char, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       //0 for id upvotes and downvotes
-      comments += Comment(0, c.body, c.userID, c.postParentID, c.commentParentID,  c.flag, 0, 0)
+      comments += Comment(0, body, userID, postParentID, commentParentID,  flag, 0, 0)
     }
   }
 }
