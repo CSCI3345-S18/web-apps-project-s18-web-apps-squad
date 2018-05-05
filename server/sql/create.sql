@@ -43,14 +43,14 @@ CREATE TABLE Comments(
     body VARCHAR(1000) NOT NULL,
     user_id int NOT NULL,
     post_parent_id int NOT NULL,
-    comment_parent_id int,
+    /*comment_parent_id int,*/
     flag CHAR(1),
     total_upvotes int NOT NULL,
     total_downvotes int NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES Users (id),
     FOREIGN KEY (post_parent_id) REFERENCES Posts (id),
-    FOREIGN KEY (comment_parent_id) REFERENCES Comments (id)
+    /*FOREIGN KEY (comment_parent_id) REFERENCES Comments (id)*/
 );
 CREATE INDEX idx_post_parent_id ON Comments (post_parent_id);
 CREATE INDEX idx_comment_parent_id ON Comments (comment_parent_id);
@@ -110,3 +110,4 @@ CREATE TABLE Vote_Comments(
   FOREIGN KEY (comment_id) REFERENCES Comments(id),
   FOREIGN KEY (user_id) REFERENCES Users(id)
 );
+ P

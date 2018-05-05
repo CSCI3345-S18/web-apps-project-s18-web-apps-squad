@@ -1,5 +1,5 @@
 @* postPage Template File *@
-@(title: String, body: String, link: String, searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
+@(subbedBoards: Seq[Subscription], comments: Seq[Comment], title: String, body: String, link: String, searchForm: Form[SearchQuery], commentForm: Form[NewComment])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,10 +30,6 @@
         		</ul>
         	</nav>
         </div>
-        <div class="rightnav">
-			<p>Have something to say?</p>
-			<button id="create-btn"><a href="@routes.PostController.addPostPage(title)">Add Post</a></button>
-        </div>
         
         <div class="main">
 			<div id="post-hero">
@@ -45,6 +41,12 @@
 				<p>Comment</p>
 				<p>Comment</p>
 				<p>Comment</p>
+			</div>
+			<div id="post-comment-form">
+				@helper.form(action = helper.CSRF(routes.CommentController.addComment(title))) {
+					@helper.inputText(commentForm("body"))
+					<input id="comment" type="submit" value="Comment">
+				}
 			</div>
 		</div>
 	</body>

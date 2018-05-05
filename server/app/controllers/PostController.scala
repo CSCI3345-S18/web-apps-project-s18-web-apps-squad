@@ -49,6 +49,9 @@ class PostController @Inject() (
 
   val searchForm = Form(mapping(
       "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+      
+  val commentForm = Form(mapping(
+      "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
 
   def addPost(boardTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
@@ -99,12 +102,53 @@ class PostController @Inject() (
   
   // Shows the original post inputs and loads its comments
   def postPage(title: String) = Action.async { implicit request =>
-    val postFutOpt = PostModel.getPostFromTitle(title, db)
-    postFutOpt.map {
-      case Some(ogPost) =>
-        Ok(views.html.postPage(ogPost.title, ogPost.body, ogPost.link, searchForm))
-      case None =>
-        Redirect(routes.UserController.homePage)
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          val postFutOpt = PostModel.getPostFromTitle(title, db)
+          postFutOpt.flatMap {
+            case Some(post) =>
+              val commentsFutSeq = CommentModel.getCommentsFromPost(post.id, db)
+              val subsOfUser = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+              for {
+                comments <- commentsFutSeq
+                subs <- subsOfUser
+              } yield {
+                Ok(views.html.postPage(subs, comments, post.title, post.body, post.link, searchForm, commentForm))
+              }
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
+          }
+        case None =>
+          val postFutOpt = PostModel.getPostFromTitle(title, db)
+          postFutOpt.flatMap {
+            case Some(post) =>
+              val commentsFutSeq = CommentModel.getCommentsFromPost(post.id, db)
+              val emptySubs: Seq[Subscription] = Seq()
+              for {
+                comments <- commentsFutSeq
+              } yield {
+                Ok(views.html.postPage(emptySubs, comments, post.title, post.body, post.link, searchForm, commentForm))
+              }
+            case None =>
+              Future.successful(Redirect(routes.BoardController.allBoards))
+          }
+      }
+    }.getOrElse {
+      val postFutOpt = PostModel.getPostFromTitle(title, db)
+      postFutOpt.flatMap {
+        case Some(post) =>
+          val commentsFutSeq = CommentModel.getCommentsFromPost(post.id, db)
+          val emptySubs: Seq[Subscription] = Seq()
+          for {
+            comments <- commentsFutSeq
+          } yield {
+            Ok(views.html.postPage(emptySubs, comments, post.title, post.body, post.link, searchForm, commentForm))
+          }
+        case None =>
+          Future.successful(Redirect(routes.BoardController.allBoards))
+      }
     }
   }
 }

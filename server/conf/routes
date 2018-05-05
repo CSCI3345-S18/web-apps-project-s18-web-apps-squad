@@ -37,6 +37,8 @@ GET		/addBoard					controllers.BoardController.addBoardPage
 
 POST	/addPost					controllers.PostController.addPost(title: String)
 
+POST	/addComment					controllers.CommentController.addComment(title: String)
+
 GET		/addPostPage				controllers.PostController.addPostPage(title: String)
 
 GET		/messages					controllers.UserController.messagesPage
