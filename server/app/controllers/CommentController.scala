@@ -65,7 +65,7 @@ class CommentController @Inject() (
                 val postFutOpt = PostModel.getPostFromTitle(title, db)
                 postFutOpt.flatMap {
                   case Some(post) =>
-                    val addFuture = CommentModel.addComment(newComment.body, actualUser.id, post.id, 'F', db)
+                    val addFuture = CommentModel.addComment(newComment.body, actualUser.id, actualUser.username, post.id, 'F', db)
                     val commentsFutSeq = CommentModel.getCommentsFromPost(post.id, db)
                     val subsOfUser = UserModel.getSubscriptionsOfUser(actualUser.id, db)
                     addFuture.map { cnt =>
