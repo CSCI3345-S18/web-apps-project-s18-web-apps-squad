@@ -15,6 +15,11 @@
         	<a href="@routes.UserController.profilePage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">My Subscriptions</p>
+        	@for(b <- subbedBoards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>
@@ -38,9 +43,13 @@
 				<h3>@link</h3>
 			</div>
 			<div id="post-comments">
-				<p>Comment</p>
-				<p>Comment</p>
-				<p>Comment</p>
+				@for(c <- comments) {
+					<table>
+						<tr>
+							<td>@c.body</td>
+						</tr>
+					</table>
+				}
 			</div>
 			<div id="post-comment-form">
 				@helper.form(action = helper.CSRF(routes.CommentController.addComment(title))) {

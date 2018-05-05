@@ -17,8 +17,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import controllers.NewComment
 
-
-
 object CommentModel {
   import Tables._
 

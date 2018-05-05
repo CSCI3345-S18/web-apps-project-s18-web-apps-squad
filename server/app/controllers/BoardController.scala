@@ -68,6 +68,35 @@ class BoardController @Inject() (
       boardsFuture.map(boards => Ok(views.html.popularBoardsPage(emptySubs, boards, searchForm)))
     }
   }
+  
+  def getPopularBoards = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          val subbedBoardsFut = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          val popularBoardsFut = BoardModel.getTopBoardsForUser(actualUser.id, db)
+          for {
+            subs <- subbedBoardsFut
+            boards <- popularBoardsFut
+          } yield {
+            Ok(views.html.popularBoardsPage(subs, boards, searchForm))
+          }
+        case None =>
+          val allBoardsFut = BoardModel.allBoards(db)
+          val emptySubs: Seq[Subscription] = Seq()
+          for {
+            boards <- allBoardsFut
+          } yield {
+            Ok(views.html.popularBoardsPage(emptySubs, boards, searchForm))
+          }
+      }
+    }.getOrElse {
+      val allBoardsFut = BoardModel.allBoards(db)
+      val emptySubs: Seq[Subscription] = Seq()
+      allBoardsFut.map(boards => Ok(views.html.popularBoardsPage(emptySubs, boards, searchForm)))
+    }
+  }
 
   def addBoard = Action.async { implicit request =>
     request.session.get("connected").map { user =>
