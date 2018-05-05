@@ -41,7 +41,9 @@ POST	/addComment					controllers.CommentController.addComment(title: String)
 
 GET		/addPostPage				controllers.PostController.addPostPage(title: String)
 
-GET		/messages					controllers.UserController.messagesPage
+GET		/messages					controllers.MessageController.messagesPage
+
+GET		/messaging					controllers.MessageController.messagingPage(friend: String)
 
 GET		/search						controllers.SearchController.searchPage
 

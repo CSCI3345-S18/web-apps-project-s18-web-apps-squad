@@ -29,7 +29,7 @@
         		}
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
-        		<li><a href="@routes.UserController.messagesPage">Messages</a></li>
+        		<li><a href="@routes.MessageController.messagesPage">Messages</a></li>
         		<li><a href="#">Create</a></li>
         		<li><a href="@routes.UserController.profilePage">Profile</a></li>
         		</ul>
@@ -42,9 +42,10 @@
 				<h3>@username</h3>
 				<p>Karma: 132</p>
 				<div id="buttons">
-					<form id="addBoard" action="@routes.UserController.messagesPage" method="GET">
+					<form id="sendMessage" action="@routes.MessageController.messagingPage(username)" method="GET">
 						@helper.CSRF.formField
 						<input id="addboardbtn" type="submit" value="Send a Message">
+						<input name="friend" type="hidden" value=@username>
 					</form>
 				</div>
 			</div>
