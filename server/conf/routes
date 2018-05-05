@@ -16,7 +16,7 @@ GET		/post						controllers.PostController.postPage(title: String)
 
 GET		/account					controllers.UserController.profilePage
 
-GET		/board						controllers.BoardController.boardPage(title: String, desc: String)
+GET		/board						controllers.BoardController.boardPage(title: String)
 
 GET		/loginPage					controllers.UserController.loginPage
 

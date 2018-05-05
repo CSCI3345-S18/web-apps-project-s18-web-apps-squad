@@ -71,7 +71,7 @@ class PostController @Inject() (
                   case Some(poster) => {
                     val addFuture = PostModel.addPost(board.id, poster.id, newPost, db)
                     addFuture flatMap { cnt =>
-                      if(cnt == 1) Future(Redirect(routes.BoardController.boardPage(boardTitle, board.description))) // posted
+                      if(cnt == 1) Future(Redirect(routes.BoardController.boardPage(boardTitle))) // posted
                       else Future(Ok("Post not added"))
                     }
                   }

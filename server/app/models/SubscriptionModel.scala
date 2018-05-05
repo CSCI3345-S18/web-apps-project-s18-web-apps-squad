@@ -37,4 +37,9 @@ object SubscriptionModel {
       subscriptions += Subscription(0, userID, boardID, title)
     }
   }
+  def checkIfSubscribed(userID: Int, boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+    db.run {
+      subscriptions.filter(_.boardID === boardID).filter(_.userID === userID).exists.result
+    }
+  }
 }

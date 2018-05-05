@@ -39,8 +39,10 @@ object UserModel {
     }
   }
   
-  def getSubsFromUser(username: String): Seq[Board] = {
-    return Seq()//TODO
+  def getSubscriptionsOfUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Subscription]] = {
+    db.run {
+      subscriptions.filter(_.userID === userID).result
+    }
   }
 
   def getUserFromID(id: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[User]] = {

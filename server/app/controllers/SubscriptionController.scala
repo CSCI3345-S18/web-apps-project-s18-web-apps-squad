@@ -41,8 +41,9 @@ class SubscriptionController @Inject() (
         case Some(user) =>
           boardToSubscribeTo.flatMap {
             case Some(board) =>
+              val checkSubscription = SubscriptionModel.checkIfSubscribed(user.id, board.id, db)
               SubscriptionModel.addSubscription(user.id, board.id, board.title, db)
-              Future.successful(Redirect(routes.BoardController.boardPage(board.title, board.description)))
+              Future.successful(Redirect(routes.BoardController.boardPage(board.title)))
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
           }
@@ -51,7 +52,7 @@ class SubscriptionController @Inject() (
       }
     }.getOrElse {
       val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Redirect(routes.UserController.homePage))
+      boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
     }
   }
 

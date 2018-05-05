@@ -1,5 +1,5 @@
 @* userPage Template File *@
-@(username: String, posts: Seq[Post], comments: Seq[Comment], searchForm: Form[SearchQuery])(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
+@(username: String, subbedBoards: Seq[Subscription], posts: Seq[Post], comments: Seq[Comment], searchForm: Form[SearchQuery])(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,15 +10,16 @@
 	<body>
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
-        	<a href="#">Popular</a>
-        	<a href="#">Top</a>
+        	<a href="@routes.BoardController.allBoards">Popular</a>
+        	<a href="#">New</a>
         	<a href="@routes.UserController.profilePage()">Account</a>
         	<h5>Filter bar</h5>
-        	<p id="sub-header">Subscriptions</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
-        	<p>Board</p>
+        	<p id="sub-header">My Subscriptions</p>
+        	@for(b <- subbedBoards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>

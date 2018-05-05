@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@(boards: Seq[Board], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
+@(boards: Seq[Subscription], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,10 +14,10 @@
         	<a href="#">New</a>
         	<a href="@routes.UserController.profilePage">Account</a>
         	<h5>Filter bar</h5>
-        	<p id="sub-header">Subscriptions</p>
+        	<p id="sub-header">My Subscriptions</p>
         	@for(b <- boards) {
         		<tr>
-        			<td><a href="@routes.BoardController.boardPage(b.title, b.description)">@b.title</a></td>
+        			<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
         		</tr>
         	}
         </div>
