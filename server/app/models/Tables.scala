@@ -26,7 +26,7 @@ case class Comment(
   body: String,
   userID: Int,
   postParentID: Int,
-  commentParentID: Int,
+  //commentParentID: Int,
   flag: Char,
   upvotes: Int,
   downvotes: Int
@@ -70,11 +70,11 @@ object Tables extends {
     def body = column[String]("body")
     def userID = column[Int]("user_id")
     def postParentID = column[Int]("post_parent_id")
-    def commentParentID = column[Int]("comment_parent_id")
+    //def commentParentID = column[Int]("comment_parent_id")
     def flag = column[Char]("flag")
     def upvotes = column[Int]("total_upvotes")
     def downvotes = column[Int]("total_downvotes")
-    def * = (id, body, userID, postParentID, commentParentID, flag, upvotes, downvotes) <> (Comment.tupled, Comment.unapply)
+    def * = (id, body, userID, postParentID, flag, upvotes, downvotes) <> (Comment.tupled, Comment.unapply)
   }
   val comments = TableQuery[Comments]
   class Messages(tag: Tag) extends Table[Message](tag, "Messages") {
