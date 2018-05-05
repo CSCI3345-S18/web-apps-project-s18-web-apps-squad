@@ -18,6 +18,7 @@ import models.UserModel
 import models.BoardModel
 import models.Board
 import models.Post
+import models.Subscription
 
 @Singleton
 class UserController @Inject() (
@@ -39,33 +40,54 @@ class UserController @Inject() (
   
   def homePage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
-      val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Ok(views.html.homePage(boards, searchForm)))
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(rawUser) =>
+          val subscribedBoards = UserModel.getSubscriptionsOfUser(rawUser.id, db)
+          subscribedBoards.map(boards => Ok(views.html.homePage(boards, searchForm)))
+        case None =>
+          val emptySubs: Seq[Subscription] = Seq()
+          Future.successful(Ok(views.html.homePage(emptySubs, searchForm)))
+      }
     }.getOrElse {
-      Unauthorized("Oops, you are not connected")
-      val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Ok(views.html.homePage(boards, searchForm)))
+      val emptySubs: Seq[Subscription] = Seq()
+      Future.successful(Ok(views.html.homePage(emptySubs, searchForm)))
     }
   }
   
   def allUsers = Action.async { implicit request =>
-    val usersFuture = UserModel.allUsers(db)
-    val boardsFuture = BoardModel.allBoards(db)
-    for { 
-      boards <- boardsFuture
-      users <- usersFuture
-    } yield (Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(rawUser) =>
+          val subscribedBoards = UserModel.getSubscriptionsOfUser(rawUser.id, db)
+          val usersFuture = UserModel.allUsers(db)
+          for {
+            boards <- subscribedBoards
+            users <- usersFuture
+          } yield {
+            Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm))
+          }
+        case None =>
+          val emptySubs: Seq[Subscription] = Seq()
+          val usersFuture = UserModel.allUsers(db)
+          usersFuture.map(users => Ok(views.html.loginPage(emptySubs, users, loginForm, newUserForm, searchForm)))
+      }
+    }.getOrElse {
+      val emptySubs: Seq[Subscription] = Seq()
+      val usersFuture = UserModel.allUsers(db)
+      usersFuture.map(users => Ok(views.html.loginPage(emptySubs, users, loginForm, newUserForm, searchForm)))
+    }
   }
   
   def addUser = Action.async { implicit request =>
     newUserForm.bindFromRequest().fold(
         formWithErrors => {
           val usersFuture = UserModel.allUsers(db)
-          val boardsFuture = BoardModel.allBoards(db)
+          val subscribedBoards: Seq[Subscription] = Seq()
           for {
             users <- usersFuture
-            boards <- boardsFuture
-          } yield (BadRequest(views.html.loginPage(boards, users, loginForm, formWithErrors, searchForm)))
+          } yield (BadRequest(views.html.loginPage(subscribedBoards, users, loginForm, formWithErrors, searchForm)))
         },
         newUser => {
           val checkUsername = UserModel.checkIfUsernameExists(newUser.username, db)
@@ -83,11 +105,10 @@ class UserController @Inject() (
     loginForm.bindFromRequest().fold(
         formWithErrors => {
           val usersFuture = UserModel.allUsers(db)
-          val boardsFuture = BoardModel.allBoards(db)
+          val subscribedBoards: Seq[Subscription] = Seq()
           for {
             users <- usersFuture
-            boards <- boardsFuture
-          } yield (BadRequest(views.html.loginPage(boards, users, formWithErrors, newUserForm, searchForm)))
+          } yield (BadRequest(views.html.loginPage(subscribedBoards, users, formWithErrors, newUserForm, searchForm)))
         },
         loginUser => {
           val loginFuture = UserModel.verifyUser(loginUser, db)
@@ -104,23 +125,58 @@ class UserController @Inject() (
   
   def userPage(username: String) = Action.async { implicit request =>
     request.session.get("connected"). map { user =>
-      val userContents = UserModel.getUserFromUsername(username, db)
-      userContents.flatMap {
-        case Some(user) =>
-          val postsSeqOpt = UserModel.getPostsOfUser(user.id, db)
-          val commentsSeqOpt = UserModel.getCommentsOfUser(user.id, db)
-          for {
-            posts <- postsSeqOpt
-            comments <- commentsSeqOpt
-          } yield {
-            Ok(views.html.userPage(user.username, posts, comments, searchForm))
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          val loggedSubs = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          val userContents = UserModel.getUserFromUsername(username, db)
+          userContents.flatMap {
+            case Some(viewedUser) =>
+              val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
+              val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
+              for {
+                subs <- loggedSubs
+                posts <- postsSeqOpt 
+                comments <- commentsSeqOpt
+              } yield {
+                Ok(views.html.userPage(viewedUser.username, subs, posts, comments, searchForm))
+              }
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
           }
         case None =>
-          Future.successful(Redirect(routes.UserController.homePage))
+          val userContents = UserModel.getUserFromUsername(username, db)
+          userContents.flatMap {
+            case Some(viewedUser) =>
+              val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
+              val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
+              val emptySubs: Seq[Subscription] = Seq()
+              for {
+                posts <- postsSeqOpt
+                comments <- commentsSeqOpt
+              } yield {
+                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, searchForm))
+              }
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
+          }
       }
-    }.getOrElse {
-      val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Redirect(routes.UserController.homePage))
+      }.getOrElse {
+          val userContents = UserModel.getUserFromUsername(username, db)
+          userContents.flatMap {
+            case Some(viewedUser) =>
+              val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
+              val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
+              val emptySubs: Seq[Subscription] = Seq()
+              for {
+                posts <- postsSeqOpt
+                comments <- commentsSeqOpt
+              } yield {
+                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, searchForm))
+              }
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
+          }
     }
   }
   
@@ -131,7 +187,7 @@ class UserController @Inject() (
         case Some(actualUser) =>
           val postsSeqOpt = UserModel.getPostsOfUser(actualUser.id, db)
           val commentsSeqOpt = UserModel.getCommentsOfUser(actualUser.id, db)
-          val subBoardsSeqOpt = BoardModel.allBoards(db)
+          val subBoardsSeqOpt = UserModel.getSubscriptionsOfUser(actualUser.id, db)
           for {
             posts <- postsSeqOpt
             comments <- commentsSeqOpt
@@ -149,18 +205,36 @@ class UserController @Inject() (
   }
   
   def loginPage() = Action.async { implicit request =>
-    val usersFuture = UserModel.allUsers(db)
-    val boardsFuture = BoardModel.allBoards(db)
-    for {
-      users <- usersFuture
-      boards <- boardsFuture
-    } yield(Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          Future.successful(Redirect(routes.UserController.profilePage))
+        case None =>
+          val usersFuture = UserModel.allUsers(db)
+          val boards: Seq[Subscription] = Seq()
+          usersFuture.map(users => Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
+      }
+    }.getOrElse {
+      val usersFuture = UserModel.allUsers(db)
+      val boards: Seq[Subscription] = Seq()
+      for {
+        users <- usersFuture
+      } yield(Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
+    }
   }
   
   def messagesPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
-      val boardsFuture = BoardModel.allBoards(db)
-      boardsFuture.map(boards => Ok(views.html.messagesPage(boards, searchForm)))
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          val boardsFuture = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          boardsFuture.map(boards => Ok(views.html.messagesPage(boards, searchForm)))
+        case None =>
+          val usersFuture = UserModel.allUsers(db)
+          usersFuture.map(users => Redirect(routes.UserController.loginPage))
+      }
     }.getOrElse {
       val boardsFuture = BoardModel.allBoards(db)
       boardsFuture.map(boards => Redirect(routes.UserController.loginPage))

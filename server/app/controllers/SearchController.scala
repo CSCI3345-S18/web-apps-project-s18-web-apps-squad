@@ -19,6 +19,7 @@ import models.BoardModel
 import models.PostModel
 import models.Board
 import models.Post
+import models.Subscription
 
 //case class NewUser(email: String, username: String, password: String)
 //case class Login(username: String, password: String)
@@ -34,25 +35,62 @@ class SearchController @Inject() (
       "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
   
   def searchPage = Action.async { implicit request =>
-    searchForm.bindFromRequest().fold(
+    request.session.get("connected").map { user =>
+      searchForm.bindFromRequest().fold(
         formWithErrors => {
           val boardsFuture = BoardModel.allBoards(db)
           boardsFuture.map(boards => Redirect(routes.UserController.homePage))
         },
         searchQuery => {
-          val sideBoardsFuture = BoardModel.allBoards(db)
+          val loggedinUser = UserModel.getUserFromUsername(user, db)
+          loggedinUser.flatMap {
+            case Some(actualUser) =>
+              val subbedBoardsFuture = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+              val searchedBoardsFuture = BoardModel.searchBoardsByTitle(searchQuery.query, db)
+              val searchedPostsFuture = PostModel.searchPostsByTitle(searchQuery.query, db)
+              val searchedUsersFuture = UserModel.searchUsersByUsername(searchQuery.query, db)
+              for {
+                subs <- subbedBoardsFuture
+                searchedBoards <- searchedBoardsFuture
+                searchedPosts <- searchedPostsFuture
+                searchedUsers <- searchedUsersFuture
+              } yield {
+                Ok(views.html.searchPage(subs, searchedBoards, searchedPosts, searchedUsers, searchForm))
+              }
+            case None =>
+              val emptySubs: Seq[Subscription] = Seq()
+              val searchedBoardsFuture = BoardModel.searchBoardsByTitle(searchQuery.query, db)
+              val searchedPostsFuture = PostModel.searchPostsByTitle(searchQuery.query, db)
+              val searchedUsersFuture = UserModel.searchUsersByUsername(searchQuery.query, db)
+              for {
+                searchedBoards <- searchedBoardsFuture
+                searchedPosts <- searchedPostsFuture
+                searchedUsers <- searchedUsersFuture
+              } yield {
+                Ok(views.html.searchPage(emptySubs, searchedBoards, searchedPosts, searchedUsers, searchForm))
+              }
+          }
+        }) 
+      }.getOrElse {
+        searchForm.bindFromRequest().fold(
+        formWithErrors => {
+          val boardsFuture = BoardModel.allBoards(db)
+          boardsFuture.map(boards => Redirect(routes.UserController.homePage))
+        },
+        searchQuery => {
+          val emptySubs: Seq[Subscription] = Seq()
           val searchedBoardsFuture = BoardModel.searchBoardsByTitle(searchQuery.query, db)
           val searchedPostsFuture = PostModel.searchPostsByTitle(searchQuery.query, db)
           val searchedUsersFuture = UserModel.searchUsersByUsername(searchQuery.query, db)
           for {
-            sideBoards <- sideBoardsFuture
             searchedBoards <- searchedBoardsFuture
             searchedPosts <- searchedPostsFuture
             searchedUsers <- searchedUsersFuture
           } yield {
-            Ok(views.html.searchPage(sideBoards, searchedBoards, searchedPosts, searchedUsers, searchForm))
+            Ok(views.html.searchPage(emptySubs, searchedBoards, searchedPosts, searchedUsers, searchForm))
           }
-        })
+      })
+    }
   }
 
 }
