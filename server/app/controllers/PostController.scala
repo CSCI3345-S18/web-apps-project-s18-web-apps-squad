@@ -73,15 +73,10 @@ class PostController @Inject() (
               case Some(actualUser) =>
                 boardBeingAddedTo.flatMap {
                   case Some(board) =>
-                    addedPost.flatMap {
-                      case Some(post) =>
-                        val addFuture = PostModel.addPost(board.id, actualUser.id, newPost, db)
-                        addFuture.flatMap { cnt =>
-                          if(cnt == 1) Future(Redirect(routes.BoardController.boardPage(boardTitle)))
-                          else Future(Ok("Post not added"))
-                        }
-                      case None =>
-                        Future(Ok("Please add an actual post"))
+                    val addFuture = PostModel.addPost(board.id, actualUser.id, newPost, db)
+                    addFuture.map { cnt =>
+                      if(cnt == 1) Redirect(routes.BoardController.boardPage(boardTitle))
+                      else Redirect(routes.BoardController.boardPage(boardTitle))
                     }
                   case None =>
                     Future(Ok("Please add to an actual board"))
