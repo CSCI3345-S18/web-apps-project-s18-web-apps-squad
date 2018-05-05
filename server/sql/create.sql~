@@ -42,6 +42,7 @@ CREATE TABLE Comments(
     id int NOT NULL AUTO_INCREMENT,
     body VARCHAR(1000) NOT NULL,
     user_id int NOT NULL,
+    username VARCHAR(50) NOT NULL,
     post_parent_id int NOT NULL,
     /*comment_parent_id int,*/
     flag CHAR(1),
