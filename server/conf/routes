@@ -45,6 +45,8 @@ GET		/messages					controllers.MessageController.messagesPage
 
 GET		/messaging					controllers.MessageController.messagingPage(friend: String)
 
+GET		/messagingsocket			controllers.MessageController.socket
+
 GET		/search						controllers.SearchController.searchPage
 
 GET		/addSubscription			controllers.SubscriptionController.addSubscription(title: String)

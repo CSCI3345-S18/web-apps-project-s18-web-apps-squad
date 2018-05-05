@@ -32,15 +32,27 @@ object MessageModel {
     }
   }
 
-  def getMessagesToUserFromUser(receiverID: Int, senderID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Message]] = {
+  def getMessagesBetweenFriends(userOneID: Int, userTwoID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Message]] = {
     db.run {
-      messages.filter(_.receiverID === receiverID).filter(_.senderID === senderID).result
+      messages.filter(m => (m.receiverID === userOneID && m.senderID === userTwoID) || (m.receiverID === userTwoID && m.senderID === userOneID)).result
     }
   }
 
   def addMessage(m: NewMessage, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       messages += Message(0, m.body, m.senderID, m.receiverID)
+    }
+  }
+  
+  def areFriends(userOneID: Int, userTwoID: Int, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+    db.run{
+      friends.filter(f => (f.userOneID === userOneID && f.userTwoID === userTwoID) || (f.userOneID === userTwoID && f.userTwoID === f.userOneID)).exists.result
+    }
+  }
+  
+  def addFriends(userOneID: Int, userTwoID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run{
+      friends += Friendship(0, userOneID, userTwoID)
     }
   }
 }

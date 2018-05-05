@@ -223,8 +223,4 @@ class UserController @Inject() (
       } yield(Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
     }
   }
-//  
-//  def messagesPage() = Action { implicit request =>
-//    Ok("TODO update this link to point to the messagesPage() method in MessageController instead of UserController")
-//  }
 }
