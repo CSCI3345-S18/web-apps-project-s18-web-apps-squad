@@ -26,7 +26,6 @@ case class Comment(
   body: String,
   userID: Int,
   postParentID: Int,
-  //commentParentID: Int,
   flag: Char,
   upvotes: Int,
   downvotes: Int
@@ -70,7 +69,6 @@ object Tables extends {
     def body = column[String]("body")
     def userID = column[Int]("user_id")
     def postParentID = column[Int]("post_parent_id")
-    //def commentParentID = column[Int]("comment_parent_id")
     def flag = column[Char]("flag")
     def upvotes = column[Int]("total_upvotes")
     def downvotes = column[Int]("total_downvotes")
