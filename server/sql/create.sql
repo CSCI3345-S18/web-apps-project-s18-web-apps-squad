@@ -18,6 +18,9 @@ CREATE TABLE Users(
     PRIMARY KEY (id)
 );
 
+CREATE INDEX idx_username on Users (username);
+CREATE INDEX idx_email on Users (email);
+
 CREATE TABLE Posts(
     id int NOT NULL AUTO_INCREMENT,
     board_id int NOT NULL,
@@ -52,10 +55,6 @@ CREATE TABLE Comments(
 CREATE INDEX idx_post_parent_id ON Comments (post_parent_id);
 CREATE INDEX idx_comment_parent_id ON Comments (comment_parent_id);
 
-
-CREATE INDEX idx_username on Users (username);
-CREATE INDEX idx_email on Users (email);
-
 CREATE TABLE Messages(
     id int NOT NULL AUTO_INCREMENT,
     body VARCHAR(1000),
@@ -79,6 +78,17 @@ CREATE TABLE Subscriptions(
 );
 CREATE INDEX idx_user_id on Subscriptions (user_id);
 CREATE INDEX idx_board_id on Subscriptions (board_id);
+
+CREATE TABLE Friends(
+	id int NOT NULL AUTO_INCREMENT,
+	user_one_id int NOT NULL,
+	user_two_id int NOT NULL,
+	PRIMARY KEY(id),
+	FOREIGN KEY (user_one_id) REFERENCES Users(id),
+	FOREIGN KEY (user_two_id) REFERENCES Users(id)
+);
+CREATE INDEX idx_friend_one on Friends(user_one_id);
+CREATE INDEX idx_friend_two on Friends(user_two_id);
 
 CREATE TABLE Vote_Posts(
   id int NOT NULL AUTO_INCREMENT,
