@@ -49,11 +49,11 @@ CREATE TABLE Comments(
     total_downvotes int NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES Users (id),
-    FOREIGN KEY (post_parent_id) REFERENCES Posts (id),
+    FOREIGN KEY (post_parent_id) REFERENCES Posts (id)
     /*FOREIGN KEY (comment_parent_id) REFERENCES Comments (id)*/
 );
 CREATE INDEX idx_post_parent_id ON Comments (post_parent_id);
-CREATE INDEX idx_comment_parent_id ON Comments (comment_parent_id);
+/*CREATE INDEX idx_comment_parent_id ON Comments (comment_parent_id);*/
 
 CREATE TABLE Messages(
     id int NOT NULL AUTO_INCREMENT,
@@ -110,4 +110,3 @@ CREATE TABLE Vote_Comments(
   FOREIGN KEY (comment_id) REFERENCES Comments(id),
   FOREIGN KEY (user_id) REFERENCES Users(id)
 );
- P
