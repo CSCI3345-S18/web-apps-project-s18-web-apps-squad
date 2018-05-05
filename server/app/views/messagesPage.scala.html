@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@(boards: Seq[Subscription], searchForm: Form[SearchQuery]/*, friendUsernames: Seq[String], friendIDs: String[Int]*/)(implicit request: MessagesRequestHeader)
+@(boards: Seq[Subscription], searchForm: Form[SearchQuery], friendUsernames: Seq[String], friendIDs: Seq[Int])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,11 +40,9 @@
         
         <div class="main">
 			<div id="profile-messages">
-				<p>Message</p>
-				<p>Message</p>
-				<p>Message</p>
-				<p>Message</p>
-				<p>Message</p>
+				@for(uname <- friendUsernames){
+					<p><a href="@routes.UserController.userPage(uname)">@uname</a></p>
+				}
 			</div>
 		</div>
 	

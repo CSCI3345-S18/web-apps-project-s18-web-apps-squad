@@ -51,8 +51,6 @@ object UserModel {
     }
   }
   
-  //def getUsernamesFromIDs()
-  
   def getUserFromID(id: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[User]] = {
     db.run {
       users.filter(_.id === id).result.headOption
