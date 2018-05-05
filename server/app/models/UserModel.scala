@@ -21,6 +21,12 @@ import controllers.NewUser
 object UserModel {
   import Tables._
   
+  def getFriendsipsOfUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Friendship]] = {
+    db.run{
+      friends.filter(friendship => friendship.userOneID === userID || friendship.userTwoID === userID).result
+    }
+  }
+  
   def getCommentsOfUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Comment]] = {
     db.run {
       comments.filter(_.userID === userID).result
@@ -44,7 +50,9 @@ object UserModel {
       subscriptions.filter(_.userID === userID).result
     }
   }
-
+  
+  //def getUsernamesFromIDs()
+  
   def getUserFromID(id: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[User]] = {
     db.run {
       users.filter(_.id === id).result.headOption

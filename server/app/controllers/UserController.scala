@@ -30,14 +30,14 @@ class UserController @Inject() (
       "email" -> nonEmptyText,
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(NewUser.apply)(NewUser.unapply))
-      
+
   val loginForm = Form(mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
-      
+
     val searchForm = Form(mapping(
       "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
-  
+
   def homePage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -54,7 +54,7 @@ class UserController @Inject() (
       Future.successful(Ok(views.html.homePage(emptySubs, searchForm)))
     }
   }
-  
+
   def allUsers = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -79,7 +79,7 @@ class UserController @Inject() (
       usersFuture.map(users => Ok(views.html.loginPage(emptySubs, users, loginForm, newUserForm, searchForm)))
     }
   }
-  
+
   def addUser = Action.async { implicit request =>
     newUserForm.bindFromRequest().fold(
         formWithErrors => {
@@ -100,7 +100,7 @@ class UserController @Inject() (
             })
         })
   }
-  
+
   def login = Action.async { implicit request =>
     loginForm.bindFromRequest().fold(
         formWithErrors => {
@@ -118,11 +118,11 @@ class UserController @Inject() (
           }
         })
   }
-  
+
   def logout = Action { implicit request =>
     Redirect(routes.UserController.allUsers).withNewSession
   }
-  
+
   def userPage(username: String) = Action.async { implicit request =>
     request.session.get("connected"). map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -136,7 +136,7 @@ class UserController @Inject() (
               val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
               for {
                 subs <- loggedSubs
-                posts <- postsSeqOpt 
+                posts <- postsSeqOpt
                 comments <- commentsSeqOpt
               } yield {
                 Ok(views.html.userPage(viewedUser.username, subs, posts, comments, searchForm))
@@ -179,7 +179,7 @@ class UserController @Inject() (
           }
     }
   }
-  
+
   def profilePage = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -203,7 +203,7 @@ class UserController @Inject() (
       boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   def loginPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -223,14 +223,30 @@ class UserController @Inject() (
       } yield(Ok(views.html.loginPage(boards, users, loginForm, newUserForm, searchForm)))
     }
   }
-  
+
   def messagesPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
       loggedinUser.flatMap {
         case Some(actualUser) =>
           val boardsFuture = UserModel.getSubscriptionsOfUser(actualUser.id, db)
-          boardsFuture.map(boards => Ok(views.html.messagesPage(boards, searchForm)))
+          boardsFuture.map{boards => 
+            val friendshipsFuture = UserModel.getFriendsipsOfUser(actualUser.id, db)
+            //friendships
+            //val friendlyIDs = friendships.collect(friend => if(friend.userOneID == actualUser.id) friend.userOneID else friend.userTwoID)
+            for{
+              friends <- friendshipsFuture
+            } yield {
+              val friendIDs = friends.map{ friend =>
+                if(friend.userOneID == actualUser.id)
+                  friend.userOneID
+                else
+                  friend.userTwoID
+              }
+              val friendUsernames = friendIDs.map{UserModel.getUserFromID(_, db)}
+            }
+            Ok(views.html.messagesPage(boards, searchForm))//, Seq(), Seq()))
+          }
         case None =>
           val usersFuture = UserModel.allUsers(db)
           usersFuture.map(users => Redirect(routes.UserController.loginPage))

@@ -19,7 +19,7 @@ import controllers.NewMessage
 
 object MessageModel {
   import Tables._
-
+  
   def getMessagesToUser(receiverID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Message]] = {
     db.run {
       messages.filter(_.receiverID === receiverID).result
