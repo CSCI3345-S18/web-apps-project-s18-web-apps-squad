@@ -114,13 +114,47 @@ class BoardController @Inject() (
 
   //Gets the board in question as well as loads the posts from the board
   def boardPage(title: String) = Action.async { implicit request =>
-    val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
-    boardsFutOpt.flatMap { 
-      case Some(board) =>
-        val postsSeqOpt = PostModel.getPostsFromBoard(board.id, db)
-        postsSeqOpt.map(posts => Ok(views.html.boardPage(posts, board.title, board.description, searchForm)))
-      case None =>
-        Future.successful(Redirect(routes.UserController.homePage))
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
+          boardsFutOpt.flatMap {
+            case Some(board) =>
+              val postsSeqOpt = PostModel.getPostsFromBoard(board.id, db)
+              val userSubs = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+              for {
+                posts <- postsSeqOpt
+                subs <- userSubs
+              } yield {
+                Ok(views.html.boardPage(posts, subs, board.title, board.description, searchForm))
+              }
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
+          }
+        case None =>
+          val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
+          boardsFutOpt.flatMap {
+            case Some(board) =>
+              val postsSeqOpt = PostModel.getPostsFromBoard(board.id, db)
+              val emptySubs: Seq[Subscription] = Seq()
+              postsSeqOpt.map(posts => Ok(views.html.boardPage(posts, emptySubs, board.title, board.description, searchForm)))
+            case None =>
+              val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
+              boardsFutOpt.map(boards => Redirect(routes.UserController.homePage))
+          }
+      }
+    }.getOrElse {
+      val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
+      boardsFutOpt.flatMap {
+        case Some(board) =>
+          val postsSeqOpt = PostModel.getPostsFromBoard(board.id, db)
+          val emptySubs: Seq[Subscription] = Seq()
+          postsSeqOpt.map(posts => Ok(views.html.boardPage(posts, emptySubs, board.title, board.description, searchForm)))
+        case None =>
+          val boardsFutOpt = BoardModel.getBoardByTitle(title, db)
+          boardsFutOpt.map(boards => Redirect(routes.UserController.homePage))
+      }
     }
   }
   

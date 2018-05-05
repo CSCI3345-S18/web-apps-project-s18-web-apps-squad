@@ -1,5 +1,5 @@
 @* postPage Template File *@
-@(posts: Seq[Post], title: String, desc: String, searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
+@(posts: Seq[Post], subbedBoards: Seq[Subscription], title: String, desc: String, searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +15,11 @@
         	<a href="@routes.UserController.profilePage()">Account</a>
         	<h5>Filter bar</h5>
         	<p id="sub-header">My Subscriptions</p>
+        	@for(b <- subbedBoards) {
+        		<tr>
+        			<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
+        		</tr>
+        	}
         </div>
         <div class="topnav">
         	<nav>
