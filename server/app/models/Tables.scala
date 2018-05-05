@@ -7,8 +7,7 @@ case class Post(
   title: String,
   body: String,
   link: String,
-  upvotes: Int,
-  downvotes: Int
+  upvotes: Int
 )
 case class User(
   id: Int,
@@ -28,8 +27,7 @@ case class Comment(
   username: String,
   postParentID: Int,
   flag: Char,
-  upvotes: Int,
-  downvotes: Int
+  upvotes: Int
 )
 case class Message(
   id: Int,
@@ -73,8 +71,7 @@ object Tables extends {
     def postParentID = column[Int]("post_parent_id")
     def flag = column[Char]("flag")
     def upvotes = column[Int]("total_upvotes")
-    def downvotes = column[Int]("total_downvotes")
-    def * = (id, body, userID, username, postParentID, flag, upvotes, downvotes) <> (Comment.tupled, Comment.unapply)
+    def * = (id, body, userID, username, postParentID, flag, upvotes) <> (Comment.tupled, Comment.unapply)
   }
   val comments = TableQuery[Comments]
   class Messages(tag: Tag) extends Table[Message](tag, "Messages") {
@@ -134,8 +131,7 @@ object Tables extends {
     def body = column[String]("body")
     def link = column[String]("link")
     def upvotes = column[Int]("total_upvotes")
-    def downvotes = column[Int]("total_downvotes")
-    def * = (id, boardID, posterID, title, body, link, upvotes, downvotes) <> (Post.tupled, Post.unapply)
+    def * = (id, boardID, posterID, title, body, link, upvotes) <> (Post.tupled, Post.unapply)
   }
   val posts = TableQuery[Posts]
   class Friends(tag: Tag) extends Table[Friendship](tag, "Friends"){
