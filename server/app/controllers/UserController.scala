@@ -228,25 +228,28 @@ class UserController @Inject() (
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
       loggedinUser.flatMap {
-        case Some(actualUser) =>
+        case Some(actualUser) => {
           val boardsFuture = UserModel.getSubscriptionsOfUser(actualUser.id, db)
-          boardsFuture.map{boards => 
+          boardsFuture.flatMap{boards =>
             val friendshipsFuture = UserModel.getFriendsipsOfUser(actualUser.id, db)
-            //friendships
-            //val friendlyIDs = friendships.collect(friend => if(friend.userOneID == actualUser.id) friend.userOneID else friend.userTwoID)
-            for{
-              friends <- friendshipsFuture
-            } yield {
+            friendshipsFuture.flatMap{friends =>
               val friendIDs = friends.map{ friend =>
-                if(friend.userOneID == actualUser.id)
+                if(friend.userOneID != actualUser.id)
                   friend.userOneID
                 else
                   friend.userTwoID
               }
-              val friendUsernames = friendIDs.map{UserModel.getUserFromID(_, db)}
+              val friendUsernameFutures = Future.sequence(friendIDs.map{UserModel.getUserFromID(_, db)})
+              
+              for{
+                maybeUsers <- friendUsernameFutures
+              } yield {
+                val friendUsernames = maybeUsers.collect{case Some(friend) => friend.username}
+                Ok(views.html.messagesPage(boards, searchForm, friendUsernames, friendIDs))
+              }
             }
-            Ok(views.html.messagesPage(boards, searchForm))//, Seq(), Seq()))
           }
+        }
         case None =>
           val usersFuture = UserModel.allUsers(db)
           usersFuture.map(users => Redirect(routes.UserController.loginPage))
