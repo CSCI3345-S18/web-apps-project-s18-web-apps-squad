@@ -1,5 +1,5 @@
-@* homePage Template File *@
-@(boards: Seq[Subscription], searchForm: Form[SearchQuery]/*, friendUsernames: Seq[String], friendIDs: String[Int]*/)(implicit request: MessagesRequestHeader)
+@* messagingPage Template File *@
+@(boards: Seq[Subscription], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +21,6 @@
         		</tr>
         	}
         </div>
-        
         <div class="topnav">
         	<nav>
         		@helper.form(action = helper.CSRF(routes.SearchController.searchPage)) {
@@ -36,8 +35,6 @@
         		</ul>
         	</nav>
         </div>
-    
-        
         <div class="main">
 			<div id="profile-messages">
 				<p>Message</p>
@@ -47,7 +44,5 @@
 				<p>Message</p>
 			</div>
 		</div>
-	
-	
 	</body>
 </html>

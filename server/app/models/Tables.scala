@@ -55,6 +55,11 @@ case class Subscription(
   boardID: Int,
   title: String
 )
+case class Friendship(
+  id: Int,
+  userOneID: Int,  
+  userTwoID: Int
+)
 
 object Tables extends {
   val profile = slick.jdbc.MySQLProfile
@@ -133,4 +138,11 @@ object Tables extends {
     def * = (id, boardID, posterID, title, body, link, upvotes, downvotes) <> (Post.tupled, Post.unapply)
   }
   val posts = TableQuery[Posts]
+  class Friends(tag: Tag) extends Table[Friendship](tag, "Friendship"){
+    def id = column[Int]("id")
+    def userOneID = column[Int]("userOneID")
+    def userTwoID = column[Int]("userTwoID")
+    def * = (id, userOneID, userTwoID) <> (Friendship.tupled, Friendship.unapply)
+  }
+  val friends = TableQuery[Friends]
 }

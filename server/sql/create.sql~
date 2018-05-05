@@ -81,14 +81,12 @@ CREATE INDEX idx_board_id on Subscriptions (board_id);
 
 CREATE TABLE Friends(
 	id int NOT NULL AUTO_INCREMENT,
-	user_one_id int NOT NULL,
-	user_two_id int NOT NULL,
+	userOneID int NOT NULL,
+	userTwoID int NOT NULL,
 	PRIMARY KEY(id),
-	FOREIGN KEY (user_one_id) REFERENCES Users(id),
-	FOREIGN KEY (user_two_id) REFERENCES Users(id)
+	FOREIGN KEY (userOneID) REFERENCES Users(id),
+	FOREIGN KEY (userTwoID) REFERENCES Users(id)
 );
-CREATE INDEX idx_friend_one on Friends(user_one_id);
-CREATE INDEX idx_friend_two on Friends(user_two_id);
 
 CREATE TABLE Vote_Posts(
   id int NOT NULL AUTO_INCREMENT,
