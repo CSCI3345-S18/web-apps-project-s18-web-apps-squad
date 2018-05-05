@@ -30,7 +30,6 @@ CREATE TABLE Posts(
     link VARCHAR(255),
     flag CHAR(1),
     total_upvotes int NOT NULL,
-    total_downvotes int NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (board_id) REFERENCES Boards (id),
     FOREIGN KEY (poster_id) REFERENCES Users (id)
@@ -47,7 +46,6 @@ CREATE TABLE Comments(
     /*comment_parent_id int,*/
     flag CHAR(1),
     total_upvotes int NOT NULL,
-    total_downvotes int NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES Users (id),
     FOREIGN KEY (post_parent_id) REFERENCES Posts (id)

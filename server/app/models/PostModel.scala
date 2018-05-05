@@ -39,19 +39,10 @@ object PostModel {
     }
   }
 
-  def getCommentsFromPost(postID: Int): Seq[(String, String)] = {
-    // Pull all comments from the particular post
-    return Seq(("todo comment body", "todo commenter"))//feel free to make this a case class
-  }
-
-  def addCommentToPost() = {
-    // Locate the post and then add comment
-  }
-
   def addPost(boardID: Int, posterID: Int, np: NewPost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
-      posts += Post(0, boardID, posterID, np.title, np.body, np.link, 0, 0)
+      posts += Post(0, boardID, posterID, np.title, np.body, np.link, 0)
     }
   }
   def searchPostsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
@@ -59,4 +50,8 @@ object PostModel {
       posts.filter(_.title like title+"%").result
     }
   }
+  
+  /*def checkIfVoteExists(userID: Int, postID, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+    
+  }*/
 }

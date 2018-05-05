@@ -33,7 +33,7 @@ object CommentModel {
   def addComment(body: String, userID: Int, username: String, postParentID: Int, flag: Char, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       //0 for id upvotes and downvotes
-      comments += Comment(0, body, userID, username, postParentID, flag, 0, 0)
+      comments += Comment(0, body, userID, username, postParentID, flag, 0)
     }
   }
 }
