@@ -193,9 +193,10 @@ class PostController @Inject() (
                     checkVote.map(exists =>
                       if(!exists) {
                         PostModel.upvotePostDB(actualUser.id, post.id, db)
-                        Redirect(routes.BoardController.boardPage(board.title))
+                        Redirect(routes.PostController.postPage(title))
                       } else {
-                        Redirect(routes.BoardController.boardPage(board.title))
+                        PostModel.updateVote(actualUser.id, post.id, true, db)
+                        Redirect(routes.PostController.postPage(title))
                       })
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -227,9 +228,10 @@ class PostController @Inject() (
                     checkVote.map(exists =>
                       if(!exists) {
                         PostModel.downvotePostDB(actualUser.id, post.id, db)
-                        Redirect(routes.BoardController.boardPage(board.title))
+                        Redirect(routes.PostController.postPage(title))
                       } else {
-                        Redirect(routes.BoardController.boardPage(board.title))
+                        PostModel.updateVote(actualUser.id, post.id, false, db)
+                        Redirect(routes.PostController.postPage(title))
                       })
                 case None =>
                   Future(Ok("Board does not exist."))
