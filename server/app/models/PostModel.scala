@@ -74,7 +74,9 @@ object PostModel {
     calculateKarma(postID, db)
   }
   def deletePost(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
-    Future(0)
+    db.run{
+      posts.filter(_.id === postID).delete
+    }
   }
   def downvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
