@@ -49,6 +49,9 @@ GET		/search						controllers.SearchController.searchPage
 
 GET		/addSubscription			controllers.SubscriptionController.addSubscription(title: String)
 
+GET		/addupVote					controllers.PostController.upvotePost(title: String)
+
+GET		/adddownVote				controllers.PostController.downvotePost(title: String)
 #Post pages
 
 # GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

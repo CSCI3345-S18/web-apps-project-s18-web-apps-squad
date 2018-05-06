@@ -51,6 +51,9 @@
 				@for(p <- posts) {
 					<table border="1">
 						<tr>
+							<td><button><a href="@routes.PostController.upvotePost(p.title)">UPVOTE</a></button><button><a href="@routes.PostController.downvotePost(p.title)">DOWNVOTE</a></button>
+						</tr>
+						<tr>
 							<th><a href="@routes.PostController.postPage(p.title)">@p.title</a></th>
 						</tr>
 						<tr>

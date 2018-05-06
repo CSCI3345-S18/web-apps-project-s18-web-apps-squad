@@ -30,7 +30,6 @@ CREATE TABLE Posts(
     link VARCHAR(255),
     flag CHAR(1),
     total_upvotes int NOT NULL,
-    total_downvotes int NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (board_id) REFERENCES Boards (id),
     FOREIGN KEY (poster_id) REFERENCES Users (id)
