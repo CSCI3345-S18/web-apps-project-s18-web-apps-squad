@@ -53,12 +53,22 @@ object CommentModel {
     db.run {
       voteComments += VoteComment(0, commentID, userID, true)
     }
+    calculateKarma(commentID, db)
   }
-
+  def updateVote(userID: Int, commentID: Int, upvote: Boolean, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run{
+      voteComments.filter(_.userID === userID).filter(_.commentID === commentID).map(_.upvote).update(upvote)
+    }
+    calculateKarma(commentID, db)
+  }
+  def deleteComment(commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    Future(0)
+  }
   def downvoteCommentDB(userID: Int, commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       voteComments += VoteComment(0, commentID, userID, false)
     }
+    calculateKarma(commentID, db)
   }
 
   def calculateKarma(commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
