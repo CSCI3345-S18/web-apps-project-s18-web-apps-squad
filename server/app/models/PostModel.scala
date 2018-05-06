@@ -21,6 +21,10 @@ import controllers.NewPost
 object PostModel {
   import Tables._
 
+  def allPosts(db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
+    db.run(posts.result)
+  }
+
   def getPostsFromBoard(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
     db.run {
       posts.filter(_.boardID === boardID).result
@@ -39,10 +43,10 @@ object PostModel {
     }
   }
 
-  def addPost(boardID: Int, posterID: Int, np: NewPost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addPost(boardID: Int, posterID: Int, posterUsername: String, np: NewPost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
-      posts += Post(0, boardID, posterID, np.title, np.body, np.link, 0)
+      posts += Post(0, boardID, posterID, posterUsername, np.title, np.body, "", 0)
     }
   }
   def searchPostsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
@@ -50,14 +54,53 @@ object PostModel {
       posts.filter(_.title like title+"%").result
     }
   }
-  def addVote(v: NewVoteComment, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+
+  def checkIfVoteExists(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
     db.run {
-      //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
-      votePosts += VotePost(0, v.commentID, v.userID, v.upvote)
+      votePosts.filter(_.userID === userID).filter(_.postID === postID).exists.result
     }
   }
 
-  /*def checkIfVoteExists(userID: Int, postID, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+  def upvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      votePosts += VotePost(0, postID, userID, true)
+    }
+    calculateKarma(postID, db)
+  }
+  def updateVote(userID: Int, postID: Int, upvote: Boolean, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run{
+      votePosts.filter(_.userID === userID).filter(_.postID === postID).map(_.upvote).update(upvote)
+    }
+    calculateKarma(postID, db)
+  }
+  def deletePost(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run{
+      posts.filter(_.id === postID).delete
+    }
+  }
+  def downvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      votePosts += VotePost(0, postID, userID, false)
+    }
+    calculateKarma(postID, db)
+  }
 
-  }*/
+  def calculateKarma(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    val q1 = votePosts.filter(_.postID === postID)
+    val positiveKarmaData = db.run(q1.filter(_.upvote === true).length.result)
+    val negativeKarmaData = db.run(q1.filter(_.upvote === false).length.result)
+
+    for{
+      positiveKarma <- positiveKarmaData
+      negativeKarma <- negativeKarmaData
+    } yield{
+      val totalKarma = positiveKarma - negativeKarma
+      val updateQuery = posts.filter(_.id === postID).map(_.upvotes)
+      db.run {
+        updateQuery.update(totalKarma)
+      }
+      totalKarma
+    }
+  }
+
 }

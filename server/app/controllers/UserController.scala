@@ -16,6 +16,7 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserModel
 import models.BoardModel
+import models.PostModel
 import models.Board
 import models.Post
 import models.Subscription
@@ -36,22 +37,40 @@ class UserController @Inject() (
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
 
   val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+      "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
 
   def homePage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
       loggedinUser.flatMap {
-        case Some(rawUser) =>
-          val subscribedBoards = UserModel.getSubscriptionsOfUser(rawUser.id, db)
-          subscribedBoards.map(boards => Ok(views.html.homePage(boards, searchForm)))
+        case Some(actualUser) =>
+//          val subscribedBoards = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+//          val postsFromSubbedBoards = PostModel.getPostsFromSubscriptions(actualUser.id, db)
+          val subscribedBoards = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          val postsFromSubbedBoards = PostModel.allPosts(db)
+          for {
+            subs <- subscribedBoards
+            posts <- postsFromSubbedBoards
+          } yield {
+            Ok(views.html.homePage(subs, posts, searchForm))
+          }
         case None =>
           val emptySubs: Seq[Subscription] = Seq()
-          Future.successful(Ok(views.html.homePage(emptySubs, searchForm)))
+          val postsFromSubbedBoards = PostModel.allPosts(db)
+          for {
+            posts <- postsFromSubbedBoards
+          } yield {
+            Ok(views.html.homePage(emptySubs, posts, searchForm))
+          }
       }
     }.getOrElse {
       val emptySubs: Seq[Subscription] = Seq()
-      Future.successful(Ok(views.html.homePage(emptySubs, searchForm)))
+      val postsFromSubbedBoards = PostModel.allPosts(db)
+      for {
+        posts <- postsFromSubbedBoards
+      } yield {
+        Ok(views.html.homePage(emptySubs, posts, searchForm))
+      }
     }
   }
 
@@ -59,8 +78,8 @@ class UserController @Inject() (
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
       loggedinUser.flatMap {
-        case Some(rawUser) =>
-          val subscribedBoards = UserModel.getSubscriptionsOfUser(rawUser.id, db)
+        case Some(actualUser) =>
+          val subscribedBoards = UserModel.getSubscriptionsOfUser(actualUser.id, db)
           val usersFuture = UserModel.allUsers(db)
           for {
             boards <- subscribedBoards
@@ -134,12 +153,14 @@ class UserController @Inject() (
             case Some(viewedUser) =>
               val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
               val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
+              val karmaOut = UserModel.getKarma(viewedUser.id, db)
               for {
                 subs <- loggedSubs
                 posts <- postsSeqOpt
                 comments <- commentsSeqOpt
+                karma <- karmaOut
               } yield {
-                Ok(views.html.userPage(viewedUser.username, subs, posts, comments, searchForm))
+                Ok(views.html.userPage(viewedUser.username, subs, posts, comments, karma, searchForm))
               }
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
@@ -151,11 +172,13 @@ class UserController @Inject() (
               val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
               val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
               val emptySubs: Seq[Subscription] = Seq()
+              val karmaOut = UserModel.getKarma(viewedUser.id, db)
               for {
                 posts <- postsSeqOpt
                 comments <- commentsSeqOpt
+                karma <- karmaOut
               } yield {
-                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, searchForm))
+                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, karma, searchForm))
               }
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
@@ -167,12 +190,14 @@ class UserController @Inject() (
             case Some(viewedUser) =>
               val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
               val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
+              val karmaOut = UserModel.getKarma(viewedUser.id, db)
               val emptySubs: Seq[Subscription] = Seq()
               for {
                 posts <- postsSeqOpt
                 comments <- commentsSeqOpt
+                karma <- karmaOut
               } yield {
-                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, searchForm))
+                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, karma, searchForm))
               }
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
@@ -188,12 +213,14 @@ class UserController @Inject() (
           val postsSeqOpt = UserModel.getPostsOfUser(actualUser.id, db)
           val commentsSeqOpt = UserModel.getCommentsOfUser(actualUser.id, db)
           val subBoardsSeqOpt = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          val karmaOut = UserModel.getKarma(actualUser.id, db)
           for {
             posts <- postsSeqOpt
             comments <- commentsSeqOpt
             subBoards <- subBoardsSeqOpt
+            karma <- karmaOut
           } yield {
-            Ok(views.html.profilePage(actualUser.username, posts, comments, subBoards, searchForm))
+            Ok(views.html.profilePage(actualUser.username, posts, comments, subBoards, karma, searchForm))
           }
         case None =>
           Future.successful(Redirect(routes.UserController.loginPage))

@@ -11,10 +11,9 @@
 
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
-        	<a href="@routes.BoardController.allBoards">Popular</a>
-        	<a href="#">New</a>
+        	<a href="@routes.BoardController.popularBoardsPage()">Popular</a>
+        	<a href="@routes.BoardController.newestBoardsPage()">New</a>
         	<a href="@routes.UserController.profilePage()">Account</a>
-        	<h5>Filter bar</h5>
         	<p id="sub-header">My Subscriptions</p>
         	@for(b <- boards) {
         		<tr>
@@ -25,14 +24,16 @@
         <div class="topnav">
         	<nav>
         		@helper.form(action = helper.CSRF(routes.SearchController.searchPage)) {
-        			@helper.inputText(searchForm("query"))
+        			@helper.inputText(searchForm("search"),
+        				'placeholder -> "Rocket League"
+        			)
         			<input type="submit" value="Search">
         		}
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
-        		<li><p>Search bar</p></li>
+        		<li><a href="@routes.BoardController.allBoards">Communities</a></li>
         		<li><a href="@routes.MessageController.messagesPage">Messages</a></li>
-        		<li><a href="#">Create</a></li>
+        		<li><a href="@routes.BoardController.addBoardPage">Create</a></li>
         		<li><a href="@routes.UserController.profilePage">Profile</a></li>
         		</ul>
         	</nav>

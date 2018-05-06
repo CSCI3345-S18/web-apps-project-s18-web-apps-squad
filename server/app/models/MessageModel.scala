@@ -15,7 +15,7 @@ import scala.collection.mutable.Buffer
 import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import controllers.NewMessage
+import actors.ChatManager.ActorMessage
 
 object MessageModel {
   import Tables._
@@ -38,7 +38,7 @@ object MessageModel {
     }
   }
 
-  def addMessage(m: NewMessage, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addMessage(m: ActorMessage, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       messages += Message(0, m.body, m.senderID, m.receiverID)
     }
@@ -46,7 +46,7 @@ object MessageModel {
   
   def areFriends(userOneID: Int, userTwoID: Int, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
     db.run{
-      friends.filter(f => (f.userOneID === userOneID && f.userTwoID === userTwoID) || (f.userOneID === userTwoID && f.userTwoID === f.userOneID)).exists.result
+      friends.filter(f => (f.userOneID === userOneID && f.userTwoID === userTwoID) || (f.userOneID === userTwoID && f.userTwoID === userOneID)).exists.result
     }
   }
   

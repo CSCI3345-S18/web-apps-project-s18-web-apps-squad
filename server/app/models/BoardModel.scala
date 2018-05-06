@@ -44,14 +44,18 @@ object BoardModel {
         (bor, subs.map(_._2).length)} sortBy(_._2) take(5) map(_._1) result
     }
   }
+
+  def getSubscriptionNum(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      subscriptions.filter(_.boardID === boardID).length.result
+    }
+  }
+
   def getBottomBoards(db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
     db.run {
       boards.join(subscriptions).groupBy(_._1).map { case (bor, subs) =>
         (bor, subs.map(_._2).length)} sortBy(_._2.desc) take(5) map(_._1) result
     }
-  }
-  def getDefaultSubscription(): Seq[String] = {
-    return Seq("todo")
   }
 
   def searchBoardsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
@@ -69,13 +73,6 @@ object BoardModel {
   def getBoardByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Board]] = {
     db.run {
       boards.filter(_.title === title).result.headOption
-    }
-  }
-  
-  def addVote(v: NewVotePost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
-    db.run {
-      //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
-      votePosts += VotePost(0, v.postID, v.userID, v.upvote)
     }
   }
 

@@ -26,12 +26,7 @@ import play.api.libs.streams.ActorFlow
 import actors.ChatActor
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-
-case class NewMessage(
-  body: String,
-  senderID: Int,
-  receiverID: Int
-)
+import actors.ChatManager.ActorMessage
 
 @Singleton
 class MessageController @Inject() (
@@ -40,9 +35,9 @@ class MessageController @Inject() (
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
     val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))  
+      "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))  
       
-    val chatManager = system.actorOf(ChatManager.props)  
+    val chatManager = system.actorOf(ChatManager.props(this))  
       
     def messagesPage() = Action.async { implicit request =>
       request.session.get("connected").map { user =>
@@ -92,7 +87,9 @@ class MessageController @Inject() (
                  case Some(actualFriend) => {
                    val areFriendsFuture = MessageModel.areFriends(actualUser.id, actualFriend.id, db)
                    areFriendsFuture.flatMap{
-                     case false => MessageModel.addFriends(actualUser.id, actualFriend.id, db)
+                     case false => {
+                       MessageModel.addFriends(actualUser.id, actualFriend.id, db)
+                     }
                      case true => Future{}
                    }
                    val prevMessagesFuture = MessageModel.getMessagesBetweenFriends(actualUser.id, actualFriend.id, db)
@@ -118,6 +115,11 @@ class MessageController @Inject() (
     ActorFlow.actorRef{ out =>
       ChatActor.props(out, chatManager)
     }
+  }
+  
+  //This exists soley so that db does not have to be passed into the ChatManager
+  def addMessage(m: ActorMessage): Future[Int] = {
+    MessageModel.addMessage(m, db)
   }
   
 }

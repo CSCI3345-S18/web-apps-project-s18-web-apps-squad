@@ -4,6 +4,7 @@ case class Post(
   id: Int,
   boardID: Int,
   posterID: Int,
+  posterUsername: String,
   title: String,
   body: String,
   link: String,
@@ -74,6 +75,7 @@ object Tables extends {
     def * = (id, body, userID, username, postParentID, flag, upvotes) <> (Comment.tupled, Comment.unapply)
   }
   val comments = TableQuery[Comments]
+  
   class Messages(tag: Tag) extends Table[Message](tag, "Messages") {
     def id = column[Int]("id")
     def body = column[String]("body")
@@ -81,6 +83,7 @@ object Tables extends {
     def receiverID = column[Int]("receiver_id")
     def * = (id, body, senderID, receiverID) <> (Message.tupled, Message.unapply)
   }
+  
   val messages = TableQuery[Messages]
   class Subscriptions(tag: Tag) extends Table[Subscription](tag, "Subscriptions") {
     def id = column[Int]("id")
@@ -90,22 +93,25 @@ object Tables extends {
     def * = (id, userID, boardID, title) <> (Subscription.tupled, Subscription.unapply)
   }
   val subscriptions = TableQuery[Subscriptions]
+  
   class VotePosts(tag: Tag) extends Table[VotePost](tag, "Vote_Posts") {
     def id = column[Int]("id")
-    def userID = column[Int]("post_id")
-    def boardID = column[Int]("board_id")
+    def postID = column[Int]("post_id")
+    def userID = column[Int]("user_id")
     def upvote = column[Boolean]("upvote")
-    def * = (id, userID, boardID, upvote) <> (VotePost.tupled, VotePost.unapply)
+    def * = (id, postID, userID, upvote) <> (VotePost.tupled, VotePost.unapply)
   }
   val votePosts = TableQuery[VotePosts]
-  class VoteComments(tag: Tag) extends Table[VoteComment](tag, "Vote_Comment") {
+  
+  class VoteComments(tag: Tag) extends Table[VoteComment](tag, "Vote_Comments") {
     def id = column[Int]("id")
-    def userID = column[Int]("post_id")
-    def boardID = column[Int]("board_id")
+    def commentID = column[Int]("comment_id")
+    def userID = column[Int]("user_id")
     def upvote = column[Boolean]("upvote")
-    def * = (id, userID, boardID, upvote) <> (VoteComment.tupled, VoteComment.unapply)
+    def * = (id, commentID, userID, upvote) <> (VoteComment.tupled, VoteComment.unapply)
   }
   val voteComments = TableQuery[VoteComments]
+  
   class Users(tag: Tag) extends Table[User](tag, "Users") {
     def id = column[Int]("id")
     def username = column[String]("username")
@@ -127,13 +133,15 @@ object Tables extends {
     def id = column[Int]("id")
     def boardID = column[Int]("board_id")
     def posterID = column[Int]("poster_id")
+    def posterUsername = column[String]("poster_username")
     def title = column[String]("title")
     def body = column[String]("body")
     def link = column[String]("link")
     def upvotes = column[Int]("total_upvotes")
-    def * = (id, boardID, posterID, title, body, link, upvotes) <> (Post.tupled, Post.unapply)
+    def * = (id, boardID, posterID, posterUsername, title, body, link, upvotes) <> (Post.tupled, Post.unapply)
   }
   val posts = TableQuery[Posts]
+  
   class Friends(tag: Tag) extends Table[Friendship](tag, "Friends"){
     def id = column[Int]("id")
     def userOneID = column[Int]("user_one_id")

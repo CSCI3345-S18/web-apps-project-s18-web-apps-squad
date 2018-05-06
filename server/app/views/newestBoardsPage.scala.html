@@ -1,20 +1,20 @@
-@* messagingPage Template File *@
-@(boards: Seq[Subscription], searchForm: Form[SearchQuery], myUsername: String, friendsUsername: String, myUID: Int, friendsUID: Int, pastMessages: Seq[Message])(implicit request: MessagesRequestHeader)
+@* postPage Template File *@
+@(subbedBoards: Seq[Subscription], boards: Seq[Board], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Chat with @friendsUsername</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/messagesPage.css")">
+		<title>Newest Boards</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/popularBoardsPage.css")">
 	</head>
 	<body>
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="@routes.BoardController.popularBoardsPage()">Popular</a>
         	<a href="@routes.BoardController.newestBoardsPage()">New</a>
-        	<a href="@routes.UserController.profilePage">Account</a>
+        	<a href="@routes.UserController.profilePage()">Account</a>
         	<p id="sub-header">My Subscriptions</p>
-        	@for(b <- boards) {
+        	@for(b <- subbedBoards) {
         		<tr>
         			<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
         		</tr>
@@ -38,20 +38,16 @@
         	</nav>
         </div>
         <div class="main">
-        	<p align="center">@friendsUsername</p>
-			<div id="profile-messages">
-				@for(message <- pastMessages){
-					<input type="hidden" class="messages" value="@message.body">
-				}
-			</div>
-			<div id="sendMessages">
-					<input type="text" id="msg"><br/>
-					<input type="hidden" id="myUID" value=@myUID><br/>
-					<input type="hidden" id="friendsUID" value=@friendsUID><br/>
-					<button id="sendButton">Send</button>
-			</div>
-		</div>
+        	<div class="boards">
+        		<table border="1">
+        			<tr><th>Newest Boards</th></tr>
+        			@for(b <- boards) {
+        				<tr>
+        					<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
+        				</tr>
+        			}
+        		</table>
+        	</div>
+        </div>
 	</body>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	@scalajs.html.scripts("FinalProject-client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 </html>
