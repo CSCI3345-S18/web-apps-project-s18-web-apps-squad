@@ -45,7 +45,6 @@
 			@helper.form(action = helper.CSRF(routes.PostController.addPost(boardTitle))) {
 				@helper.inputText(newPostForm("title"))
 				@helper.inputText(newPostForm("body"))
-				@helper.inputText(newPostForm("link"))
 				<input type="submit" value="Submit">
 			}
 			</div>

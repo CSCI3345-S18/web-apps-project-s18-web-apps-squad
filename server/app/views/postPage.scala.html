@@ -1,5 +1,5 @@
 @* postPage Template File *@
-@(subbedBoards: Seq[Subscription], comments: Seq[Comment], posterUsername: String, boardTitle: String, title: String, body: String, link: String, searchForm: Form[SearchQuery], commentForm: Form[NewComment])(implicit request: MessagesRequestHeader)
+@(subbedBoards: Seq[Subscription], comments: Seq[Comment], posterUsername: String, boardTitle: String, title: String, body: String, searchForm: Form[SearchQuery], commentForm: Form[NewComment])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +40,6 @@
 			<div id="post-hero">
 				<h3>@title</h3>
 				<h3>@body</h3>
-				<h3><a href="@link">@link</a></h3>
 				<h3>A post by <a href="@routes.UserController.userPage(posterUsername)">@posterUsername</a></h3>
 				<a href="@routes.BoardController.boardPage(boardTitle)"><button>Back to @boardTitle</button></a>
 			</div>
