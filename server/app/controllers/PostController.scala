@@ -160,4 +160,58 @@ class PostController @Inject() (
       }
     }
   }
+  
+  def upvotePost(title: String) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val postToVote = PostModel.getPostFromTitle(title, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToVote.flatMap {
+            case Some(post) =>
+              val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+              checkVote.map(exists =>
+                if(!exists) {
+                  PostModel.upvotePostDB(actualUser.id, post.id, db)
+                  Redirect(routes.PostController.postPage(title))
+                } else {
+                  Redirect(routes.PostController.postPage(title))
+                })
+            case None =>
+              Future(Ok("Post does not exist."))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))
+    }
+  }
+  
+  def downvotePost(title: String) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val postToVote = PostModel.getPostFromTitle(title, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToVote.flatMap {
+            case Some(post) =>
+              val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+              checkVote.map(exists =>
+                if(!exists) {
+                  PostModel.downvotePostDB(actualUser.id, post.id, db)
+                  Redirect(routes.PostController.postPage(title))
+                } else {
+                  Redirect(routes.PostController.postPage(title))
+                })
+            case None =>
+              Future(Ok("Post does not exist."))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))     
+    }
+  }
 }

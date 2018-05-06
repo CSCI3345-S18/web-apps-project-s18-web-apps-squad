@@ -51,7 +51,21 @@ object PostModel {
     }
   }
   
-  /*def checkIfVoteExists(userID: Int, postID, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
-    
-  }*/
+  def checkIfVoteExists(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+    db.run {
+      votePosts.filter(_.userID === userID).filter(_.postID === postID).exists.result
+    }
+  }
+  
+  def upvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      votePosts += VotePost(0, postID, userID, true)
+    }
+  }
+  
+  def downvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      votePosts += VotePost(0, postID, userID, false)
+    }
+  }
 }
