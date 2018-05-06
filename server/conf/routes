@@ -54,6 +54,10 @@ GET		/addSubscription			controllers.SubscriptionController.addSubscription(title
 GET		/addupVote					controllers.PostController.upvotePost(title: String)
 
 GET		/adddownVote				controllers.PostController.downvotePost(title: String)
+
+GET		/popularBoards				controllers.BoardController.popularBoardsPage
+
+GET		/newestBoards				controllers.BoardController.newestBoardsPage
 #Post pages
 
 # GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

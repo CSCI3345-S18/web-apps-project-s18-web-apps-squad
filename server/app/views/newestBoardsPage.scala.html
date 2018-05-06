@@ -1,11 +1,11 @@
 @* postPage Template File *@
-@(posts: Seq[Post], subbedBoards: Seq[Subscription], title: String, desc: String, searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
+@(subbedBoards: Seq[Subscription], boards: Seq[Board], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>@title</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/boardPage.css")">
+		<title>Newest Boards</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/popularBoardsPage.css")">
 	</head>
 	<body>
         <div class="leftnav">
@@ -35,36 +35,17 @@
         		</ul>
         	</nav>
         </div>
-        <div class="rightnav">
-			<p>Have something to say?</p>
-			<button id="create-btn"><a href="@routes.PostController.addPostPage(title)">Add Post</a></button>
-        </div>
-        
         <div class="main">
-			<div id="board-hero">
-				<h3>Welcome to @title</h3>
-				<h3>@desc</h3>
-				<button><a href="@routes.SubscriptionController.addSubscription(title)">Subscribe</a></button>
-			</div>
-			<div id="board-posts">
-				<tr><th>Recent posts</th></tr>
-				@for(p <- posts) {
-					<table border="1">
-						<tr>
-							<td><button><a href="@routes.PostController.upvotePost(p.title)">UPVOTE</a></button><button><a href="@routes.PostController.downvotePost(p.title)">DOWNVOTE</a></button>
-						</tr>
-						<tr>
-							<th><a href="@routes.PostController.postPage(p.title)">@p.title</a></th>
-						</tr>
-						<tr>
-							<td>@p.body</td>
-						</tr>
-						<tr>
-							<td>@p.link</td>
-						</tr>
-					</table>
-				}
-			</div>
-		</div>
+        	<div class="boards">
+        		<table border="1">
+        			<tr><th>Popular Boards</th></tr>
+        			@for(b <- boards) {
+        				<tr>
+        					<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
+        				</tr>
+        			}
+        		</table>
+        	</div>
+        </div>
 	</body>
 </html>
