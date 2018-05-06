@@ -73,7 +73,7 @@ class PostController @Inject() (
               case Some(actualUser) =>
                 boardBeingAddedTo.flatMap {
                   case Some(board) =>
-                    val addFuture = PostModel.addPost(board.id, actualUser.id, newPost, db)
+                    val addFuture = PostModel.addPost(board.id, actualUser.id, actualUser.username, newPost, db)
                     addFuture.map { cnt =>
                       if(cnt == 1) Redirect(routes.BoardController.boardPage(boardTitle))
                       else Redirect(routes.BoardController.boardPage(boardTitle))
@@ -120,14 +120,20 @@ class PostController @Inject() (
             case Some(post) =>
               val commentsFutSeq = CommentModel.getCommentsFromPost(post.id, db)
               val subsOfUser = UserModel.getSubscriptionsOfUser(actualUser.id, db)
-              for {
-                comments <- commentsFutSeq
-                subs <- subsOfUser
-              } yield {
-                Ok(views.html.postPage(subs, comments, post.title, post.body, post.link, searchForm, commentForm))
+              val boardPostIsOn = BoardModel.getBoardByID(post.boardID, db)
+              boardPostIsOn.flatMap {
+                case Some(board) =>
+                  for {
+                    comments <- commentsFutSeq
+                    subs <- subsOfUser
+                  } yield {
+                    Ok(views.html.postPage(subs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                  }
+                case None =>
+                  Future(Ok("Board does not exist."))
               }
             case None =>
-              Future.successful(Redirect(routes.UserController.homePage))
+              Future(Ok("Post does not exist."))
           }
         case None =>
           val postFutOpt = PostModel.getPostFromTitle(title, db)
@@ -135,10 +141,16 @@ class PostController @Inject() (
             case Some(post) =>
               val commentsFutSeq = CommentModel.getCommentsFromPost(post.id, db)
               val emptySubs: Seq[Subscription] = Seq()
-              for {
-                comments <- commentsFutSeq
-              } yield {
-                Ok(views.html.postPage(emptySubs, comments, post.title, post.body, post.link, searchForm, commentForm))
+              val boardPostIsOn = BoardModel.getBoardByID(post.boardID, db)
+              boardPostIsOn.flatMap {
+                case Some(board) =>
+                  for {
+                    comments <- commentsFutSeq
+                  } yield {
+                    Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                  }
+                case None =>
+                  Future(Ok("Board does not exist."))
               }
             case None =>
               Future.successful(Redirect(routes.BoardController.allBoards))
@@ -150,10 +162,16 @@ class PostController @Inject() (
         case Some(post) =>
           val commentsFutSeq = CommentModel.getCommentsFromPost(post.id, db)
           val emptySubs: Seq[Subscription] = Seq()
-          for {
-            comments <- commentsFutSeq
-          } yield {
-            Ok(views.html.postPage(emptySubs, comments, post.title, post.body, post.link, searchForm, commentForm))
+          val boardPostIsOn = BoardModel.getBoardByID(post.boardID, db)
+          boardPostIsOn.flatMap {
+            case Some(board) =>
+              for {
+                comments <- commentsFutSeq
+              } yield {
+                Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
+              }
+            case None =>
+              Future(Ok("Board does not exist."))
           }
         case None =>
           Future.successful(Redirect(routes.BoardController.allBoards))
@@ -170,13 +188,20 @@ class PostController @Inject() (
           postToVote.flatMap {
             case Some(post) =>
               val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
-              checkVote.map(exists =>
-                if(!exists) {
-                  PostModel.upvotePostDB(actualUser.id, post.id, db)
-                  Redirect(routes.PostController.postPage(title))
-                } else {
-                  Redirect(routes.PostController.postPage(title))
-                })
+              val boardFut = BoardModel.getBoardByID(post.boardID, db)
+              boardFut.flatMap {
+                case Some(board) =>
+                  val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+                    checkVote.map(exists =>
+                      if(!exists) {
+                        PostModel.upvotePostDB(actualUser.id, post.id, db)
+                        Redirect(routes.BoardController.boardPage(board.title))
+                      } else {
+                        Redirect(routes.BoardController.boardPage(board.title))
+                      })   
+                case None =>
+                  Future(Ok("Board does not exist."))
+              }
             case None =>
               Future(Ok("Post does not exist."))
           }
@@ -197,13 +222,20 @@ class PostController @Inject() (
           postToVote.flatMap {
             case Some(post) =>
               val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
-              checkVote.map(exists =>
-                if(!exists) {
-                  PostModel.downvotePostDB(actualUser.id, post.id, db)
-                  Redirect(routes.PostController.postPage(title))
-                } else {
-                  Redirect(routes.PostController.postPage(title))
-                })
+              val boardFut = BoardModel.getBoardByID(post.boardID, db)
+              boardFut.flatMap {
+                case Some(board) =>
+                  val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+                    checkVote.map(exists =>
+                      if(!exists) {
+                        PostModel.downvotePostDB(actualUser.id, post.id, db)
+                        Redirect(routes.BoardController.boardPage(board.title))
+                      } else {
+                        Redirect(routes.BoardController.boardPage(board.title))
+                      })   
+                case None =>
+                  Future(Ok("Board does not exist."))
+              }
             case None =>
               Future(Ok("Post does not exist."))
           }
@@ -211,7 +243,7 @@ class PostController @Inject() (
           Future.successful(Redirect(routes.UserController.loginPage))
       }
     }.getOrElse {
-      Future.successful(Redirect(routes.UserController.loginPage))     
+      Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
 }

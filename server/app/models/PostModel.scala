@@ -21,6 +21,10 @@ import controllers.NewPost
 object PostModel {
   import Tables._
   
+  def allPosts(db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
+    db.run(posts.result)
+  }
+  
   def getPostsFromBoard(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
     db.run {
       posts.filter(_.boardID === boardID).result
@@ -39,10 +43,10 @@ object PostModel {
     }
   }
 
-  def addPost(boardID: Int, posterID: Int, np: NewPost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addPost(boardID: Int, posterID: Int, posterUsername: String, np: NewPost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
-      posts += Post(0, boardID, posterID, np.title, np.body, np.link, 0)
+      posts += Post(0, boardID, posterID, posterUsername, np.title, np.body, np.link, 0)
     }
   }
   def searchPostsByTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
@@ -61,11 +65,33 @@ object PostModel {
     db.run {
       votePosts += VotePost(0, postID, userID, true)
     }
+    calculateKarma(postID, db)
   }
   
   def downvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       votePosts += VotePost(0, postID, userID, false)
+    }
+    calculateKarma(postID, db)
+  }
+  
+  def calculateKarma(postID: Int, db: Database)(implicit ec: ExecutionContext) = {
+    val positiveKarma = 0
+    val negativeKarma = 0
+    val upvotes = for {
+      p <- votePosts if p.postID === postID && p.upvote === true 
+    } yield {
+      positiveKarma + 1
+    }
+    val downvotes = for {
+      p <- votePosts if p.postID === postID && p.upvote === false
+    } yield {
+      negativeKarma + 1
+    }
+    val totalKarma = positiveKarma - negativeKarma
+    val updateQuery = posts.filter(_.id === postID).map(_.upvotes)
+    db.run {
+      updateQuery.update(totalKarma)
     }
   }
 }

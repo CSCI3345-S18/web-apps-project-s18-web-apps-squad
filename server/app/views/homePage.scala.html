@@ -1,5 +1,5 @@
 @* homePage Template File *@
-@(boards: Seq[Subscription], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader, flash: Flash)
+@(subbedBoards: Seq[Subscription], homePosts: Seq[Post], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader, flash: Flash)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,9 +13,8 @@
         	<a href="@routes.BoardController.popularBoardsPage">Popular</a>
         	<a href="@routes.BoardController.newestBoardsPage">New</a>
         	<a href="@routes.UserController.profilePage">Account</a>
-        	<h5>Filter bar</h5>
         	<p id="sub-header">My Subscriptions</p>
-        	@for(b <- boards) {
+        	@for(b <- subbedBoards) {
         		<tr>
         			<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
         		</tr>
@@ -29,8 +28,9 @@
         		}
         		<ul>
         		<li><p id="header">Welcome to Funny Informative Forums, the last page of the internet!</p></li>
+        		<li><a href="@routes.BoardController.allBoards">Communities</a></li>
         		<li><a href="@routes.MessageController.messagesPage">Messages</a></li>
-        		<li><a href="#">Create</a></li>
+        		<li><a href="@routes.BoardController.addBoardPage">Create</a></li>
         		<li><a href="@routes.UserController.profilePage">Profile</a></li>
         		</ul>
         	</nav>
@@ -43,11 +43,11 @@
         </div>
         <div class="main">
 			<div id="home-posts">
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
-				<p>Post</p>
+				@for(p <- homePosts) {
+					<tr>
+						<td><a href="@routes.PostController.postPage(p.title)">@p.title by @p.posterUsername</a></td>
+					</tr>
+				}
 			</div>
 		</div>
 	</body>
