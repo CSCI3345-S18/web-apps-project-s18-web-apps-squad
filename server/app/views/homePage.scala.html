@@ -44,9 +44,19 @@
         <div class="main">
 			<div id="home-posts">
 				@for(p <- homePosts) {
-					<tr>
-						<td><a href="@routes.PostController.postPage(p.title)">@p.title by @p.posterUsername</a></td>
-					</tr>
+					<div class="post">
+						<h3 class="title">
+							<a href="@routes.PostController.postPage(p.title)">@p.title </a>
+						</h3>
+						<p class="username">
+							<a> by <a href="@routes.UserController.userPage(p.posterUsername)">@p.posterUsername</a></a>
+						</p>
+						<div class="votes">
+							<span> Karma: @p.upvotes</span>
+							<a href="@routes.PostController.upvotePost(p.title)"><button>UPVOTE</button></a>
+							<a href="@routes.PostController.downvotePost(p.title)"><button>DOWNVOTE</button></a>
+						</div>
+					</div>
 				}
 			</div>
 		</div>

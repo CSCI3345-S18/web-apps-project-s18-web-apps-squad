@@ -37,22 +37,22 @@
         </div>
         <div class="rightnav">
 			<p>Have something to say?</p>
-			<button id="create-btn"><a href="@routes.PostController.addPostPage(title)">Add Post</a></button>
+			<a href="@routes.PostController.addPostPage(title)"><button id="create-btn">Add Post</button></a>
         </div>
-        
+
         <div class="main">
 			<div id="board-hero">
 				<h3>Welcome to @title</h3>
 				<h3>Subscribers: @numSubs</h3>
 				<h3>@desc</h3>
-				<button><a href="@routes.SubscriptionController.addSubscription(title)">Subscribe</a></button>
+				<a href="@routes.SubscriptionController.addSubscription(title)"><button>Subscribe</button></a>
 			</div>
 			<div id="board-posts">
 				<tr><th>Recent posts</th></tr>
 				@for(p <- posts) {
 					<table border="1">
 						<tr>
-							<td><button><a href="@routes.PostController.upvotePost(p.title)">UPVOTE</a></button><button><a href="@routes.PostController.downvotePost(p.title)">DOWNVOTE</a></button>
+							<td><a href="@routes.PostController.upvotePost(p.title)"><button>UPVOTE</button></a><a href="@routes.PostController.downvotePost(p.title)"><button>DOWNVOTE</button></a>
 						</tr>
 						<tr>
 							<th><a href="@routes.PostController.postPage(p.title)">@p.title</a></th>

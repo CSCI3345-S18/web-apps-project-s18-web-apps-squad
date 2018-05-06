@@ -35,20 +35,20 @@
         		</ul>
         	</nav>
         </div>
-        
+
         <div class="main">
 			<div id="post-hero">
 				<h3>@title</h3>
 				<h3>@body</h3>
 				<h3><a href="@link">@link</a></h3>
 				<h3>A post by <a href="@routes.UserController.userPage(posterUsername)">@posterUsername</a></h3>
-				<button><a href="@routes.BoardController.boardPage(boardTitle)">Back to @boardTitle</a></button>
+				<a href="@routes.BoardController.boardPage(boardTitle)"><button>Back to @boardTitle</button></a>
 			</div>
 			<div id="post-comments">
 				@for(c <- comments) {
 					<table>
 						<tr>
-							<td><button><a href="@routes.CommentController.upvoteComment(c.id, title)">UPVOTE</a></button><button><a href="@routes.CommentController.downvoteComment(c.id, title)">DOWNVOTE</a></button>
+							<td><a href="@routes.CommentController.upvoteComment(c.id, title)"><button>UPVOTE</button></a><a href="@routes.CommentController.downvoteComment(c.id, title)"><button>DOWNVOTE</button></a>
 						</tr>
 						<tr>
 							<td>@c.body</td><td>@c.username</td>
