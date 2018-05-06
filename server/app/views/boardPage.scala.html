@@ -23,7 +23,9 @@
         <div class="topnav">
         	<nav>
         		@helper.form(action = helper.CSRF(routes.SearchController.searchPage)) {
-        			@helper.inputText(searchForm("query"))
+        			@helper.inputText(searchForm("search"),
+        				'placeholder -> "Rocket League"
+        			)
         			<input type="submit" value="Search">
         		}
         		<ul>
