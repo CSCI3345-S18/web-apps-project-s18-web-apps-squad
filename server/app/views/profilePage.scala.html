@@ -1,5 +1,5 @@
 @* userPage Template File *@
-@(username: String, posts: Seq[Post], comments: Seq[Comment], subscribedBoards: Seq[Subscription], searchForm: Form[SearchQuery])(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
+@(username: String, posts: Seq[Post], comments: Seq[Comment], subscribedBoards: Seq[Subscription], karma: Int,  searchForm: Form[SearchQuery])(implicit request: RequestHeader, flash: Flash, messagesProvider: MessagesProvider)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,12 +35,12 @@
         		</ul>
         	</nav>
         </div>
-        
-        <div class="main">	
+
+        <div class="main">
 			<div id="profile-hero">
 				<p>Profile pic</p>
 				<h3>@username</h3>
-				<p>Karma: 132</p>
+				<p>Karma: @karma</p>
 				<div id="buttons">
 					<form id="messagesForm" action="@routes.MessageController.messagesPage" method="GET">
 						@helper.CSRF.formField

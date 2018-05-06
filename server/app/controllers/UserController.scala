@@ -153,12 +153,14 @@ class UserController @Inject() (
             case Some(viewedUser) =>
               val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
               val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
+              val karmaOut = UserModel.getKarma(viewedUser.id, db)
               for {
                 subs <- loggedSubs
                 posts <- postsSeqOpt
                 comments <- commentsSeqOpt
+                karma <- karmaOut
               } yield {
-                Ok(views.html.userPage(viewedUser.username, subs, posts, comments, searchForm))
+                Ok(views.html.userPage(viewedUser.username, subs, posts, comments, karma, searchForm))
               }
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
@@ -170,11 +172,13 @@ class UserController @Inject() (
               val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
               val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
               val emptySubs: Seq[Subscription] = Seq()
+              val karmaOut = UserModel.getKarma(viewedUser.id, db)
               for {
                 posts <- postsSeqOpt
                 comments <- commentsSeqOpt
+                karma <- karmaOut
               } yield {
-                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, searchForm))
+                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, karma, searchForm))
               }
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
@@ -186,12 +190,14 @@ class UserController @Inject() (
             case Some(viewedUser) =>
               val postsSeqOpt = UserModel.getPostsOfUser(viewedUser.id, db)
               val commentsSeqOpt = UserModel.getCommentsOfUser(viewedUser.id, db)
+              val karmaOut = UserModel.getKarma(viewedUser.id, db)
               val emptySubs: Seq[Subscription] = Seq()
               for {
                 posts <- postsSeqOpt
                 comments <- commentsSeqOpt
+                karma <- karmaOut
               } yield {
-                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, searchForm))
+                Ok(views.html.userPage(viewedUser.username, emptySubs, posts, comments, karma, searchForm))
               }
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
@@ -207,12 +213,14 @@ class UserController @Inject() (
           val postsSeqOpt = UserModel.getPostsOfUser(actualUser.id, db)
           val commentsSeqOpt = UserModel.getCommentsOfUser(actualUser.id, db)
           val subBoardsSeqOpt = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          val karmaOut = UserModel.getKarma(actualUser.id, db)
           for {
             posts <- postsSeqOpt
             comments <- commentsSeqOpt
             subBoards <- subBoardsSeqOpt
+            karma <- karmaOut
           } yield {
-            Ok(views.html.profilePage(actualUser.username, posts, comments, subBoards, searchForm))
+            Ok(views.html.profilePage(actualUser.username, posts, comments, subBoards, karma, searchForm))
           }
         case None =>
           Future.successful(Redirect(routes.UserController.loginPage))
