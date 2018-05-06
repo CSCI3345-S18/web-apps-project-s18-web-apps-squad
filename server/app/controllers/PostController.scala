@@ -34,12 +34,8 @@ import models.BoardModel
 import models.Board
 import models.Post
 
-case class NewPost(title: String, body: String, link: String)
-case class NewVotePost(
-  postID: Int,
-  userID: Int,
-  upvote: Boolean
-)
+case class NewPost(title: String, body: String)
+
 @Singleton
 class PostController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
@@ -48,12 +44,10 @@ class PostController @Inject() (
 
   val newPostForm = Form(mapping(
       "title" -> nonEmptyText,
-      "body" -> nonEmptyText,
-      "link" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
+      "body" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
 
   val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
-
+      "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
   val commentForm = Form(mapping(
       "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
 
@@ -131,7 +125,7 @@ class PostController @Inject() (
                     comments <- commentsFutSeq
                     subs <- subsOfUser
                   } yield {
-                    Ok(views.html.postPage(subs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                    Ok(views.html.postPage(subs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -151,7 +145,7 @@ class PostController @Inject() (
                   for {
                     comments <- commentsFutSeq
                   } yield {
-                    Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                    Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -172,7 +166,7 @@ class PostController @Inject() (
               for {
                 comments <- commentsFutSeq
               } yield {
-                Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
               }
             case None =>
               Future(Ok("Board does not exist."))
