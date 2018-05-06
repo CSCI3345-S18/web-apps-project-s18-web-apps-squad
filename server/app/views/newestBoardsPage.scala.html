@@ -38,7 +38,7 @@
         <div class="main">
         	<div class="boards">
         		<table border="1">
-        			<tr><th>Popular Boards</th></tr>
+        			<tr><th>Newest Boards</th></tr>
         			@for(b <- boards) {
         				<tr>
         					<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
