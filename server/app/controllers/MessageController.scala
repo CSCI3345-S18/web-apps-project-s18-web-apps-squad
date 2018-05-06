@@ -87,7 +87,9 @@ class MessageController @Inject() (
                  case Some(actualFriend) => {
                    val areFriendsFuture = MessageModel.areFriends(actualUser.id, actualFriend.id, db)
                    areFriendsFuture.flatMap{
-                     case false => MessageModel.addFriends(actualUser.id, actualFriend.id, db)
+                     case false => {
+                       MessageModel.addFriends(actualUser.id, actualFriend.id, db)
+                     }
                      case true => Future{}
                    }
                    val prevMessagesFuture = MessageModel.getMessagesBetweenFriends(actualUser.id, actualFriend.id, db)

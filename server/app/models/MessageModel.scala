@@ -46,7 +46,7 @@ object MessageModel {
   
   def areFriends(userOneID: Int, userTwoID: Int, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
     db.run{
-      friends.filter(f => (f.userOneID === userOneID && f.userTwoID === userTwoID) || (f.userOneID === userTwoID && f.userTwoID === f.userOneID)).exists.result
+      friends.filter(f => (f.userOneID === userOneID && f.userTwoID === userTwoID) || (f.userOneID === userTwoID && f.userTwoID === userOneID)).exists.result
     }
   }
   
