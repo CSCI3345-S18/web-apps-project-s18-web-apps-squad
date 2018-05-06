@@ -38,7 +38,7 @@ class BoardController @Inject() (
       "description" -> nonEmptyText)(NewBoard.apply)(NewBoard.unapply))
       
   val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+      "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
       
   def allBoards = Action.async { implicit request =>
     request.session.get("connected").map { user =>

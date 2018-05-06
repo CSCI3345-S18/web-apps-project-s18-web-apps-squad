@@ -31,21 +31,29 @@ object SPAMain {
       $("#profile-messages").append("<p align=\"left\">" + message + "</p>")
     })
     
-    $("#msg").change(() => msg = $("#msg").value().asInstanceOf[String])
+    $("#msg").keypress(() => msg = $("#msg").value().asInstanceOf[String])
     
     $("#sendButton").click{() =>
+      $("#msg").value("")
       val jsonLit = js.Dynamic.literal(userOneID = myUID, userTwoID = friendsUID, body = msg)
       socket.send(JSON.stringify(jsonLit))
       $("#profile-messages").append("<p align=\"right\">" + msg + "</p>")
-    }   
+    }
+    
+    document.onkeypress = {(e: dom.KeyboardEvent) =>
+      if(e.keyCode == 13){
+        $("#msg").value("")
+        val jsonLit = js.Dynamic.literal(userOneID = myUID, userTwoID = friendsUID, body = msg)
+        socket.send(JSON.stringify(jsonLit))
+        $("#profile-messages").append("<p align=\"right\">" + msg + "</p>")
+      }
+    }
     
     $(".messages").each{ elem =>
-      //println(elem.getAttribute("value").toString())
-      val data = JSON.parse(elem.getAttribute("value").toString())
-      val message = data.message.asInstanceOf[String]
-      println(message)
-      val sender = data.userOneID.asInstanceOf[Int]
-      println(sender)
+      val jsonLit = elem.getAttribute("value").toString()
+      val obj = JSON.parse(jsonLit)
+      val message = obj.body.asInstanceOf[String]
+      val sender = obj.userOneID.asInstanceOf[Int]
       val htmlElem = {
           if(sender == myUID){
 						"<p class=\"messages\" align=\"right\">" + message + "</p>"

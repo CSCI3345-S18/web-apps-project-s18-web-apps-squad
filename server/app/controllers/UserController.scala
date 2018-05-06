@@ -37,7 +37,7 @@ class UserController @Inject() (
       "password" -> nonEmptyText)(Login.apply)(Login.unapply))
 
   val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+      "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
 
   def homePage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>

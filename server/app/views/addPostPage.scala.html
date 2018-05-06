@@ -24,7 +24,9 @@
         <div class="topnav">
         	<nav>
         		@helper.form(action = helper.CSRF(routes.SearchController.searchPage)) {
-        			@helper.inputText(searchForm("query"))
+        			@helper.inputText(searchForm("search"),
+        				'placeholder -> "RocketLeague"
+        			)
         			<input type="submit" value="Search">
         		}
         		<ul>
@@ -45,7 +47,6 @@
 			@helper.form(action = helper.CSRF(routes.PostController.addPost(boardTitle))) {
 				@helper.inputText(newPostForm("title"))
 				@helper.inputText(newPostForm("body"))
-				@helper.inputText(newPostForm("link"))
 				<input type="submit" value="Submit">
 			}
 			</div>
