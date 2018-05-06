@@ -51,9 +51,13 @@ GET		/search						controllers.SearchController.searchPage
 
 GET		/addSubscription			controllers.SubscriptionController.addSubscription(title: String)
 
-GET		/addupVote					controllers.PostController.upvotePost(title: String)
+GET		/upvotePost					controllers.PostController.upvotePost(title: String)
 
-GET		/adddownVote				controllers.PostController.downvotePost(title: String)
+GET		/downvotePost				controllers.PostController.downvotePost(title: String)
+
+GET		/upvoteComment				controllers.CommentController.upvoteComment(commentID: Int, postTitle: String)
+
+GET		/downvoteComment			controllers.CommentController.downvoteComment(commentID: Int, postTitle: String)
 
 GET		/popularBoards				controllers.BoardController.popularBoardsPage
 

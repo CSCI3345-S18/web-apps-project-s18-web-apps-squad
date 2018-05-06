@@ -102,7 +102,7 @@ object Tables extends {
   }
   val votePosts = TableQuery[VotePosts]
   
-  class VoteComments(tag: Tag) extends Table[VoteComment](tag, "Vote_Comment") {
+  class VoteComments(tag: Tag) extends Table[VoteComment](tag, "Vote_Comments") {
     def id = column[Int]("id")
     def commentID = column[Int]("comment_id")
     def userID = column[Int]("user_id")

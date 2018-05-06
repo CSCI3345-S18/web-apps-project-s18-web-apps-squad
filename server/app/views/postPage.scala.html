@@ -46,6 +46,9 @@
 				@for(c <- comments) {
 					<table>
 						<tr>
+							<td><button><a href="@routes.CommentController.upvoteComment(c.id, title)">UPVOTE</a></button><button><a href="@routes.CommentController.downvoteComment(c.id, title)">DOWNVOTE</a></button>
+						</tr>
+						<tr>
 							<td>@c.body</td><td>@c.username</td>
 						</tr>
 					</table>
