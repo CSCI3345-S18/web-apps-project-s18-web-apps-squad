@@ -25,14 +25,6 @@ case class NewComment(
     body: String
 )
 
-/*case class NewComment(
-  body: String,
-  userID: Int,
-  postParentID: Int,
-  commentParentID: Int,
-  flag: Char
-)*/
-
 @Singleton
 class CommentController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
@@ -79,6 +71,72 @@ class CommentController @Inject() (
                 Future.successful(Redirect(routes.UserController.loginPage))
             }
           })
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))
+    }
+  }
+  
+  def upvoteComment(commentID: Int, postTitle: String) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val commentToVote = CommentModel.getCommentFromID(commentID, db)
+      val postToComment = PostModel.getPostFromTitle(postTitle, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToComment.flatMap {
+            case Some(post) =>
+              commentToVote.flatMap {
+                case Some(comment) =>
+                  val checkVote = CommentModel.checkIfVoteExists(actualUser.id, comment.id, db)
+                  checkVote.map(exists =>
+                    if(!exists) {
+                      CommentModel.upvoteCommentDB(actualUser.id, comment.id, db)
+                      Redirect(routes.PostController.postPage(postTitle))
+                    } else {
+                      Redirect(routes.PostController.postPage(postTitle))
+                    })
+                case None =>
+                  Future.successful(Redirect(routes.PostController.postPage(postTitle)))
+              }
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))
+    }
+  }
+  
+  def downvoteComment(commentID: Int, postTitle: String) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val commentToVote = CommentModel.getCommentFromID(commentID, db)
+      val postToComment = PostModel.getPostFromTitle(postTitle, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToComment.flatMap {
+            case Some(post) =>
+              commentToVote.flatMap {
+                case Some(comment) =>
+                  val checkVote = CommentModel.checkIfVoteExists(actualUser.id, comment.id, db)
+                  checkVote.map(exists =>
+                    if(!exists) {
+                      CommentModel.downvoteCommentDB(actualUser.id, comment.id, db)
+                      Redirect(routes.PostController.postPage(postTitle))
+                    } else {
+                      Redirect(routes.PostController.postPage(postTitle))
+                    })
+                case None =>
+                  Future.successful(Redirect(routes.PostController.postPage(postTitle)))
+              }
+            case None =>
+              Future.successful(Redirect(routes.UserController.homePage))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
     }.getOrElse {
       Future.successful(Redirect(routes.UserController.loginPage))
     }

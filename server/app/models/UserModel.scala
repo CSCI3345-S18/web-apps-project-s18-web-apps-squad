@@ -84,5 +84,4 @@ object UserModel {
       users.filter(_.username like username+"%").result
     }
   }
-
 }

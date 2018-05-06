@@ -36,4 +36,28 @@ object CommentModel {
       comments += Comment(0, body, userID, username, postParentID, flag, 0)
     }
   }
+  
+  def getCommentFromID(id: Int, db: Database)(implicit ec: ExecutionContext): Future[Option[Comment]] = {
+    db.run {
+      comments.filter(_.id === id).result.headOption
+    }
+  }
+  
+  def checkIfVoteExists(userID: Int, commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
+    db.run {
+      voteComments.filter(_.userID === userID).filter(_.commentID === commentID).exists.result
+    }
+  }
+  
+  def upvoteCommentDB(userID: Int, commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      voteComments += VoteComment(0, commentID, userID, true)
+    }
+  }
+  
+  def downvoteCommentDB(userID: Int, commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      voteComments += VoteComment(0, commentID, userID, false)
+    }
+  }
 }

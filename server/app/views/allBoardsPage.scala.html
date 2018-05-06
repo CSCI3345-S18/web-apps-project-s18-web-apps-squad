@@ -1,21 +1,20 @@
-@* homePage Template File *@
-@(boards: Seq[Subscription], newBoardForm: Form[NewBoard], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader, flash: Flash)
+@* postPage Template File *@
+@(subbedBoards: Seq[Subscription], boards: Seq[Board], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Add a Board</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/addBoardPage.css")">
+		<title>All Communities</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/popularBoardsPage.css")">
 	</head>
 	<body>
-
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
         	<a href="@routes.BoardController.popularBoardsPage()">Popular</a>
         	<a href="@routes.BoardController.newestBoardsPage()">New</a>
         	<a href="@routes.UserController.profilePage()">Account</a>
         	<p id="sub-header">My Subscriptions</p>
-        	@for(b <- boards) {
+        	@for(b <- subbedBoards) {
         		<tr>
         			<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
         		</tr>
@@ -36,18 +35,17 @@
         		</ul>
         	</nav>
         </div>
-
         <div class="main">
-        	<div id="add-board-hero">
-        		<p id="add-board-header1">Create a New Community</p>
+        	<div class="boards">
+        		<table border="1">
+        			<tr><th>All Communities</th></tr>
+        			@for(b <- boards) {
+        				<tr>
+        					<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
+        				</tr>
+        			}
+        		</table>
         	</div>
-			<div id="add-board-instruction">
-			@helper.form(action = helper.CSRF(routes.BoardController.addBoard())) {
-				@helper.inputText(newBoardForm("title"))
-				@helper.inputText(newBoardForm("description"))
-				<input type="submit" value="Submit">
-			}
-			</div>
-		</div>
+        </div>
 	</body>
 </html>

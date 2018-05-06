@@ -51,7 +51,7 @@ class BoardController @Inject() (
             subs <- subbedBoardsFut
             boards <- popularBoardsFut
           } yield {
-            Ok(views.html.popularBoardsPage(subs, boards, searchForm))
+            Ok(views.html.allBoardsPage(subs, boards, searchForm))
           }
         case None =>
           val popularBoardsFut = BoardModel.allBoards(db)
@@ -59,13 +59,13 @@ class BoardController @Inject() (
           for {
             boards <- popularBoardsFut
           } yield {
-            Ok(views.html.popularBoardsPage(emptySubs, boards, searchForm))
+            Ok(views.html.allBoardsPage(emptySubs, boards, searchForm))
           }
       }
     }.getOrElse {
       val boardsFuture = BoardModel.allBoards(db)
       val emptySubs: Seq[Subscription] = Seq()
-      boardsFuture.map(boards => Ok(views.html.popularBoardsPage(emptySubs, boards, searchForm)))
+      boardsFuture.map(boards => Ok(views.html.allBoardsPage(emptySubs, boards, searchForm)))
     }
   }
 

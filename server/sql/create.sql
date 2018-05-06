@@ -25,6 +25,7 @@ CREATE TABLE Posts(
     id int NOT NULL AUTO_INCREMENT,
     board_id int NOT NULL,
     poster_id int NOT NULL,
+    poster_username VARCHAR(50) NOT NULL,
     title VARCHAR(50) NOT NULL,
     body VARCHAR(255),
     link VARCHAR(255),
