@@ -46,8 +46,7 @@ object BoardModel {
   }
   def getSubscriptionNum(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
-      boards.filter(_.boardID === boardID).join(subscriptions).groupBy(_._1).map { case (bor, subs) =>
-        (bor, subs.map(_._2).length)} map(_._2) result head
+      subscriptions.filter(_.boardID === boardID).length.result
     }
   }
   def getBottomBoards(db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
