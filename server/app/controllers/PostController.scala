@@ -49,7 +49,7 @@ class PostController @Inject() (
 
   val searchForm = Form(mapping(
       "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
-      
+
   val commentForm = Form(mapping(
       "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
       
@@ -89,7 +89,7 @@ class PostController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   def addPostPage(boardTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -108,7 +108,7 @@ class PostController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   // Shows the original post inputs and loads its comments
   def postPage(title: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
@@ -178,7 +178,7 @@ class PostController @Inject() (
       }
     }
   }
-  
+
   def upvotePost(title: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -198,7 +198,7 @@ class PostController @Inject() (
                         Redirect(routes.BoardController.boardPage(board.title))
                       } else {
                         Redirect(routes.BoardController.boardPage(board.title))
-                      })   
+                      })
                 case None =>
                   Future(Ok("Board does not exist."))
               }
@@ -212,7 +212,7 @@ class PostController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   def downvotePost(title: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -232,7 +232,7 @@ class PostController @Inject() (
                         Redirect(routes.BoardController.boardPage(board.title))
                       } else {
                         Redirect(routes.BoardController.boardPage(board.title))
-                      })   
+                      })
                 case None =>
                   Future(Ok("Board does not exist."))
               }
