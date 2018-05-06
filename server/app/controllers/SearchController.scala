@@ -32,7 +32,7 @@ class SearchController @Inject() (
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
   
   val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+      "search" -> text)(SearchQuery.apply)(SearchQuery.unapply))
   
   def searchPage = Action.async { implicit request =>
     request.session.get("connected").map { user =>

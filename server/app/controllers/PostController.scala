@@ -47,7 +47,7 @@ class PostController @Inject() (
       "body" -> nonEmptyText)(NewPost.apply)(NewPost.unapply))
 
   val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
+      "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
       
   val commentForm = Form(mapping(
       "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
