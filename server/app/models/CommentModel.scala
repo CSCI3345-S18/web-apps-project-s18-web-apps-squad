@@ -71,11 +71,11 @@ object CommentModel {
       negativeKarma <- negativeKarmaData
     } yield{
       val totalKarma = positiveKarma - negativeKarma
-      val updateQuery = comments.filter(_.id === postID).map(_.upvotes)
+      val updateQuery = comments.filter(_.id === commentID).map(_.upvotes)
       db.run {
         updateQuery.update(totalKarma)
-        totalKarma
       }
+      totalKarma
     }
   }
 }
