@@ -61,11 +61,33 @@ object PostModel {
     db.run {
       votePosts += VotePost(0, postID, userID, true)
     }
+    calculateKarma(postID, db)
   }
   
   def downvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       votePosts += VotePost(0, postID, userID, false)
+    }
+    calculateKarma(postID, db)
+  }
+  
+  def calculateKarma(postID: Int, db: Database)(implicit ec: ExecutionContext) = {
+    val positiveKarma = 0
+    val negativeKarma = 0
+    val upvotes = for {
+      p <- votePosts if p.postID === postID && p.upvote === true 
+    } yield {
+      positiveKarma + 1
+    }
+    val downvotes = for {
+      p <- votePosts if p.postID === postID && p.upvote === false
+    } yield {
+      negativeKarma + 1
+    }
+    val totalKarma = positiveKarma - negativeKarma
+    val updateQuery = posts.filter(_.id === postID).map(_.upvotes)
+    db.run {
+      updateQuery.update(totalKarma)
     }
   }
 }
