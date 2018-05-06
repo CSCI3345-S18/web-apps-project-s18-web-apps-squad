@@ -39,19 +39,17 @@
         	<p align="center">@friendsUsername</p>
 			<div id="profile-messages">
 				@for(message <- pastMessages){
-					@if(message.senderID == myUID){
-						<p align="right">@message.body</p>
-					}else{
-						<p aligh="left">@message.body</p>
-					}
+					<input type="hidden" class="messages" value="@message.body">
 				}
 			</div>
 			<div id="sendMessages">
-				<form>
-					<input type="text" id="message"><br/>
-					<input type="submit" value="Send">
-				</form>
+					<input type="text" id="msg"><br/>
+					<input type="hidden" id="myUID" value=@myUID><br/>
+					<input type="hidden" id="friendsUID" value=@friendsUID><br/>
+					<button id="sendButton">Send</button>
 			</div>
 		</div>
 	</body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	@scalajs.html.scripts("FinalProject-client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 </html>

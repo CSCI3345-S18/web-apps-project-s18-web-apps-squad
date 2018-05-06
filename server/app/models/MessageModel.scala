@@ -15,7 +15,7 @@ import scala.collection.mutable.Buffer
 import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
-import controllers.NewMessage
+import actors.ChatManager.ActorMessage
 
 object MessageModel {
   import Tables._
@@ -38,7 +38,7 @@ object MessageModel {
     }
   }
 
-  def addMessage(m: NewMessage, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+  def addMessage(m: ActorMessage, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       messages += Message(0, m.body, m.senderID, m.receiverID)
     }
