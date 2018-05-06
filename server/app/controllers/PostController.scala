@@ -127,7 +127,7 @@ class PostController @Inject() (
                     comments <- commentsFutSeq
                     subs <- subsOfUser
                   } yield {
-                    Ok(views.html.postPage(subs, comments, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                    Ok(views.html.postPage(subs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -147,7 +147,7 @@ class PostController @Inject() (
                   for {
                     comments <- commentsFutSeq
                   } yield {
-                    Ok(views.html.postPage(emptySubs, comments, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                    Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -168,7 +168,7 @@ class PostController @Inject() (
               for {
                 comments <- commentsFutSeq
               } yield {
-                Ok(views.html.postPage(emptySubs, comments, board.title, post.title, post.body, post.link, searchForm, commentForm))
+                Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, post.link, searchForm, commentForm))
               }
             case None =>
               Future(Ok("Board does not exist."))

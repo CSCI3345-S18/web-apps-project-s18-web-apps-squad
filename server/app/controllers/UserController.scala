@@ -16,6 +16,7 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserModel
 import models.BoardModel
+import models.PostModel
 import models.Board
 import models.Post
 import models.Subscription
@@ -42,16 +43,34 @@ class UserController @Inject() (
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
       loggedinUser.flatMap {
-        case Some(rawUser) =>
-          val subscribedBoards = UserModel.getSubscriptionsOfUser(rawUser.id, db)
-          subscribedBoards.map(boards => Ok(views.html.homePage(boards, searchForm)))
+        case Some(actualUser) =>
+//          val subscribedBoards = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+//          val postsFromSubbedBoards = PostModel.getPostsFromSubscriptions(actualUser.id, db)
+          val subscribedBoards = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+          val postsFromSubbedBoards = PostModel.allPosts(db)
+          for {
+            subs <- subscribedBoards
+            posts <- postsFromSubbedBoards
+          } yield {
+            Ok(views.html.homePage(subs, posts, searchForm))
+          }
         case None =>
           val emptySubs: Seq[Subscription] = Seq()
-          Future.successful(Ok(views.html.homePage(emptySubs, searchForm)))
+          val postsFromSubbedBoards = PostModel.allPosts(db)
+          for {
+            posts <- postsFromSubbedBoards
+          } yield {
+            Ok(views.html.homePage(emptySubs, posts, searchForm))
+          }
       }
     }.getOrElse {
       val emptySubs: Seq[Subscription] = Seq()
-      Future.successful(Ok(views.html.homePage(emptySubs, searchForm)))
+      val postsFromSubbedBoards = PostModel.allPosts(db)
+      for {
+        posts <- postsFromSubbedBoards
+      } yield {
+        Ok(views.html.homePage(emptySubs, posts, searchForm))
+      }
     }
   }
 
@@ -59,8 +78,8 @@ class UserController @Inject() (
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
       loggedinUser.flatMap {
-        case Some(rawUser) =>
-          val subscribedBoards = UserModel.getSubscriptionsOfUser(rawUser.id, db)
+        case Some(actualUser) =>
+          val subscribedBoards = UserModel.getSubscriptionsOfUser(actualUser.id, db)
           val usersFuture = UserModel.allUsers(db)
           for {
             boards <- subscribedBoards

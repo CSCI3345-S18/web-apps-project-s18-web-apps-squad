@@ -21,6 +21,10 @@ import controllers.NewPost
 object PostModel {
   import Tables._
   
+  def allPosts(db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
+    db.run(posts.result)
+  }
+  
   def getPostsFromBoard(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
     db.run {
       posts.filter(_.boardID === boardID).result
