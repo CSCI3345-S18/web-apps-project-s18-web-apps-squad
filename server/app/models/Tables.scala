@@ -4,6 +4,7 @@ case class Post(
   id: Int,
   boardID: Int,
   posterID: Int,
+  posterUsername: String,
   title: String,
   body: String,
   link: String,
@@ -132,11 +133,12 @@ object Tables extends {
     def id = column[Int]("id")
     def boardID = column[Int]("board_id")
     def posterID = column[Int]("poster_id")
+    def posterUsername = column[String]("poster_username")
     def title = column[String]("title")
     def body = column[String]("body")
     def link = column[String]("link")
     def upvotes = column[Int]("total_upvotes")
-    def * = (id, boardID, posterID, title, body, link, upvotes) <> (Post.tupled, Post.unapply)
+    def * = (id, boardID, posterID, posterUsername, title, body, link, upvotes) <> (Post.tupled, Post.unapply)
   }
   val posts = TableQuery[Posts]
   
