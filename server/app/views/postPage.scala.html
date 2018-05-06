@@ -1,5 +1,5 @@
 @* postPage Template File *@
-@(subbedBoards: Seq[Subscription], comments: Seq[Comment], title: String, body: String, link: String, searchForm: Form[SearchQuery], commentForm: Form[NewComment])(implicit request: MessagesRequestHeader)
+@(subbedBoards: Seq[Subscription], comments: Seq[Comment], boardTitle: String, title: String, body: String, link: String, searchForm: Form[SearchQuery], commentForm: Form[NewComment])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +41,7 @@
 				<h3>@title</h3>
 				<h3>@body</h3>
 				<h3>@link</h3>
+				<button><a href="@routes.BoardController.boardPage(boardTitle)">Back to @boardTitle</a></button>
 			</div>
 			<div id="post-comments">
 				@for(c <- comments) {
