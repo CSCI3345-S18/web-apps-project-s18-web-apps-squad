@@ -71,5 +71,12 @@ object BoardModel {
       boards.filter(_.title === title).result.headOption
     }
   }
+  
+  def addVote(v: NewVotePost, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
+      votePosts += VotePost(0, v.postID, v.userID, v.upvote)
+    }
+  }
 
 }

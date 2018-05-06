@@ -36,4 +36,10 @@ object CommentModel {
       comments += Comment(0, body, userID, username, postParentID, flag, 0)
     }
   }
+  def addVote(v: NewVoteComment, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
+      votePosts += VotePost(0, v.postID, v.userID, v.upvote)
+    }
+  }
 }

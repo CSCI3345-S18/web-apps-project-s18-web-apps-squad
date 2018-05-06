@@ -20,7 +20,7 @@ import controllers.NewPost
 
 object PostModel {
   import Tables._
-  
+
   def getPostsFromBoard(boardID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Post]] = {
     db.run {
       posts.filter(_.boardID === boardID).result
@@ -32,7 +32,7 @@ object PostModel {
       posts.filter(_.id === postID).result.headOption
     }
   }
-  
+
   def getPostFromTitle(title: String, db: Database)(implicit ec: ExecutionContext): Future[Option[Post]] = {
     db.run {
       posts.filter(_.title === title).result.headOption
@@ -50,8 +50,14 @@ object PostModel {
       posts.filter(_.title like title+"%").result
     }
   }
-  
+  def addVote(v: NewVoteComment, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
+    db.run {
+      //first number is an id which the database will ignore and last two are upvotes and downvotes which database should ignore
+      votePosts += VotePost(0, v.commentID, v.userID, v.upvote)
+    }
+  }
+
   /*def checkIfVoteExists(userID: Int, postID, db: Database)(implicit ec: ExecutionContext): Future[Boolean] = {
-    
+
   }*/
 }

@@ -35,7 +35,11 @@ import models.Board
 import models.Post
 
 case class NewPost(title: String, body: String, link: String)
-
+case class NewVotePost(
+  postID: Int,
+  userID: Int,
+  upvote: Boolean
+)
 @Singleton
 class PostController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
@@ -49,10 +53,10 @@ class PostController @Inject() (
 
   val searchForm = Form(mapping(
       "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
-      
+
   val commentForm = Form(mapping(
       "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
-      
+
   def addPost(boardTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -89,7 +93,7 @@ class PostController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   def addPostPage(boardTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -108,7 +112,7 @@ class PostController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   // Shows the original post inputs and loads its comments
   def postPage(title: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
