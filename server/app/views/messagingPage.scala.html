@@ -1,10 +1,10 @@
 @* messagingPage Template File *@
-@(boards: Seq[Subscription], searchForm: Form[SearchQuery])(implicit request: MessagesRequestHeader)
+@(boards: Seq[Subscription], searchForm: Form[SearchQuery], myUsername: String, friendsUsername: String, myUID: Int, friendsUID: Int, pastMessages: Seq[Message])(implicit request: MessagesRequestHeader)
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Messages</title>
+		<title>Chat with @friendsUsername</title>
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/messagesPage.css")">
 	</head>
 	<body>
@@ -36,12 +36,21 @@
         	</nav>
         </div>
         <div class="main">
+        	<p align="center">@friendsUsername</p>
 			<div id="profile-messages">
-				<p>Message</p>
-				<p>Message</p>
-				<p>Message</p>
-				<p>Message</p>
-				<p>Message</p>
+				@for(message <- pastMessages){
+					@if(message.senderID == myUID){
+						<p align="right">@message.body</p>
+					}else{
+						<p aligh="left">@message.body</p>
+					}
+				}
+			</div>
+			<div id="sendMessages">
+				<form>
+					<input type="text" id="message"><br/>
+					<input type="submit" value="Send">
+				</form>
 			</div>
 		</div>
 	</body>

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Messages</title>
+		<title>Message Center</title>
 		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/messagesPage.css")">
 	</head>
 	<body>
@@ -41,8 +41,7 @@
         <div class="main">
 			<div id="profile-messages">
 				@for(uname <- friendUsernames){
-					@*TODO make this link go to a messaging page*@
-					<p><a href="@routes.UserController.userPage(uname)">@uname</a></p>
+					<p><a href="@routes.MessageController.messagingPage(uname)">@uname</a></p>
 				}
 			</div>
 		</div>

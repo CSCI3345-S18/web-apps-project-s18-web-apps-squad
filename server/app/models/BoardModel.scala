@@ -38,6 +38,18 @@ object BoardModel {
         (bor, subs.map(_._2).length)} sortBy(_._2) take(5) map(_._1) result
     }
   }
+  def getTopBoards(db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
+    db.run {
+      boards.join(subscriptions).groupBy(_._1).map { case (bor, subs) =>
+        (bor, subs.map(_._2).length)} sortBy(_._2) take(5) map(_._1) result
+    }
+  }
+  def getBottomBoards(db: Database)(implicit ec: ExecutionContext): Future[Seq[Board]] = {
+    db.run {
+      boards.join(subscriptions).groupBy(_._1).map { case (bor, subs) =>
+        (bor, subs.map(_._2).length)} sortBy(_._2.desc) take(5) map(_._1) result
+    }
+  }
   def getDefaultSubscription(): Seq[String] = {
     return Seq("todo")
   }

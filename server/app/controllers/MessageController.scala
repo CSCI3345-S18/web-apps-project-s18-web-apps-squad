@@ -16,8 +16,16 @@ import play.api.data.Forms._
 import scala.concurrent.Future
 import models.UserModel
 import models.BoardModel
+import models.MessageModel
 import models.Board
 import models.Post
+import models.Message
+import actors.ChatManager
+import akka.actor.ActorSystem
+import play.api.libs.streams.ActorFlow
+import actors.ChatActor
+import akka.actor.ActorSystem
+import akka.stream.Materializer
 
 case class NewMessage(
   body: String,
@@ -28,12 +36,14 @@ case class NewMessage(
 @Singleton
 class MessageController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
-    mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
+    mcc: MessagesControllerComponents) (implicit ec: ExecutionContext, system: ActorSystem, mat: Materializer)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
     val searchForm = Form(mapping(
       "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))  
-  
+      
+    val chatManager = system.actorOf(ChatManager.props)  
+      
     def messagesPage() = Action.async { implicit request =>
       request.session.get("connected").map { user =>
         val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -71,7 +81,43 @@ class MessageController @Inject() (
   }
     
   def messagingPage(friend: String) = Action.async { implicit request =>
-    val res = "you are messaging" + friend
-    Future(Ok(res))
+      request.session.get("connected").map { user =>
+        val loggedinUser = UserModel.getUserFromUsername(user, db)
+        loggedinUser.flatMap {
+          case Some(actualUser) => {
+            val boardsFuture = UserModel.getSubscriptionsOfUser(actualUser.id, db)
+            boardsFuture.flatMap{boards =>
+               val friendUser = UserModel.getUserFromUsername(friend, db)
+               friendUser.flatMap{
+                 case Some(actualFriend) => {
+                   val areFriendsFuture = MessageModel.areFriends(actualUser.id, actualFriend.id, db)
+                   areFriendsFuture.flatMap{
+                     case false => MessageModel.addFriends(actualUser.id, actualFriend.id, db)
+                     case true => Future{}
+                   }
+                   val prevMessagesFuture = MessageModel.getMessagesBetweenFriends(actualUser.id, actualFriend.id, db)
+                   for{
+                     prevMessages <- prevMessagesFuture
+                   } yield (Ok(views.html.messagingPage(boards, searchForm, actualUser.username, actualFriend.username, actualUser.id, actualFriend.id, prevMessages)))
+                 }
+                 case None => Future(Ok("[error] Your friend \"" + friend + "\"is imaginary"))
+               }
+            }
+          }
+          case None =>
+            val usersFuture = UserModel.allUsers(db)
+            usersFuture.map(users => Redirect(routes.UserController.loginPage))
+        }
+      }.getOrElse {
+        val boardsFuture = BoardModel.allBoards(db)
+        boardsFuture.map(boards => Redirect(routes.UserController.loginPage))
+      }
   }
+  
+  def socket = WebSocket.accept[String, String] { request =>
+    ActorFlow.actorRef{ out =>
+      ChatActor.props(out, chatManager)
+    }
+  }
+  
 }
