@@ -35,7 +35,7 @@ class MessageController @Inject() (
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
     val searchForm = Form(mapping(
-      "query" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))  
+      "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))  
       
     val chatManager = system.actorOf(ChatManager.props(this))  
       
