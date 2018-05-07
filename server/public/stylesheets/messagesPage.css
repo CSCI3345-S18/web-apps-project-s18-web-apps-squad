@@ -71,6 +71,25 @@ nav ul li a {
 	padding: 6px 8px 6px 16px;
 }
 
+//.messages {
+//	border-radius: 10px;
+//}
+
+.myMessage {
+	text-align: right;
+	color: #0072C6;
+}
+
+#friendsUname {
+	font-weight: bold;
+	text-decoration: underline;	
+}
+
+.friendsMessage {
+	text-align: left;
+	color: #FF5700;
+}
+
 .main {
 	margin-left: 220px;
 	margin-right: 330px;
@@ -78,7 +97,8 @@ nav ul li a {
 }
 
 .main #profile-messages {
-	background-color: yellow;
-	color: red;
+	
+	color: black;
 	font-size: 30px;
+	width: 100% ! important;
 }

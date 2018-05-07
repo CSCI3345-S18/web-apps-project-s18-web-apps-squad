@@ -38,8 +38,8 @@
         	</nav>
         </div>
         <div class="main">
-        	<p align="center">@friendsUsername</p>
 			<div id="profile-messages">
+			<p class="friendsMessage" id="friendsUname">@friendsUsername</p>
 				@for(message <- pastMessages){
 					<input type="hidden" class="messages" value="@message.body">
 				}

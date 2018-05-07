@@ -37,7 +37,7 @@ object SPAMain {
       $("#msg").value("")
       val jsonLit = js.Dynamic.literal(userOneID = myUID, userTwoID = friendsUID, body = msg)
       socket.send(JSON.stringify(jsonLit))
-      $("#profile-messages").append("<p align=\"right\">" + msg + "</p>")
+      $("#profile-messages").append("<p class=\"messages myMessage\">" + msg + "</p>")
     }
     
     document.onkeypress = {(e: dom.KeyboardEvent) =>
@@ -45,7 +45,7 @@ object SPAMain {
         $("#msg").value("")
         val jsonLit = js.Dynamic.literal(userOneID = myUID, userTwoID = friendsUID, body = msg)
         socket.send(JSON.stringify(jsonLit))
-        $("#profile-messages").append("<p align=\"right\">" + msg + "</p>")
+        $("#profile-messages").append("<p class=\"messages myMessage\">" + msg + "</p>")
       }
     }
     
@@ -56,9 +56,9 @@ object SPAMain {
       val sender = obj.userOneID.asInstanceOf[Int]
       val htmlElem = {
           if(sender == myUID){
-						"<p class=\"messages\" align=\"right\">" + message + "</p>"
+						"<p class=\"messages myMessage\">" + message + "</p>"
 					} else{
-						"<p class=\"messages\" align=\"left\">" + message + "</p>"
+						"<p class=\"messages friendsMessage\">" + message + "</p>"
 					}
       }
       $("#profile-messages").append(htmlElem)
