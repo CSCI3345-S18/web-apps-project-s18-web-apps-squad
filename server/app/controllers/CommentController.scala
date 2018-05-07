@@ -142,18 +142,7 @@ class CommentController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-      
-  def checkLogin(request: RequestHeader ):Future[Option[User]] = {
-    request.session.get("connected").map { user =>
-      val loggedinUser = UserModel.getUserFromUsername(user, db)
-      loggedinUser.map {
-        case Some(actualUser) => Some(actualUser)
-        case None =>
-          None
-      }
-    }.getOrElse(return Future(None))
-  }
- 
+
   def deleteComment(commentID: Int) = Action.async { implicit request =>
     val futureOptComment = CommentModel.getCommentFromID(commentID, db)
     checkLogin(request, db).flatMap {
