@@ -21,6 +21,7 @@ import models.Board
 import models.Post
 import models.CommentModel
 import models.User
+import controllers.util.checkLogin
 case class NewComment(
     body: String
 )
@@ -142,19 +143,10 @@ class CommentController @Inject() (
     }
   }
 
-  def checkLogin(request: RequestHeader ):Future[Option[User]] = {
-    request.session.get("connected").map { user =>
-      val loggedinUser = UserModel.getUserFromUsername(user, db)
-      loggedinUser.map {
-        case Some(actualUser) => Some(actualUser)
-        case None =>
-          None
-      }
-    }.getOrElse(return Future(None))
-  }
+
   def deleteComment(commentID: Int) = Action.async { implicit request =>
     val futureOptComment = CommentModel.getCommentFromID(commentID, db)
-    checkLogin(request).flatMap {
+    checkLogin(request, db).flatMap {
       case Some(user) => {
         futureOptComment.flatMap{
           case Some(comment) => {

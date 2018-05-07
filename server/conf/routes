@@ -66,6 +66,8 @@ GET		/newestBoards				controllers.BoardController.newestBoardsPage
 GET   /deletePost         controllers.PostController.delete(postID:Int)
 
 GET   /deleteComment      controllers.CommentController.deleteComment(commentID: Int)
+
+GET   /deleteSubscription controllers.SubscriptionController.deleteSubscription(userID: Int, postID: Int)
 #Post pages
 
 # GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

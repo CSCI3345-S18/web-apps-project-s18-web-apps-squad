@@ -20,6 +20,7 @@ import models.Board
 import models.Post
 import models.CommentModel
 import models.SubscriptionModel
+import controllers.util.checkLogin
 
 case class NewSubscription(
   userID: Int,
@@ -32,7 +33,7 @@ class SubscriptionController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
-  
+
   def addSubscription(title: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -59,5 +60,16 @@ class SubscriptionController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-
+  def deleteSubscription(userID: Int, boardID: Int) = Action.async { implicit request =>
+    checkLogin(request, db).flatMap{
+      case Some(user) =>
+        val subFut = SubscriptionModel.deleteSubscription(userID, boardID, db)
+        for {
+           sub <- subFut
+        } yield {
+          Redirect(routes.UserController.homePage)
+        }
+      case None => Future.successful(Redirect(routes.UserController.loginPage))
+    }
+  }
 }
