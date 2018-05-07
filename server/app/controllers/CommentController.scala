@@ -142,23 +142,39 @@ class CommentController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-
-
+      
+  def checkLogin(request: RequestHeader ):Future[Option[User]] = {
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.map {
+        case Some(actualUser) => Some(actualUser)
+        case None =>
+          None
+      }
+    }.getOrElse(return Future(None))
+  }
+ 
   def deleteComment(commentID: Int) = Action.async { implicit request =>
     val futureOptComment = CommentModel.getCommentFromID(commentID, db)
     checkLogin(request, db).flatMap {
       case Some(user) => {
         futureOptComment.flatMap{
           case Some(comment) => {
-            if(comment.userID == user.id){
-              val cmtFut = CommentModel.deleteComment(commentID, db)
-              for{
-                res <- cmtFut
-              } yield{
-                Redirect(routes.UserController.homePage)
-              }
-            } else {
-              Future.successful(Redirect(routes.UserController.loginPage))
+            val postCommentIsOn = PostModel.getPostFromID(comment.postParentID, db)
+            postCommentIsOn.flatMap {
+              case Some(post) =>
+                if(comment.userID == user.id) {
+                  val cmtFut = CommentModel.deleteComment(commentID, db)
+                  for {
+                    res <- cmtFut
+                  } yield {
+                    Redirect(routes.PostController.postPage(post.title))
+                  }
+                } else {
+                  Future.successful(Redirect(routes.UserController.loginPage))
+                }
+              case None =>
+                Future(Ok("Post does not exist"))
             }
           }
           case None => Future.successful(Redirect(routes.UserController.loginPage))
@@ -167,6 +183,5 @@ class CommentController @Inject() (
       case None => Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-
 
 }

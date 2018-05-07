@@ -67,12 +67,14 @@ object PostModel {
     }
     calculateKarma(postID, db)
   }
+  
   def updateVote(userID: Int, postID: Int, upvote: Boolean, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run{
       votePosts.filter(_.userID === userID).filter(_.postID === postID).map(_.upvote).update(upvote)
     }
     calculateKarma(postID, db)
   }
+  
   def deletePost(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run{
       val post = posts.filter(_.id === postID)
@@ -85,6 +87,7 @@ object PostModel {
       post.delete).transactionally
     }
   }
+  
   def downvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
       votePosts += VotePost(0, postID, userID, false)
