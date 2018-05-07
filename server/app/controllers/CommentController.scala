@@ -33,7 +33,7 @@ class CommentController @Inject() (
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
   val commentForm = Form(mapping(
-      "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
+      "comment" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
 
   def addComment(title: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
