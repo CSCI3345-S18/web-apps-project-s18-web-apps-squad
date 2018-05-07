@@ -55,6 +55,10 @@ GET		/upvotePost					controllers.PostController.upvotePost(title: String)
 
 GET		/downvotePost				controllers.PostController.downvotePost(title: String)
 
+GET		/upvotePostHome				controllers.PostController.upvotePostHome(title: String)
+
+GET		/downvotePostHome			controllers.PostController.downvotePostHome(title: String)
+
 GET		/upvoteComment				controllers.CommentController.upvoteComment(commentID: Int, postTitle: String)
 
 GET		/downvoteComment			controllers.CommentController.downvoteComment(commentID: Int, postTitle: String)
@@ -62,6 +66,12 @@ GET		/downvoteComment			controllers.CommentController.downvoteComment(commentID:
 GET		/popularBoards				controllers.BoardController.popularBoardsPage
 
 GET		/newestBoards				controllers.BoardController.newestBoardsPage
+
+GET   /deletePost         controllers.PostController.delete(postID:Int)
+
+GET   /deleteComment      controllers.CommentController.deleteComment(commentID: Int)
+
+GET   /deleteSubscription controllers.SubscriptionController.deleteSubscription(userID: Int, postID: Int)
 #Post pages
 
 # GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

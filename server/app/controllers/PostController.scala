@@ -125,7 +125,7 @@ class PostController @Inject() (
                     comments <- commentsFutSeq
                     subs <- subsOfUser
                   } yield {
-                    Ok(views.html.postPage(subs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
+                    Ok(views.html.postPage(subs, comments, board, post, actualUser, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -145,7 +145,8 @@ class PostController @Inject() (
                   for {
                     comments <- commentsFutSeq
                   } yield {
-                    Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
+                    val guestUser = User(0, "", "", "")
+                    Ok(views.html.postPage(emptySubs, comments, board, post, guestUser, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -166,7 +167,8 @@ class PostController @Inject() (
               for {
                 comments <- commentsFutSeq
               } yield {
-                Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
+                val guestUser = User(0, "", "", "")
+                Ok(views.html.postPage(emptySubs, comments, board, post, guestUser, searchForm, commentForm))
               }
             case None =>
               Future(Ok("Board does not exist."))
@@ -174,6 +176,35 @@ class PostController @Inject() (
         case None =>
           Future.successful(Redirect(routes.BoardController.allBoards))
       }
+    }
+  }
+
+  def delete(postID: Int) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val postToVote = PostModel.getPostFromID(postID, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToVote.flatMap {
+            case Some(post) =>
+            if (post.posterID == actualUser.id) {
+              val deleteFuture = PostModel.deletePost(postID, db)
+              for{
+                cnt <- deleteFuture
+              } yield{
+                Redirect(routes.UserController.homePage)
+              }
+            } else {
+              Future.successful(Redirect(routes.UserController.homePage))
+            }
+            case None =>
+              Future(Ok("Post does not exist."))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
 
@@ -193,10 +224,45 @@ class PostController @Inject() (
                     checkVote.map(exists =>
                       if(!exists) {
                         PostModel.upvotePostDB(actualUser.id, post.id, db)
-                        Redirect(routes.PostController.postPage(title))
+                        Redirect(routes.BoardController.boardPage(board.title))
                       } else {
                         PostModel.updateVote(actualUser.id, post.id, true, db)
-                        Redirect(routes.PostController.postPage(title))
+                        Redirect(routes.BoardController.boardPage(board.title))
+                      })
+                case None =>
+                  Future(Ok("Board does not exist."))
+              }
+            case None =>
+              Future(Ok("Post does not exist."))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))
+    }
+  }
+  
+  def upvotePostHome(title: String) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val postToVote = PostModel.getPostFromTitle(title, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToVote.flatMap {
+            case Some(post) =>
+              val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+              val boardFut = BoardModel.getBoardByID(post.boardID, db)
+              boardFut.flatMap {
+                case Some(board) =>
+                  val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+                    checkVote.map(exists =>
+                      if(!exists) {
+                        PostModel.upvotePostDB(actualUser.id, post.id, db)
+                        Redirect(routes.UserController.homePage)
+                      } else {
+                        PostModel.updateVote(actualUser.id, post.id, true, db)
+                        Redirect(routes.UserController.homePage)
                       })
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -228,10 +294,45 @@ class PostController @Inject() (
                     checkVote.map(exists =>
                       if(!exists) {
                         PostModel.downvotePostDB(actualUser.id, post.id, db)
-                        Redirect(routes.PostController.postPage(title))
+                        Redirect(routes.BoardController.boardPage(board.title))
                       } else {
                         PostModel.updateVote(actualUser.id, post.id, false, db)
-                        Redirect(routes.PostController.postPage(title))
+                        Redirect(routes.BoardController.boardPage(board.title))
+                      })
+                case None =>
+                  Future(Ok("Board does not exist."))
+              }
+            case None =>
+              Future(Ok("Post does not exist."))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))
+    }
+  }
+  
+  def downvotePostHome(title: String) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val postToVote = PostModel.getPostFromTitle(title, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToVote.flatMap {
+            case Some(post) =>
+              val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+              val boardFut = BoardModel.getBoardByID(post.boardID, db)
+              boardFut.flatMap {
+                case Some(board) =>
+                  val checkVote = PostModel.checkIfVoteExists(actualUser.id, post.id, db)
+                    checkVote.map(exists =>
+                      if(!exists) {
+                        PostModel.downvotePostDB(actualUser.id, post.id, db)
+                        Redirect(routes.UserController.homePage)
+                      } else {
+                        PostModel.updateVote(actualUser.id, post.id, false, db)
+                        Redirect(routes.UserController.homePage)
                       })
                 case None =>
                   Future(Ok("Board does not exist."))
