@@ -35,29 +35,24 @@ class SubscriptionController @Inject() (
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
 
   def addSubscription(title: String) = Action.async { implicit request =>
-    request.session.get("connected").map { user =>
-      val loggedinUser = UserModel.getUserFromUsername(user, db)
-      val boardToSubscribeTo = BoardModel.getBoardByTitle(title, db)
-      loggedinUser.flatMap {
-        case Some(user) =>
-          boardToSubscribeTo.flatMap {
-            case Some(board) =>
-              val checkSubscription = SubscriptionModel.checkIfSubscribed(user.id, board.id, db)
-              checkSubscription.map(exists =>
-                if(!exists) {
-                  SubscriptionModel.addSubscription(user.id, board.id, board.title, db)
-                  Redirect(routes.BoardController.boardPage(board.title))
-                } else {
-                  Redirect(routes.BoardController.boardPage(board.title))
-                })
-            case None =>
-              Future.successful(Redirect(routes.UserController.homePage))
-          }
-        case None =>
-          Future.successful(Redirect(routes.UserController.homePage))
-      }
-    }.getOrElse {
-      Future.successful(Redirect(routes.UserController.loginPage))
+    val boardToSubscribeTo = BoardModel.getBoardByTitle(title, db)
+    checkLogin(request, db).flatMap{
+      case Some(user) =>
+        boardToSubscribeTo.flatMap {
+          case Some(board) =>
+            val checkSubscription = SubscriptionModel.checkIfSubscribed(user.id, board.id, db)
+            checkSubscription.map(exists =>
+              if(!exists) {
+                SubscriptionModel.addSubscription(user.id, board.id, board.title, db)
+                Redirect(routes.BoardController.boardPage(board.title))
+              } else {
+                Redirect(routes.BoardController.boardPage(board.title))
+              })
+          case None =>
+            Future.successful(Redirect(routes.UserController.homePage))
+        }
+      case None =>
+        Future.successful(Redirect(routes.UserController.homePage))
     }
   }
   def deleteSubscription(userID: Int, boardID: Int) = Action.async { implicit request =>
