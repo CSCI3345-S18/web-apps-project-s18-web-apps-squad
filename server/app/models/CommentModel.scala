@@ -62,7 +62,9 @@ object CommentModel {
     calculateKarma(commentID, db)
   }
   def deleteComment(commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
-    Future(0)
+    db.run{
+      comments.filter(_.id === commentID).delete
+    }
   }
   def downvoteCommentDB(userID: Int, commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run {
@@ -73,8 +75,8 @@ object CommentModel {
 
   def calculateKarma(commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     val q1 = voteComments.filter(_.commentID === commentID)
-    val positiveKarmaData = db.run(q1.filter(_.upvote === true).length.result)
-    val negativeKarmaData = db.run(q1.filter(_.upvote === false).length.result)
+    val positiveKarmaData:Future[Int] = db.run(q1.filter(_.upvote === true).length.result)
+    val negativeKarmaData:Future[Int] = db.run(q1.filter(_.upvote === false).length.result)
 
     for{
       positiveKarma <- positiveKarmaData
