@@ -66,6 +66,10 @@ GET		/downvoteComment			controllers.CommentController.downvoteComment(commentID:
 GET		/popularBoards				controllers.BoardController.popularBoardsPage
 
 GET		/newestBoards				controllers.BoardController.newestBoardsPage
+
+GET   /deletePost         controllers.PostController.delete(postID:Int)
+
+GET   /deleteComment      controllers.CommentController.deleteComment(commentID: Int)
 #Post pages
 
 # GET		/$board<.*>/posts/:postID		controllers.PostController.viewPost(board, postID)

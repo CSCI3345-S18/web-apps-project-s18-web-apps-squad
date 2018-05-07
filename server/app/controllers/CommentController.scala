@@ -20,7 +20,7 @@ import models.PostModel
 import models.Board
 import models.Post
 import models.CommentModel
-
+import models.User
 case class NewComment(
     body: String
 )
@@ -30,10 +30,10 @@ class CommentController @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider,
     mcc: MessagesControllerComponents) (implicit ec: ExecutionContext)
     extends MessagesAbstractController(mcc) with HasDatabaseConfigProvider[JdbcProfile] {
-  
+
   val commentForm = Form(mapping(
       "body" -> nonEmptyText)(NewComment.apply)(NewComment.unapply))
-  
+
   def addComment(title: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -75,7 +75,7 @@ class CommentController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   def upvoteComment(commentID: Int, postTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -108,7 +108,7 @@ class CommentController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
-  
+
   def downvoteComment(commentID: Int, postTitle: String) = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -141,5 +141,40 @@ class CommentController @Inject() (
       Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
+
+  def checkLogin(request: RequestHeader ):Future[Option[User]] = {
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.map {
+        case Some(actualUser) => Some(actualUser)
+        case None =>
+          None
+      }
+    }.getOrElse(return Future(None))
+  }
+  def deleteComment(commentID: Int) = Action.async { implicit request =>
+    val futureOptComment = CommentModel.getCommentFromID(commentID, db)
+    checkLogin(request).flatMap {
+      case Some(user) => {
+        futureOptComment.flatMap{
+          case Some(comment) => {
+            if(comment.userID == user.id){
+              val cmtFut = CommentModel.deleteComment(commentID, db)
+              for{
+                res <- cmtFut
+              } yield{
+                Redirect(routes.UserController.homePage)
+              }
+            } else {
+              Future.successful(Redirect(routes.UserController.loginPage))
+            }
+          }
+          case None => Future.successful(Redirect(routes.UserController.loginPage))
+        }
+      }
+      case None => Future.successful(Redirect(routes.UserController.loginPage))
+    }
+  }
+
 
 }

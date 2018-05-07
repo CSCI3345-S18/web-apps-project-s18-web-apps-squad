@@ -125,7 +125,7 @@ class PostController @Inject() (
                     comments <- commentsFutSeq
                     subs <- subsOfUser
                   } yield {
-                    Ok(views.html.postPage(subs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
+                    Ok(views.html.postPage(subs, comments, board, post, actualUser, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -145,7 +145,8 @@ class PostController @Inject() (
                   for {
                     comments <- commentsFutSeq
                   } yield {
-                    Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
+                    val guestUser = User(0, "", "", "")
+                    Ok(views.html.postPage(emptySubs, comments, board, post, guestUser, searchForm, commentForm))
                   }
                 case None =>
                   Future(Ok("Board does not exist."))
@@ -166,7 +167,8 @@ class PostController @Inject() (
               for {
                 comments <- commentsFutSeq
               } yield {
-                Ok(views.html.postPage(emptySubs, comments, post.posterUsername, board.title, post.title, post.body, searchForm, commentForm))
+                val guestUser = User(0, "", "", "")
+                Ok(views.html.postPage(emptySubs, comments, board, post, guestUser, searchForm, commentForm))
               }
             case None =>
               Future(Ok("Board does not exist."))
@@ -174,6 +176,35 @@ class PostController @Inject() (
         case None =>
           Future.successful(Redirect(routes.BoardController.allBoards))
       }
+    }
+  }
+
+  def delete(postID: Int) = Action.async { implicit request =>
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      val postToVote = PostModel.getPostFromID(postID, db)
+      loggedinUser.flatMap {
+        case Some(actualUser) =>
+          postToVote.flatMap {
+            case Some(post) =>
+            if (post.posterID == actualUser.id) {
+              val deleteFuture = PostModel.deletePost(postID, db)
+              for{
+                cnt <- deleteFuture
+              } yield{
+                Redirect(routes.UserController.homePage)
+              }
+            } else {
+              Future.successful(Redirect(routes.UserController.homePage))
+            }
+            case None =>
+              Future(Ok("Post does not exist."))
+          }
+        case None =>
+          Future.successful(Redirect(routes.UserController.loginPage))
+      }
+    }.getOrElse {
+      Future.successful(Redirect(routes.UserController.loginPage))
     }
   }
 
