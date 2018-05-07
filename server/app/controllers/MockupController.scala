@@ -5,7 +5,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.JdbcProfile
 import slick.jdbc.JdbcCapabilities
 import slick.jdbc.MySQLProfile.api._
@@ -18,12 +18,26 @@ import models.UserModel
 import models.BoardModel
 import models.Board
 import models.Post
-
+import models.User
 case class NewUser(email: String, username: String, password: String)
 case class Login(username: String, password: String)
 
+object util {
+  def checkLogin(request: RequestHeader, db: Database):Future[Option[User]] = {
+    request.session.get("connected").map { user =>
+      val loggedinUser = UserModel.getUserFromUsername(user, db)
+      loggedinUser.map {
+        case Some(actualUser) => Some(actualUser)
+        case None =>
+          None
+      }
+    }.getOrElse(return Future(None))
+  }
+}
+
+
 //case class NewPost(boardID: Int, posterID: Int, title: String, body: String, link: String)
-//ase class NewBoard(title: String, description: String) 
+//ase class NewBoard(title: String, description: String)
 
 @Singleton
 class MockupController @Inject() (

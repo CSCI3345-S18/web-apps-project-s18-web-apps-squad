@@ -19,6 +19,7 @@ import models.BoardModel
 import models.PostModel
 //import controllers.NewBoard
 import models.Post
+import models.User
 import models.Subscription
 import models.SubscriptionModel
 
@@ -36,10 +37,10 @@ class BoardController @Inject() (
   val newBoardForm = Form(mapping(
       "title" -> nonEmptyText,
       "description" -> nonEmptyText)(NewBoard.apply)(NewBoard.unapply))
-      
+
   val searchForm = Form(mapping(
       "search" -> nonEmptyText)(SearchQuery.apply)(SearchQuery.unapply))
-      
+
   def allBoards = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -129,7 +130,7 @@ class BoardController @Inject() (
                 subs <- userSubs
                 num <- numSubs
               } yield {
-                Ok(views.html.boardPage(posts, subs, board.title, board.description, num, searchForm))
+                Ok(views.html.boardPage(posts, subs, board, actualUser, num, searchForm))
               }
             case None =>
               //Future.successful(Redirect(routes.UserController.homePage))
@@ -146,7 +147,8 @@ class BoardController @Inject() (
                 posts <- postsSeqOpt
                 num <- numSubs
               } yield {
-                Ok(views.html.boardPage(posts, emptySubs, board.title, board.description, num, searchForm))
+                val guestUser: User = User(0, "","","")
+                Ok(views.html.boardPage(posts, emptySubs, board, guestUser, num, searchForm))
               }
             case None =>
               Future.successful(Redirect(routes.UserController.homePage))
@@ -163,14 +165,15 @@ class BoardController @Inject() (
             posts <- postsSeqOpt
             num <- numSubs
           } yield {
-            Ok(views.html.boardPage(posts, emptySubs, board.title, board.description, num, searchForm))
+            val guestUser: User = User(0, "","","")
+            Ok(views.html.boardPage(posts, emptySubs, board, guestUser, num, searchForm))
           }
         case None =>
           Future.successful(Redirect(routes.UserController.homePage))
       }
     }
   }
-  
+
   def addBoardPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -187,7 +190,7 @@ class BoardController @Inject() (
       Future.successful(Ok(views.html.addBoardPage(emptySubs, newBoardForm, searchForm)))
     }
   }
-  
+
   def popularBoardsPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
@@ -216,7 +219,7 @@ class BoardController @Inject() (
       boardsFuture.map(boards => Ok(views.html.popularBoardsPage(emptySubs, boards, searchForm)))
     }
   }
-  
+
     def newestBoardsPage() = Action.async { implicit request =>
     request.session.get("connected").map { user =>
       val loggedinUser = UserModel.getUserFromUsername(user, db)
