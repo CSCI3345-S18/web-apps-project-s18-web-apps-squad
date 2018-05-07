@@ -151,3 +151,39 @@ nav ul li a {
 	border: 1px solid #e8e8e8;
 	margin-bottom: 30px;
 }
+
+#username {
+	font-size: 60px;
+	text-align: center;
+	margin-top: 10px;
+	margin-left: 20px;
+	margin-bottom: -10px;
+}
+
+#karma {
+	font-size: 30px;
+	text-align: center;
+	margin-left: 20px;
+}
+
+#profile-posts-header {
+	font-size: 26px;
+	margin-left: 20px;
+}
+
+#profile-comments-header {
+	font-size: 26px;
+	margin-left: 20px;
+}
+
+.posts {
+	margin-left: 20px;
+}
+
+.posts a {
+	text-decoration: none;
+}
+
+.comments {
+	margin-left: 20px;
+}
