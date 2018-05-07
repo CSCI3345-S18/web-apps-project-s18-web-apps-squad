@@ -45,8 +45,20 @@ object UserModel {
     }
   }
   def getKarma(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
-    db.run {
-      posts.filter(_.posterID === userID).join(comments.filter(_.userID === userID)).length.result
+    val com = voteComments.filter((e) => e.commentID in comments.filter(_.userID === userID).map(_.id))
+    val votesComUpFut:Future[Int] = db.run(com.filter(_.upvote === true).length.result)
+    val votesComDownFut:Future[Int] = db.run(com.filter(_.upvote === false).length.result)
+
+    val p = votePosts.filter(_.postID in posts.filter(_.posterID === userID).map(_.id))
+    val votesPostsUpFut:Future[Int] = db.run(p.filter(_.upvote === true).length.result)
+    val votesPostsDownFut:Future[Int] = db.run(p.filter(_.upvote === false).length.result)
+    for{
+      votesComUp <- votesComUpFut
+      votesComDown <- votesComDownFut
+      votesPostsUp <- votesPostsUpFut
+      votesPostsDown <- votesPostsDownFut
+    } yield {
+      votesComUp - votesComDown + votesPostsUp - votesPostsDown
     }
   }
   def getSubscriptionsOfUser(userID: Int, db: Database)(implicit ec: ExecutionContext): Future[Seq[Subscription]] = {
