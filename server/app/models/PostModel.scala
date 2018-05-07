@@ -75,7 +75,14 @@ object PostModel {
   }
   def deletePost(postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run{
-      posts.filter(_.id === postID).delete
+      val post = posts.filter(_.id === postID)
+      val postVotes = votePosts.filter(_.postID in post.map(_.id))
+      val cmts = comments.filter(_.postParentID in post.map(_.id))
+      val cmtVotes = voteComments.filter(_.commentID in cmts.map(_.id))
+      (cmtVotes.delete andThen
+      cmts.delete andThen
+      postVotes.delete andThen
+      post.delete).transactionally
     }
   }
   def downvotePostDB(userID: Int, postID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {

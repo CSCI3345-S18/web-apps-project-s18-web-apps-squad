@@ -63,7 +63,9 @@ object CommentModel {
   }
   def deleteComment(commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
     db.run{
-      comments.filter(_.id === commentID).delete
+      val cmts = comments.filter(_.id === commentID)
+      val cmtVotes = voteComments.filter(_.commentID in cmts.map(_.id))
+      (cmtVotes.delete andThen cmts.delete).transactionally
     }
   }
   def downvoteCommentDB(userID: Int, commentID: Int, db: Database)(implicit ec: ExecutionContext): Future[Int] = {
