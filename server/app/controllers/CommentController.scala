@@ -145,7 +145,7 @@ class CommentController @Inject() (
 
   def deleteComment(commentID: Int) = Action.async { implicit request =>
     val futureOptComment = CommentModel.getCommentFromID(commentID, db)
-    checkLogin(request).flatMap {
+    checkLogin(request, db).flatMap {
       case Some(user) => {
         futureOptComment.flatMap{
           case Some(comment) => {
