@@ -28,24 +28,26 @@ object SPAMain {
       val receiver = data.userTwoID.asInstanceOf[Int]
       val message = data.body.asInstanceOf[String]
         
-      $("#profile-messages").append("<p align=\"left\">" + message + "</p>")
+      $("#profile-messages").prepend("<p class=\"messages friendsMessage\">" + message + "</p>")
     })
     
     $("#msg").keypress(() => msg = $("#msg").value().asInstanceOf[String])
     
-    $("#sendButton").click{() =>
-      $("#msg").value("")
-      val jsonLit = js.Dynamic.literal(userOneID = myUID, userTwoID = friendsUID, body = msg)
-      socket.send(JSON.stringify(jsonLit))
-      $("#profile-messages").append("<p align=\"right\">" + msg + "</p>")
-    }
-    
-    document.onkeypress = {(e: dom.KeyboardEvent) =>
-      if(e.keyCode == 13){
+    $("#sendButton").click{() => 
+      if($("#msg").value().asInstanceOf[String] != ""){
         $("#msg").value("")
         val jsonLit = js.Dynamic.literal(userOneID = myUID, userTwoID = friendsUID, body = msg)
         socket.send(JSON.stringify(jsonLit))
-        $("#profile-messages").append("<p align=\"right\">" + msg + "</p>")
+        $("#profile-messages").prepend("<p class=\"messages myMessage\">" + msg + "</p>")
+      }
+    }
+    
+    document.onkeypress = {(e: dom.KeyboardEvent) =>
+      if(e.keyCode == 13 && $("#msg").value().asInstanceOf[String] != ""){
+        $("#msg").value("")
+        val jsonLit = js.Dynamic.literal(userOneID = myUID, userTwoID = friendsUID, body = msg)
+        socket.send(JSON.stringify(jsonLit))
+        $("#profile-messages").prepend("<p class=\"messages myMessage\">" + msg + "</p>")
       }
     }
     
@@ -56,12 +58,12 @@ object SPAMain {
       val sender = obj.userOneID.asInstanceOf[Int]
       val htmlElem = {
           if(sender == myUID){
-						"<p class=\"messages\" align=\"right\">" + message + "</p>"
+						"<p class=\"messages myMessage\">" + message + "</p>"
 					} else{
-						"<p class=\"messages\" align=\"left\">" + message + "</p>"
+						"<p class=\"messages friendsMessage\">" + message + "</p>"
 					}
       }
-      $("#profile-messages").append(htmlElem)
+      $("#profile-messages").prepend(htmlElem)
     }
   }
 }

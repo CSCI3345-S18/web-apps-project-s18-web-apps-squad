@@ -35,6 +35,31 @@ nav ul li a {
         color: black;
 }
 
+#sendButton {
+	background-color: #FF5700;
+    border: 1px;
+    border-color: #008B8B;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    width: 100%;
+    padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+#msg {
+   	width: 100%;
+    padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: right;
+	font-size: 18px;
+}
+
 .leftnav {
     width: 220px;
     position: fixed;
@@ -71,6 +96,27 @@ nav ul li a {
 	padding: 6px 8px 6px 16px;
 }
 
+//.messages {
+//	border-radius: 10px;
+//}
+
+.myMessage {
+	text-align: right;
+	color: #0072C6;
+}
+
+#friendsUname {
+	font-weight: bold;
+	text-decoration: underline;	
+	font-size: 30px;
+	width: 100% ! important;
+}
+
+.friendsMessage {
+	text-align: left;
+	color: #FF5700;
+}
+
 .main {
 	margin-left: 220px;
 	margin-right: 330px;
@@ -78,7 +124,8 @@ nav ul li a {
 }
 
 .main #profile-messages {
-	background-color: yellow;
-	color: red;
+	
+	color: black;
 	font-size: 30px;
+	width: 100% ! important;
 }
