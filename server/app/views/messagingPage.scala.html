@@ -38,17 +38,17 @@
         	</nav>
         </div>
         <div class="main">
-			<div id="profile-messages">
-			<p class="friendsMessage" id="friendsUname">@friendsUsername</p>
-				@for(message <- pastMessages){
-					<input type="hidden" class="messages" value="@message.body">
-				}
-			</div>
+        	<p class="friendsMessage" id="friendsUname"><a href=@routes.UserController.userPage(friendsUsername)>@friendsUsername</a></p>
 			<div id="sendMessages">
 					<input type="text" id="msg"><br/>
 					<input type="hidden" id="myUID" value=@myUID><br/>
 					<input type="hidden" id="friendsUID" value=@friendsUID><br/>
 					<button id="sendButton">Send</button>
+			</div>
+			<div id="profile-messages">
+				@for(message <- pastMessages){
+					<input type="hidden" class="messages" value="@message.body">
+				}
 			</div>
 		</div>
 	</body>
