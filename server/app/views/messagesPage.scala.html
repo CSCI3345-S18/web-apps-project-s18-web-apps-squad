@@ -10,8 +10,8 @@
 	<body>
         <div class="leftnav">
         	<a href="@routes.UserController.homePage()">Home</a>
-        	<a href="@routes.BoardController.popularBoardsPage()">Popular</a>
-        	<a href="@routes.BoardController.newestBoardsPage()">New</a>
+        	<a href="@routes.BoardController.newestBoardsPage()">Popular</a>
+        	<a href="@routes.BoardController.popularBoardsPage()">New</a>
         	<a href="@routes.UserController.profilePage">Account</a>
         	<p id="sub-header">My Subscriptions</p>
         	@for(b <- boards) {

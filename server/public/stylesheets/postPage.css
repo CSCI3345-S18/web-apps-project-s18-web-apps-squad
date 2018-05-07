@@ -90,7 +90,7 @@ nav ul li a {
 	text-align: center;
 }
 
-.rightnav #create-btn {
+.create-btn {
         background-color: #FF5700;
         border: 1px;
         border-color: #008B8B;
@@ -107,7 +107,7 @@ nav ul li a {
         padding-bottom: 10px;
 }
 
-.rightnav #create-btn a {
+.create-btn a {
 	text-decoration: none;
 	color: white;
 	display: inline-block;
