@@ -38,29 +38,31 @@
         	</nav>
         </div>
         <div class="main">
-			<div id="post">
-				<h3 class="header">Communities</th>
-				@for(b <- searchedBoards) {
-					<h3 class="title">
-							 <a href="@routes.BoardController.boardPage(b.title)">@b.title</a>
-					</h3>
-				}
-			</div>
-			<div id="searched-posts">
-				<h3 class="header">Posts</div>
-					@for(p <- searchedPosts) {
+        	<div class="post">
+				<div id="searched-boards">
+					<h3 class="header">Communities</h3>
+					@for(b <- searchedBoards) {
 						<h3 class="title">
-							<a href="@routes.PostController.postPage(p.title)">@p.title</a>
+							<a href="@routes.BoardController.boardPage(b.title)">@b.title</a>
 						</h3>
 					}
-			</div>
-			<div id="searched-posts">
-				<h3 class="header">Users</h3>
-					@for(u <- searchedUsers) {
-						<h3 class="title">
-							<a href="@routes.UserController.userPage(u.username)">@u.username</a>
-						</h3>
-					}
+				</div>
+				<div id="searched-posts">
+					<h3 class="header">Posts</h3>
+						@for(p <- searchedPosts) {
+							<h3 class="title">
+								<a href="@routes.PostController.postPage(p.title)">@p.title</a>
+							</h3>
+						}
+				</div>
+				<div id="searched-posts">
+					<h3 class="header">Users</h3>
+						@for(u <- searchedUsers) {
+							<h3 class="title">
+								<a href="@routes.UserController.userPage(u.username)">@u.username</a>
+							</h3>
+						}
+				</div>
 			</div>
 		</div>
 	</body>
