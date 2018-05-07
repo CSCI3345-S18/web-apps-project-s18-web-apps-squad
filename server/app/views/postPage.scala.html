@@ -71,16 +71,16 @@
 					<table>
 						<tr>
 							<td>
-								<a href="@routes.CommentController.upvoteComment(c.id, post.title)">
-									<button>UPVOTE</button>
-								</a>
-								<a href="@routes.CommentController.downvoteComment(c.id, post.title)">
-									<button>DOWNVOTE</button>
-								</a>
+								<button class="votebtn">
+									<a href="@routes.CommentController.upvoteComment(c.id, post.title)">UPVOTE</a>
+								</button>
+								<button class="votebtn">
+									<a href="@routes.CommentController.downvoteComment(c.id, post.title)">DOWNVOTE</a>
+								</button>
 								@if(user.id == c.userID){
-									<a href="@routes.CommentController.deleteComment(c.id)">
-										<button>DELETE</button>
-									</a>
+									<button class="votebtn">
+										<a href="@routes.CommentController.deleteComment(c.id)">DELETE</a>
+									</button>
 								}
 
 						</tr>

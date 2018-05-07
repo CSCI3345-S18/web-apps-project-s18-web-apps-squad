@@ -136,3 +136,8 @@ nav ul li a {
 	color: red;
 	font-size: 30px;
 }
+
+#upvotebtn a {
+	text-decoration: none;
+	color: black;
+}
