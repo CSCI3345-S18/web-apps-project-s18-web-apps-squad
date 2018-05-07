@@ -39,41 +39,35 @@
         </div>
         <div class="rightnav">
 			<p>Have something to say?</p>
-			<a href="@routes.PostController.addPostPage(board.title)"><button id="create-btn">Add Post</button></a>
+			<a href="@routes.PostController.addPostPage(board.title)"><button class="create-btn">Add Post</button></a>
         </div>
 
         <div class="main">
 			<div id="board-hero">
-				<h3>Welcome to @board.title</h3>
-				<h3>Subscribers: @numSubs</h3>
-				<h3>@board.description</h3>
+				<h2>@board.title</h2>
+				<h2>@board.description</h2>
+				<h2>Subscribers: @numSubs</h2>
 				@if(subbedBoards.map(_.boardID).contains(board.id)){
-					<a href="@routes.SubscriptionController.deleteSubscription(user.id, board.id)"><button>UnSubscribe</button></a>
+					<a href="@routes.SubscriptionController.deleteSubscription(user.id, board.id)"><button class="create-btn">UnSubscribe</button></a>
 				} else {
-					<a href="@routes.SubscriptionController.addSubscription(board.title)"><button>Subscribe</button></a>
+					<a href="@routes.SubscriptionController.addSubscription(board.title)"><button class="create-btn">Subscribe</button></a>
 				}
 
 			</div>
-			<div id="board-posts">
-				<tr><th>Recent posts</th></tr>
+			<div class="board-posts">
+				<h2 id="board-posts-header">Recent Posts</h2>
 				@for(p <- posts) {
-					<table border="1">
-						<tr>
-							<td><a href="@routes.PostController.upvotePost(p.title)"><button>UPVOTE</button></a><a href="@routes.PostController.downvotePost(p.title)"><button>DOWNVOTE</button></a>
-						</tr>
-						<tr>
-							<th><a href="@routes.PostController.postPage(p.title)">@p.title</a></th>
-						</tr>
-						<tr>
-							<td>@p.body</td>
-						</tr>
-						<tr>
-							<td>Karma: @p.upvotes</td>
-						</tr>
-						<tr>
-							<td>By: @p.posterUsername</td>
-						</tr>
-					</table>
+					<div class="post">
+						<a href="@routes.PostController.upvotePost(p.title)"><button>UPVOTE</button></a><a href="@routes.PostController.downvotePost(p.title)"><button>DOWNVOTE</button></a>
+						<h3 class="title">
+							<a href="@routes.PostController.postPage(p.title)">@p.title</a></th>
+						</h3>
+						<p class="body">@p.body</p>
+						<div class="votes">Karma: @p.upvotes</div>
+						<p class="username">
+							by <a href="@routes.UserController.userPage(p.posterUsername)">@p.posterUsername</a>
+						</p>
+					</div>
 				}
 			</div>
 		</div>

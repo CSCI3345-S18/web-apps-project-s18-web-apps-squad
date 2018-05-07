@@ -38,15 +38,15 @@
         	</nav>
         </div>
         <div class="main">
-        	<div class="boards">
-        		<table border="1">
-        			<tr><th>Popular Boards</th></tr>
-        			@for(b <- boards) {
-        				<tr>
-        					<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
-        				</tr>
-        			}
-        		</table>
+        	<div class="post">
+        		<div class="username">Popular Boards</div>
+        		<div class="posts-background">
+        		@for(b <- boards) {
+        			<h3 class="title">
+        				<a href="@routes.BoardController.boardPage(b.title)">@b.title</a>
+        			</h3><hr>
+        		}
+        		</div>
         	</div>
         </div>
 	</body>

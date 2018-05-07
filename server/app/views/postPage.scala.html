@@ -66,28 +66,23 @@
 					}
 				</div>
 			</div>
-			<div id="post-comments">
+			<div id="board-posts">
 				@for(c <- comments) {
-					<table>
-						<tr>
-							<td>
-								<button class="votebtn">
-									<a href="@routes.CommentController.upvoteComment(c.id, post.title)">UPVOTE</a>
-								</button>
-								<button class="votebtn">
-									<a href="@routes.CommentController.downvoteComment(c.id, post.title)">DOWNVOTE</a>
-								</button>
-								@if(user.id == c.userID){
-									<button class="votebtn">
-										<a href="@routes.CommentController.deleteComment(c.id)">DELETE</a>
-									</button>
-								}
-
-						</tr>
-						<tr>
-							<td>@c.body</td><td>@c.username</td>
-						</tr>
-					</table>
+					<div class="post">
+						<button class="votebtn">
+							<a href="@routes.CommentController.upvoteComment(c.id, post.title)">UPVOTE</a>
+						</button>
+						<button class="votebtn">
+							<a href="@routes.CommentController.downvoteComment(c.id, post.title)">DOWNVOTE</a>
+						</button>
+						@if(user.id == c.userID) {
+							<button class="votebtn">
+								<a href="@routes.CommentController.deleteComment(c.id)">DELETE</a>
+							</button>
+						}
+						<p>@c.body</p> 
+						<p id="commentUser"><strong><ul><a href="@routes.UserController.userPage(c.username)">@c.username</a></ul></strong></p>
+					</div>
 				}
 			</div>
 			<div id="post-comment-form">

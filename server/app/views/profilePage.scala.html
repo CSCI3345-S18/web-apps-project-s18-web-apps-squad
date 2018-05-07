@@ -40,9 +40,8 @@
 
         <div class="main">
 			<div id="profile-hero">
-				<p>Profile pic</p>
-				<h3>@username</h3>
-				<p>Karma: @karma</p>
+				<h3 id="username">@username</h3>
+				<p id="karma">Karma: @karma</p>
 				<div id="buttons">
 					<form id="messagesForm" action="@routes.MessageController.messagesPage" method="GET">
 						@helper.CSRF.formField
@@ -60,23 +59,20 @@
 			</div>
 			<div id="profile-posts">
 				<p id="profile-posts-header">My Posts</p><hr>
-				<table border="1">
 					@for(p <- posts) {
-						<tr>
-							<td><a href="@routes.PostController.postPage(p.title)">@p.title</a></td>
-						</tr>
+						<h3 class="posts">
+							<a href="@routes.PostController.postPage(p.title)">@p.title</a>
+						</h3>
 					}
 				</table>
 			</div>
 			<div id="profile-comments">
 				<p id="profile-comments-header">My Comments</p><hr>
-				<table border="1">
 					@for(c <- comments) {
-						<tr>
-							<td>@c.body</td>
-						</tr>
+						<h3 class="comments">
+							@c.body
+						</h3><hr>
 					}
-				</table>
 			</div>
 		</div>
 	</body>
