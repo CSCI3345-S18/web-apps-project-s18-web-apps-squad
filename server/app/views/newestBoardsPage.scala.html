@@ -5,7 +5,7 @@
 <html lang="en">
 	<head>
 		<title>Newest Boards</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/popularBoardsPage.css")">
+		<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/popularBoardsPage.css")">		
 	</head>
 	<body>
         <div class="leftnav">
@@ -38,15 +38,15 @@
         	</nav>
         </div>
         <div class="main">
-        	<div class="boards">
-        		<table border="1">
-        			<tr><th>Newest Boards</th></tr>
+        	<div class="post">
+        		<div class="username">Newest Boards</div>
+        		<div class="posts-background">
         			@for(b <- boards) {
-        				<tr>
-        					<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></td>
-        				</tr>
+        				<h3 class="title">
+        					<a href="@routes.BoardController.boardPage(b.title)">@b.title</a>
+        				</h3><hr>
         			}
-        		</table>
+        		</div>
         	</div>
         </div>
 	</body>

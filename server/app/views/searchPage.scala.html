@@ -38,35 +38,29 @@
         	</nav>
         </div>
         <div class="main">
-			<div id="seached-boards">
-				<table border="1">
-					<th>Communities</th>
-					@for(b <- searchedBoards) {
-						<tr>
-							<td><a href="@routes.BoardController.boardPage(b.title)">@b.title</a></th>
-						</tr>
-					}
-				</table>
+			<div id="post">
+				<h3 class="header">Communities</th>
+				@for(b <- searchedBoards) {
+					<h3 class="title">
+							 <a href="@routes.BoardController.boardPage(b.title)">@b.title</a>
+					</h3>
+				}
 			</div>
 			<div id="searched-posts">
-				<table border="1">
-					<th>Posts</th>
+				<h3 class="header">Posts</div>
 					@for(p <- searchedPosts) {
-						<tr>
-							<td><a href="@routes.PostController.postPage(p.title)">@p.title</a></td>
-						</tr>
+						<h3 class="title">
+							<a href="@routes.PostController.postPage(p.title)">@p.title</a>
+						</h3>
 					}
-				</table>
 			</div>
 			<div id="searched-posts">
-				<table border="1">
-					<th>Users</th>
+				<h3 class="header">Users</h3>
 					@for(u <- searchedUsers) {
-						<tr>
-							<td><a href="@routes.UserController.userPage(u.username)">@u.username</a></td>
-						</tr>
+						<h3 class="title">
+							<a href="@routes.UserController.userPage(u.username)">@u.username</a>
+						</h3>
 					}
-				</table>
 			</div>
 		</div>
 	</body>

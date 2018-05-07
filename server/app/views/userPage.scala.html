@@ -52,24 +52,21 @@
 				</div>
 			</div>
 			<div id="profile-posts">
-				<p id="profile-posts-header">Posts</p><hr>
-				<table border="1">
+				<p id="profile-posts-header">My Posts</p><hr>
 					@for(p <- posts) {
-						<tr>
-							<td><a href="@routes.PostController.postPage(p.title)">@p.title</a></td>
-						</tr>
+						<h3 class="posts">
+							<a href="@routes.PostController.postPage(p.title)">@p.title</a>
+						</h3>
 					}
 				</table>
 			</div>
 			<div id="profile-comments">
-				<p id="profile-communities-header">Comments</p><hr>
-				<table border="1">
+				<p id="profile-comments-header">My Comments</p><hr>
 					@for(c <- comments) {
-						<tr>
-							<td>@c.body</td>
-						</tr>
+						<h3 class="comments">
+							@c.body
+						</h3><hr>
 					}
-				</table>
 			</div>
 		</div>
 	</body>
